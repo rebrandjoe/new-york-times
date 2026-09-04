@@ -52,7 +52,7 @@ export default function SubscribePage() {
         ))}
       </div>
 
-      <div className="mx-auto mt-16 max-w-2xl border border-accent p-8 text-center sm:p-10">
+      <div className="mx-auto mt-16 max-w-2xl border border-accent bg-charcoal-deep p-8 text-center sm:p-10">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
           Coming soon
         </p>

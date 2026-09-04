@@ -9,8 +9,8 @@ export function WhyItMatters() {
           <p className="mt-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
             Health decisions affect every family, every community and every
             country. We make complex developments in health, medicine and
-            research easier to understand—putting evidence, context and people
-            at the centre of the story.
+            research easier to understand — putting evidence, context and
+            people at the centre of the story.
           </p>
         </div>
       </div>

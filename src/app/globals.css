@@ -50,8 +50,10 @@ body {
   font-family: var(--brand-font-sans);
 }
 
-* {
-  border-color: var(--brand-charcoal);
+@layer base {
+  * {
+    border-color: var(--brand-charcoal);
+  }
 }
 
 ::selection {

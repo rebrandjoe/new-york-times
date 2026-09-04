@@ -27,7 +27,7 @@ export function FormField({
         required={required}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="focus-ring mt-2 w-full border border-charcoal bg-black px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted"
+        className="focus-ring mt-2 w-full border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
       />
     </div>
   );
@@ -56,7 +56,7 @@ export function FormTextArea({
         name={name}
         required={required}
         rows={rows}
-        className="focus-ring mt-2 w-full resize-y border border-charcoal bg-black px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted"
+        className="focus-ring mt-2 w-full resize-y border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
       />
     </div>
   );

@@ -3,7 +3,6 @@ import { AboutHero } from "@/components/about/AboutHero";
 import { WhoIAm } from "@/components/about/WhoIAm";
 import { GlobalCoverage } from "@/components/about/GlobalCoverage";
 import { WhatICover } from "@/components/about/WhatICover";
-import { MyApproach } from "@/components/about/MyApproach";
 import { WhyItMatters } from "@/components/about/WhyItMatters";
 import { AboutContactCta } from "@/components/about/AboutContactCta";
 
@@ -27,7 +26,6 @@ export default function AboutPage() {
       <WhoIAm />
       <GlobalCoverage />
       <WhatICover />
-      <MyApproach />
       <WhyItMatters />
       <AboutContactCta />
     </>
