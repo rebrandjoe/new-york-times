@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
+
+const displaySerif = Playfair_Display({
+  variable: "--brand-font-serif-display",
+  subsets: ["latin"],
+  weight: ["700", "800", "900"],
+  display: "swap",
+});
 
 const SITE_URL = "https://josephmmwa.com";
 const SITE_NAME = "JOSEPH MMWA";
@@ -54,7 +62,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
       <head>
         <script
           type="application/ld+json"

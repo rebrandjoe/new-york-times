@@ -12,7 +12,8 @@
   --brand-gray-muted: #8f897f;
   --brand-live-red: #ff2d2d;
 
-  --brand-font-serif: Georgia, "TeX Gyre Pagella", "Times New Roman", serif;
+  --brand-font-serif: var(--brand-font-serif-display, Georgia), "TeX Gyre Pagella",
+    "Times New Roman", serif;
   --brand-font-sans: Arial, Poppins, Helvetica, sans-serif;
 }
 

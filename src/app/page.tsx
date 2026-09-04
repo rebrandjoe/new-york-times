@@ -21,7 +21,10 @@ const regionTabs = [
 export default function Home() {
   return (
     <>
-      <Hero />
+      <Hero
+        imageSrc="/images/hero-group.jpg"
+        imageAlt="A diverse group of people smiling together"
+      />
       <LeadNews primary={leadArticle} secondary={leadSecondaryArticles} />
       <LatestNews articles={latestArticles} />
       <RegionalSection regions={regionTabs} />
