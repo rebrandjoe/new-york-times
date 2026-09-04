@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tagline, WordmarkLink } from "@/components/Wordmark";
 
 export function AuthShell({
   heading,
@@ -12,21 +13,38 @@ export function AuthShell({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-[1440px] items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
-          JOSEPH MMWA
-        </p>
-        <h1 className="mt-3 font-serif text-3xl font-extrabold text-white sm:text-4xl">
-          {heading}
-        </h1>
-        {subtext && (
-          <p className="mt-3 text-sm text-gray-secondary-light">{subtext}</p>
-        )}
+    <div className="mx-auto grid min-h-[75vh] max-w-[1440px] grid-cols-1 lg:grid-cols-2">
+      <div className="relative hidden flex-col justify-between overflow-hidden border-r border-charcoal bg-charcoal-deep p-12 lg:flex">
+        <WordmarkLink className="text-2xl" />
 
-        <div className="mt-8">{children}</div>
+        <div>
+          <div className="h-1 w-16 bg-accent" />
+          <p className="mt-6 max-w-sm font-serif text-3xl font-bold leading-snug text-white">
+            Global health news you can trust — from Kenya, across Africa, and
+            around the world.
+          </p>
+        </div>
 
-        {footer && <div className="mt-6 text-sm text-gray-secondary">{footer}</div>}
+        <Tagline className="text-sm text-gray-secondary" />
+      </div>
+
+      <div className="flex items-center justify-center px-4 py-16 sm:px-6 lg:px-12">
+        <div className="w-full max-w-md">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent lg:hidden">
+            JOSEPH MMWA
+          </p>
+          <div className="mt-3 hidden h-1 w-16 bg-accent lg:block" />
+          <h1 className="mt-3 font-serif text-3xl font-extrabold text-white sm:text-4xl">
+            {heading}
+          </h1>
+          {subtext && (
+            <p className="mt-3 text-sm text-gray-secondary-light">{subtext}</p>
+          )}
+
+          <div className="mt-8">{children}</div>
+
+          {footer && <div className="mt-6 text-sm text-gray-secondary">{footer}</div>}
+        </div>
       </div>
     </div>
   );

@@ -10,12 +10,12 @@ import { AboutContactCta } from "@/components/about/AboutContactCta";
 export const metadata: Metadata = {
   title: "Joseph Mmwa — Health & Medical Journalist",
   description:
-    "Joseph Mmwa is a Health & Medical Journalist covering medical research, public health, and health policy across Kenya, Africa, and the world.",
+    "Joseph Mmwa is a Kenyan health news editor and aggregator focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "Joseph Mmwa — Health & Medical Journalist",
     description:
-      "Joseph Mmwa is a Health & Medical Journalist covering medical research, public health, and health policy across Kenya, Africa, and the world.",
+      "Joseph Mmwa is a Kenyan health news editor and aggregator focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
     url: "/about",
   },
 };

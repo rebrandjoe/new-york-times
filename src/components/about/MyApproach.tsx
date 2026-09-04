@@ -7,6 +7,10 @@ export function MyApproach() {
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
       <SectionHeading title="My Approach" />
 
+      <p className="mb-6 text-base font-semibold text-offwhite sm:text-lg">
+        My approach is simple:
+      </p>
+
       <div className="flex flex-wrap items-center gap-x-3 gap-y-4">
         {steps.map((step, i) => (
           <div key={step} className="flex items-center gap-3">
@@ -24,15 +28,8 @@ export function MyApproach() {
 
       <div className="mt-8 max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
         <p>
-          Health and medical journalism requires care. I take the time to
-          understand a development before I write about it, verify important
-          claims, and properly attribute sources — rather than rushing a story
-          into print.
-        </p>
-        <p>
-          Complex medical and scientific developments deserve to be explained in
-          language people can actually use. Accuracy, verification, attribution,
-          context, clarity, and responsibility guide every story I publish.
+          My mission is simple: to make sure no important health story goes
+          unnoticed, misunderstood or unexplained.
         </p>
       </div>
     </section>

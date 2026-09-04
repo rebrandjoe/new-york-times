@@ -7,11 +7,10 @@ export function WhyItMatters() {
             Why This Journalism Matters
           </h2>
           <p className="mt-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
-            Health news is ultimately about people. A study can change how a
-            disease is understood. A vaccine development can affect families. A
-            policy decision can change who has access to care. An outbreak can
-            affect entire populations. My job is to help readers understand what
-            happened, why it matters, and what it could mean for them.
+            Health decisions affect every family, every community and every
+            country. We make complex developments in health, medicine and
+            research easier to understand—putting evidence, context and people
+            at the centre of the story.
           </p>
         </div>
       </div>
