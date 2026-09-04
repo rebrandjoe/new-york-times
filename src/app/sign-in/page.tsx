@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { SignInForm } from "./SignInForm";
 
-export const metadata: Metadata = { title: "Sign In" };
+export const metadata: Metadata = {
+  title: "Sign In",
+  description: "Sign in to your JOSEPH MMWA account.",
+};
 
 export default function SignInPage() {
-  return <PlaceholderPage title="Sign In" message="Sign-in is coming soon." />;
+  return <SignInForm />;
 }

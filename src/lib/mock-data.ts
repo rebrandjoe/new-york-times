@@ -59,16 +59,19 @@ export const regionalArticles: Record<RegionSlug, { featured: Article; supportin
 };
 
 export const healthTopics: Topic[] = [
+  { id: "t-global-health", name: "Global Health", slug: "global-health" },
+  { id: "t-research", name: "Medical Research", slug: "medical-research" },
+  { id: "t-infectious", name: "Infectious Diseases", slug: "infectious-diseases" },
   { id: "t-hiv", name: "HIV & AIDS", slug: "hiv-aids" },
   { id: "t-vaccines", name: "Vaccines", slug: "vaccines" },
   { id: "t-cancer", name: "Cancer", slug: "cancer" },
-  { id: "t-infectious", name: "Infectious diseases", slug: "infectious-diseases" },
-  { id: "t-research", name: "Medical research", slug: "medical-research" },
-  { id: "t-ai", name: "AI & health", slug: "ai-health" },
-  { id: "t-public-health", name: "Public health", slug: "public-health" },
-  { id: "t-policy", name: "Health policy", slug: "health-policy" },
-  { id: "t-maternal", name: "Maternal & child health", slug: "maternal-child-health" },
+  { id: "t-public-health", name: "Public Health", slug: "public-health" },
+  { id: "t-policy", name: "Health Policy", slug: "health-policy" },
+  { id: "t-healthcare", name: "Healthcare", slug: "healthcare" },
+  { id: "t-ai", name: "AI & Health", slug: "ai-health" },
+  { id: "t-maternal", name: "Maternal & Child Health", slug: "maternal-child-health" },
   { id: "t-nutrition", name: "Nutrition", slug: "nutrition" },
-  { id: "t-mental", name: "Mental health", slug: "mental-health" },
-  { id: "t-emerging", name: "Emerging diseases", slug: "emerging-diseases" },
+  { id: "t-mental", name: "Mental Health", slug: "mental-health" },
+  { id: "t-emerging", name: "Emerging Diseases", slug: "emerging-diseases" },
+  { id: "t-breakthroughs", name: "Medical Breakthroughs", slug: "medical-breakthroughs" },
 ];

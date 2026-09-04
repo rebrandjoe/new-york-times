@@ -1,8 +1,35 @@
 import type { Metadata } from "next";
-import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { AboutHero } from "@/components/about/AboutHero";
+import { WhoIAm } from "@/components/about/WhoIAm";
+import { GlobalCoverage } from "@/components/about/GlobalCoverage";
+import { WhatICover } from "@/components/about/WhatICover";
+import { MyApproach } from "@/components/about/MyApproach";
+import { WhyItMatters } from "@/components/about/WhyItMatters";
+import { AboutContactCta } from "@/components/about/AboutContactCta";
 
-export const metadata: Metadata = { title: "About" };
+export const metadata: Metadata = {
+  title: "Joseph Mmwa — Health & Medical Journalist",
+  description:
+    "Joseph Mmwa is a Health & Medical Journalist covering medical research, public health, and health policy across Kenya, Africa, and the world.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "Joseph Mmwa — Health & Medical Journalist",
+    description:
+      "Joseph Mmwa is a Health & Medical Journalist covering medical research, public health, and health policy across Kenya, Africa, and the world.",
+    url: "/about",
+  },
+};
 
 export default function AboutPage() {
-  return <PlaceholderPage title="About" message="The About page is coming soon." />;
+  return (
+    <>
+      <AboutHero />
+      <WhoIAm />
+      <GlobalCoverage />
+      <WhatICover />
+      <MyApproach />
+      <WhyItMatters />
+      <AboutContactCta />
+    </>
+  );
 }

@@ -44,18 +44,19 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Organization",
-      "@id": `${SITE_URL}/#organization`,
-      name: SITE_NAME,
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: "Joseph Mmwa",
+      jobTitle: "Health & Medical Journalist",
       url: SITE_URL,
-      slogan: "If it's health, it's here",
     },
     {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
       name: SITE_NAME,
-      publisher: { "@id": `${SITE_URL}/#organization` },
+      publisher: { "@id": `${SITE_URL}/#person` },
+      author: { "@id": `${SITE_URL}/#person` },
     },
   ],
 };
