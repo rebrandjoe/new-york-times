@@ -13,7 +13,19 @@ export function AboutHero() {
 
       <div className="mt-10 grid grid-cols-1 gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
         <ProfilePhoto className="lg:col-span-5" />
-        <div className="flex flex-col justify-center lg:col-span-7" />
+        <div className="flex flex-col justify-center lg:col-span-7">
+          <p className="max-w-xl text-lg leading-relaxed text-offwhite sm:text-xl">
+            I cover health and medical developments as they unfold — from Kenya and
+            across Africa, to the United States, Europe, Asia, Latin America, and the
+            Middle East.
+          </p>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-gray-secondary-light">
+            My work follows medical research, public health, disease outbreaks,
+            vaccines, healthcare systems, and health policy wherever they matter —
+            explaining what happened, why it matters, and what it could mean for
+            people.
+          </p>
+        </div>
       </div>
     </section>
   );
