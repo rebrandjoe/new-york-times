@@ -40,7 +40,7 @@ export async function requireAdmin() {
   } = await supabase.auth.getUser();
 
   if (!user || user.email !== ADMIN_EMAIL) {
-    redirect("/sign-in");
+    redirect("/sign-in?redirectTo=/admin");
   }
 
   return { supabase, user };
