@@ -33,7 +33,7 @@ export function Hero({ imageSrc = null, imageAlt = "" }: HeroProps) {
             <span className="block text-accent">YOU CAN TRUST</span>
           </h1>
           <p className="mt-4 max-w-md text-sm text-gray-secondary-light sm:mt-5 sm:max-w-lg sm:text-lg">
-            The world&apos;s biggest health and medical news explained as they happen
+            The world&apos;s biggest health and medical stories explained as they happen
           </p>
         </div>
       </div>
