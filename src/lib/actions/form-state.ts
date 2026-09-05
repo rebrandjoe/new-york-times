@@ -1,3 +1,5 @@
+import type { CmsMedia } from "@/lib/cms/types";
+
 export interface AuthFormState {
   status: "idle" | "error" | "success";
   message?: string;
@@ -30,6 +32,7 @@ export const initialArticleFormState: ArticleFormState = { status: "idle" };
 export interface MediaFormState {
   status: "idle" | "error" | "success";
   message?: string;
+  media?: CmsMedia;
 }
 
 export const initialMediaFormState: MediaFormState = { status: "idle" };

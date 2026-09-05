@@ -37,21 +37,38 @@ export async function uploadMedia(
     data: { publicUrl },
   } = supabase.storage.from("article-media").getPublicUrl(path);
 
-  const { error: insertError } = await supabase.from("media").insert({
-    type,
-    url: publicUrl,
-    alt_text: altText,
-    caption: caption || null,
-    credit: credit || null,
-    source: source || null,
-  });
+  const { data: inserted, error: insertError } = await supabase
+    .from("media")
+    .insert({
+      type,
+      url: publicUrl,
+      alt_text: altText,
+      caption: caption || null,
+      credit: credit || null,
+      source: source || null,
+    })
+    .select("id, type, url, alt_text, caption, credit, source, link_url")
+    .single();
 
-  if (insertError) {
+  if (insertError || !inserted) {
     return { status: "error", message: "Saved the file but could not record it in the library." };
   }
 
   revalidatePath("/admin/media");
-  return { status: "success", message: "Uploaded to the media library." };
+  return {
+    status: "success",
+    message: "Uploaded to the media library.",
+    media: {
+      id: inserted.id,
+      type: inserted.type === "video" ? "video" : "image",
+      url: inserted.url,
+      altText: inserted.alt_text,
+      caption: inserted.caption,
+      credit: inserted.credit,
+      source: inserted.source,
+      linkUrl: inserted.link_url,
+    },
+  };
 }
 
 export async function listMedia(): Promise<CmsMedia[]> {

@@ -3,16 +3,18 @@
 import Image from "next/image";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import type { CmsMedia } from "@/lib/cms/types";
+import { MediaSourcePicker } from "@/components/admin/MediaSourcePicker";
 
 function fieldClass() {
   return "focus-ring w-full border border-white/10 bg-black px-3 py-2 text-sm text-offwhite placeholder:text-gray-muted focus:border-accent";
 }
 
-/** Inline image node: selecting from the media library, and its Caption/
- * Credit/Alt text, live directly beneath the image at its position in the
- * body — not as a separate field elsewhere. */
+/** Inline image node: selecting from the media library, or uploading a new
+ * file, and its Caption/Credit/Alt text, live directly beneath the image at
+ * its position in the body — not as a separate field elsewhere. */
 export function ArticleImageView({ node, updateAttributes, deleteNode, extension }: NodeViewProps) {
   const media = (extension.options.media as CmsMedia[]) ?? [];
+  const onUploaded = extension.options.onUploaded as ((media: CmsMedia) => void) | undefined;
   const { mediaId, url, alt, caption, credit } = node.attrs as {
     mediaId: string;
     url: string;
@@ -21,8 +23,7 @@ export function ArticleImageView({ node, updateAttributes, deleteNode, extension
     credit: string | null;
   };
 
-  function selectMedia(id: string) {
-    const selected = media.find((m) => m.id === id) ?? null;
+  function applyMedia(selected: CmsMedia | null) {
     updateAttributes({
       mediaId: selected?.id ?? "",
       url: selected?.url ?? "",
@@ -49,19 +50,8 @@ export function ArticleImageView({ node, updateAttributes, deleteNode, extension
         </div>
       ) : null}
 
-      <div className="space-y-2">
-        <select
-          value={mediaId}
-          onChange={(e) => selectMedia(e.target.value)}
-          className={fieldClass()}
-        >
-          <option value="">Select from media library…</option>
-          {media.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.altText || m.url.split("/").pop()}
-            </option>
-          ))}
-        </select>
+      <div className="space-y-3">
+        <MediaSourcePicker media={media} value={mediaId} onChange={applyMedia} onUploaded={onUploaded} />
         <input
           type="text"
           value={alt}

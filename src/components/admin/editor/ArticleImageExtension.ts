@@ -5,6 +5,7 @@ import { ArticleImageView } from "./ArticleImageView";
 
 export interface ArticleImageOptions {
   media: CmsMedia[];
+  onUploaded?: (media: CmsMedia) => void;
 }
 
 declare module "@tiptap/core" {
@@ -22,7 +23,7 @@ export const ArticleImage = Node.create<ArticleImageOptions>({
   draggable: true,
 
   addOptions() {
-    return { media: [] };
+    return { media: [], onUploaded: undefined };
   },
 
   addAttributes() {

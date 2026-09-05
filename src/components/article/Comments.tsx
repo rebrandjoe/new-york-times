@@ -17,6 +17,16 @@ function formatCommentDate(iso: string) {
   });
 }
 
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 export function Comments({
   articleId,
   articlePath,
@@ -56,7 +66,7 @@ export function Comments({
   }, [state.status]);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-3xl border-t border-charcoal px-4 py-12 sm:px-6 lg:px-8">
       <h2 className="font-serif text-2xl font-extrabold text-white">
         Comments {initialComments.length > 0 && `(${initialComments.length})`}
       </h2>
@@ -71,8 +81,8 @@ export function Comments({
           rows={3}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Share your thoughts…"
-          className="focus-ring w-full border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
+          placeholder="Share your thoughts on this story…"
+          className="focus-ring w-full border border-white/10 bg-charcoal-deep px-4 py-3 text-sm leading-relaxed text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
         />
 
         {state.status === "auth_required" ? (
@@ -106,12 +116,17 @@ export function Comments({
           <p className="py-6 text-sm text-gray-muted">Be the first to comment.</p>
         ) : (
           initialComments.map((comment) => (
-            <div key={comment.id} className="py-6">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-offwhite">{comment.authorName}</span>
-                <span className="text-xs text-gray-muted">{formatCommentDate(comment.createdAt)}</span>
+            <div key={comment.id} className="flex gap-3 py-6">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-charcoal-deep text-xs font-bold text-gray-secondary-light">
+                {initials(comment.authorName)}
+              </span>
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-semibold text-offwhite">{comment.authorName}</span>
+                  <span className="text-xs text-gray-muted">{formatCommentDate(comment.createdAt)}</span>
+                </div>
+                <p className="mt-1.5 text-sm leading-relaxed text-gray-secondary-light">{comment.body}</p>
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-gray-secondary-light">{comment.body}</p>
             </div>
           ))
         )}

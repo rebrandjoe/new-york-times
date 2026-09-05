@@ -46,6 +46,7 @@ export function ArticleEditor({
   media: CmsMedia[];
 }) {
   const router = useRouter();
+  const [mediaList, setMediaList] = useState<CmsMedia[]>(media);
   const [id, setId] = useState(articleId);
   const [status, setStatus] = useState(initial?.status ?? "draft");
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -73,6 +74,10 @@ export function ArticleEditor({
   const [sourceUrl, setSourceUrl] = useState(initial?.source.url ?? "");
   const [sourceAdditional, setSourceAdditional] = useState(initial?.source.additional ?? "");
   const [scheduledFor, setScheduledFor] = useState("");
+
+  function handleMediaUploaded(uploaded: CmsMedia) {
+    setMediaList((prev) => [uploaded, ...prev]);
+  }
 
   const isFirstRender = useRef(true);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -314,9 +319,10 @@ export function ArticleEditor({
             <label className={labelClass()}>Featured image</label>
             <div className="mt-1.5">
               <MediaPickerField
-                media={media.filter((m) => m.type === "image")}
+                media={mediaList.filter((m) => m.type === "image")}
                 value={featuredImageId}
                 onChange={(m) => setFeaturedImageId(m?.id ?? "")}
+                onUploaded={handleMediaUploaded}
               />
             </div>
           </div>
@@ -324,7 +330,12 @@ export function ArticleEditor({
           <div>
             <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">Body</h2>
             <div className="mt-4">
-              <TiptapEditor blocks={body} onChange={setBody} media={media} />
+              <TiptapEditor
+                blocks={body}
+                onChange={setBody}
+                media={mediaList}
+                onMediaUploaded={handleMediaUploaded}
+              />
             </div>
           </div>
 

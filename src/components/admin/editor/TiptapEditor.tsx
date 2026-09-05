@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -19,17 +20,19 @@ export function TiptapEditor({
   blocks,
   onChange,
   media,
+  onMediaUploaded,
 }: {
   blocks: ContentBlock[];
   onChange: (blocks: ContentBlock[]) => void;
   media: CmsMedia[];
+  onMediaUploaded?: (media: CmsMedia) => void;
 }) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
       Placeholder.configure({ placeholder: "Start writing…" }),
-      ArticleImage.configure({ media }),
+      ArticleImage.configure({ media, onUploaded: onMediaUploaded }),
       ArticleVideo,
       PullQuote,
     ],
@@ -41,6 +44,17 @@ export function TiptapEditor({
       },
     },
   });
+
+  // Extension options are captured once at editor creation — keep them in
+  // sync as new uploads extend the media list during the same session.
+  useEffect(() => {
+    if (!editor) return;
+    const imageExtension = editor.extensionManager.extensions.find((e) => e.name === "articleImage");
+    if (imageExtension) {
+      imageExtension.options.media = media;
+      imageExtension.options.onUploaded = onMediaUploaded;
+    }
+  }, [editor, media, onMediaUploaded]);
 
   if (!editor) return null;
 
