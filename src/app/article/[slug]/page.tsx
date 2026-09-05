@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ArticleView } from "@/components/article/ArticleView";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms/queries";
 import { getComments } from "@/lib/actions/comments";
+import { createClient } from "@/lib/supabase/server";
+import { hasActivePremiumAccess } from "@/lib/premium/access";
 
 const SITE_URL = "https://josephmmwa.com";
 
@@ -43,9 +45,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!article) notFound();
 
   const articlePath = `/article/${article.slug}`;
-  const [related, comments] = await Promise.all([
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [related, comments, premiumAccess] = await Promise.all([
     getRelatedArticles(article, 4),
     getComments(article.id),
+    article.premium ? hasActivePremiumAccess(user?.id ?? null) : Promise.resolve(true),
   ]);
 
   const canonicalUrl = article.canonicalUrl || `${SITE_URL}${articlePath}`;
@@ -57,6 +65,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       comments={comments}
       articlePath={articlePath}
       canonicalUrl={canonicalUrl}
+      premiumLocked={article.premium && !premiumAccess}
     />
   );
 }

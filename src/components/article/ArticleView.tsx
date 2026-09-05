@@ -5,6 +5,8 @@ import { AuthorBlock } from "@/components/article/AuthorBlock";
 import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
 import { Comments } from "@/components/article/Comments";
+import { PaywallNotice } from "@/components/article/PaywallNotice";
+import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
 
@@ -22,6 +24,7 @@ export function ArticleView({
   articlePath,
   canonicalUrl,
   interactive = true,
+  premiumLocked = false,
 }: {
   article: CmsArticle;
   related: CmsArticle[];
@@ -31,7 +34,12 @@ export function ArticleView({
   /** Admin preview disables comment posting and related-article/author links
    * navigating away, since drafts aren't real pages yet for readers. */
   interactive?: boolean;
+  /** True when this is a premium article and the current reader has no
+   * active subscription — shows a preview of the body plus a paywall
+   * instead of the full text. */
+  premiumLocked?: boolean;
 }) {
+  const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -102,17 +110,18 @@ export function ArticleView({
       ) : null}
 
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={article.body} />
+        <BlockRenderer blocks={bodyBlocks} />
+        {premiumLocked && <PaywallNotice />}
       </div>
 
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <AuthorBlock name={article.author.name} title={article.author.title} />
-        <ShareRow url={canonicalUrl} title={article.title} />
+        {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
       </div>
 
-      <RelatedArticles articles={related} />
+      {!premiumLocked && <RelatedArticles articles={related} />}
 
-      {interactive && (
+      {interactive && !premiumLocked && (
         <Comments articleId={article.id} articlePath={articlePath} initialComments={comments} />
       )}
     </article>

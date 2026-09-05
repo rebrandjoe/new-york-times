@@ -113,3 +113,22 @@ export function estimateReadTimeMinutes(blocks: ContentBlock[]): number {
   const words = blocksToWordCount(blocks);
   return Math.max(1, Math.round(words / AVERAGE_READING_WPM));
 }
+
+const PREVIEW_WORD_LIMIT = 120;
+
+/** For the premium paywall: enough of the article to show real value, then
+ * cut off — never the full body. */
+export function truncateBlocksForPreview(blocks: ContentBlock[]): ContentBlock[] {
+  const preview: ContentBlock[] = [];
+  let words = 0;
+
+  for (const block of blocks) {
+    preview.push(block);
+    if (block.type === "paragraph" || block.type === "heading" || block.type === "blockquote" || block.type === "pullquote") {
+      words += block.text.trim().split(/\s+/).filter(Boolean).length;
+    }
+    if (words >= PREVIEW_WORD_LIMIT) break;
+  }
+
+  return preview.length > 0 ? preview : blocks.slice(0, 1);
+}

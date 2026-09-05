@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/corrections", destination: "/corrections-and-fact-checking", permanent: true },
       { source: "/fact-checking", destination: "/corrections-and-fact-checking", permanent: true },
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/subscribe", destination: "/premium", permanent: true },
     ];
   },
 };

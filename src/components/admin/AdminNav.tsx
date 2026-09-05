@@ -9,6 +9,7 @@ const links = [
   { href: "/admin/media", label: "Media" },
   { href: "/admin/ticker", label: "Ticker" },
   { href: "/admin/comments", label: "Comments" },
+  { href: "/admin/subscriptions", label: "Subscriptions" },
 ];
 
 export function AdminNav() {

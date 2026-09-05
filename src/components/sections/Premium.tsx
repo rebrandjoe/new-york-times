@@ -17,7 +17,7 @@ export function Premium() {
           </p>
         </div>
         <Link
-          href="/subscribe"
+          href="/premium"
           className="focus-ring shrink-0 bg-accent px-6 py-3 text-sm font-bold text-black transition-opacity hover:opacity-90"
         >
           Subscribe

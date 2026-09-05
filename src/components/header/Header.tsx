@@ -73,7 +73,7 @@ export function Header({ tickerHeadline = null }: { tickerHeadline?: string | nu
               </Link>
             )}
             <Link
-              href="/subscribe"
+              href="/premium"
               className="focus-ring bg-accent px-4 py-2 text-sm font-bold text-black transition-opacity hover:opacity-90"
             >
               Subscribe
@@ -143,7 +143,7 @@ export function Header({ tickerHeadline = null }: { tickerHeadline?: string | nu
 
             <div className="mt-6 flex flex-col gap-2">
               <Link
-                href="/subscribe"
+                href="/premium"
                 onClick={() => setDrawerOpen(false)}
                 className="focus-ring bg-accent px-4 py-3 text-center text-sm font-bold text-black"
               >
