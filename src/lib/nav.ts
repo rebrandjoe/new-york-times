@@ -34,14 +34,14 @@ export const footerTopics: NavLink[] = [
 ];
 
 export const footerEditorial: NavLink[] = [
-  { label: "Editorial policy", href: "/editorial-policy" },
-  { label: "Corrections", href: "/corrections" },
-  { label: "Fact-checking", href: "/fact-checking" },
-  { label: "AI policy", href: "/ai-policy" },
+  { label: "Editorial Standards", href: "/editorial-standards" },
+  { label: "Corrections & Fact-Checking", href: "/corrections-and-fact-checking" },
+  { label: "AI Policy", href: "/ai-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
 ];
 
 export const footerLegal: NavLink[] = [
-  { label: "Privacy", href: "/privacy" },
+  { label: "Privacy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms-of-service" },
 ];
 

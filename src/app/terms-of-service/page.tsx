@@ -44,18 +44,14 @@ export default function TermsOfServicePage() {
           guarantee that every piece of information will remain current or that an error will never
           occur. Health research evolves, developing stories change and corrections may sometimes be
           necessary. Our{" "}
-          <Link href="/editorial-policy" className="text-accent hover:underline">
-            Editorial Policy
-          </Link>
-          ,{" "}
-          <Link href="/fact-checking" className="text-accent hover:underline">
-            Fact-Checking Policy
+          <Link href="/editorial-standards" className="text-accent hover:underline">
+            Editorial Standards
           </Link>{" "}
           and{" "}
-          <Link href="/corrections" className="text-accent hover:underline">
-            Corrections Policy
+          <Link href="/corrections-and-fact-checking" className="text-accent hover:underline">
+            Corrections &amp; Fact-Checking
           </Link>{" "}
-          explain our standards.
+          pages explain our standards.
         </PolicyParagraph>
       </PolicySection>
 

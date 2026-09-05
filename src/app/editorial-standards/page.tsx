@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PolicyLead, PolicyList, PolicyPage, PolicyParagraph, PolicySection } from "@/components/policy/PolicyPage";
 
 export const metadata: Metadata = {
-  title: "Editorial Policy",
+  title: "Editorial Standards",
   description:
-    "JOSEPH MMWA's editorial policy — accuracy, context and accountability in health and medical journalism.",
-  alternates: { canonical: "/editorial-policy" },
+    "JOSEPH MMWA's editorial standards — accuracy, context and accountability in health and medical journalism.",
+  alternates: { canonical: "/editorial-standards" },
   openGraph: {
-    title: "Editorial Policy — Joseph Mmwa",
+    title: "Editorial Standards — Joseph Mmwa",
     description:
-      "JOSEPH MMWA's editorial policy — accuracy, context and accountability in health and medical journalism.",
-    url: "/editorial-policy",
+      "JOSEPH MMWA's editorial standards — accuracy, context and accountability in health and medical journalism.",
+    url: "/editorial-standards",
   },
 };
 
-export default function EditorialPolicyPage() {
+export default function EditorialStandardsPage() {
   return (
-    <PolicyPage eyebrow="Editorial Policy" title="Editorial Policy" intro="Journalism with consequences">
+    <PolicyPage eyebrow="Editorial Standards" title="Editorial Standards" intro="Journalism with consequences">
       <PolicyParagraph>Health journalism is different from ordinary information publishing.</PolicyParagraph>
       <PolicyParagraph>
         A health story can influence what someone believes, the treatment they seek, the decisions a
@@ -178,7 +179,13 @@ export default function EditorialPolicyPage() {
         <PolicyParagraph>
           We do not believe that correcting an error weakens journalism. It strengthens accountability.
         </PolicyParagraph>
-        <PolicyParagraph>Our Corrections Policy explains how we handle this process.</PolicyParagraph>
+        <PolicyParagraph>
+          Our{" "}
+          <Link href="/corrections-and-fact-checking" className="text-accent hover:underline">
+            Corrections &amp; Fact-Checking
+          </Link>{" "}
+          page explains how we handle this process.
+        </PolicyParagraph>
       </PolicySection>
 
       <PolicySection heading="Our editorial standard">

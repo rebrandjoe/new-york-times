@@ -26,12 +26,34 @@ export function PolicyPage({
   );
 }
 
-export function PolicySection({ heading, children }: { heading: string; children: ReactNode }) {
+export function PolicySection({
+  heading,
+  children,
+  headingLevel = 2,
+}: {
+  heading: string;
+  children: ReactNode;
+  /** Use 3 when nested inside a PolicyGroup, so the page's heading outline stays correct. */
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   return (
     <section className="mt-10 border-t border-charcoal pt-10 first:mt-0 first:border-t-0 first:pt-0">
-      <h2 className="font-serif text-xl font-bold text-white sm:text-2xl">{heading}</h2>
+      <Heading className="font-serif text-xl font-bold text-white sm:text-2xl">{heading}</Heading>
       <div className="mt-4 space-y-4">{children}</div>
     </section>
+  );
+}
+
+/** Groups several PolicySections under one major heading — for pages that
+ * merge more than one former policy into distinct parts (e.g. Corrections
+ * & Fact-Checking). */
+export function PolicyGroup({ heading, children }: { heading: string; children: ReactNode }) {
+  return (
+    <div className="mt-14 border-t-2 border-accent/30 pt-10 first:mt-10">
+      <h2 className="font-serif text-2xl font-extrabold text-white sm:text-3xl">{heading}</h2>
+      <div className="mt-6">{children}</div>
+    </div>
   );
 }
 

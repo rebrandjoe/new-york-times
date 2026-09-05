@@ -85,7 +85,7 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col items-center gap-2 border-t border-charcoal pt-6">
           <div className="flex gap-4">
-            <Link href="/privacy" className="focus-ring text-xs text-gray-muted hover:text-accent">
+            <Link href="/privacy-policy" className="focus-ring text-xs text-gray-muted hover:text-accent">
               Privacy
             </Link>
             <Link href="/terms-of-service" className="focus-ring text-xs text-gray-muted hover:text-accent">
