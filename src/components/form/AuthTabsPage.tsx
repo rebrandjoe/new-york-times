@@ -10,6 +10,7 @@ import { PasswordField } from "@/components/form/PasswordField";
 import { SuccessMessage } from "@/components/form/SuccessMessage";
 import { SubmitButton } from "@/components/form/SubmitButton";
 import { GoogleButton } from "@/components/form/GoogleButton";
+import { AppleButton } from "@/components/form/AppleButton";
 import { signInAction, signUpAction } from "@/lib/actions/auth";
 import { initialAuthState } from "@/lib/actions/form-state";
 
@@ -20,6 +21,7 @@ export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
+  const authError = searchParams.get("authError");
 
   const [signInState, signInFormAction] = useActionState(signInAction, initialAuthState);
   const [signUpState, signUpFormAction] = useActionState(signUpAction, initialAuthState);
@@ -136,8 +138,15 @@ export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
             <span className="h-px flex-1 bg-charcoal" />
           </div>
 
-          <div className="mt-6">
+          {authError && (
+            <p role="alert" className="mt-6 border border-live-red/40 bg-live-red/10 px-4 py-3 text-sm text-live-red">
+              {authError}
+            </p>
+          )}
+
+          <div className="mt-6 flex flex-col gap-3">
             <GoogleButton redirectTo={redirectTo ?? undefined} />
+            <AppleButton redirectTo={redirectTo ?? undefined} />
           </div>
         </div>
       </div>
