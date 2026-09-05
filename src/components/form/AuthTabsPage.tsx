@@ -9,6 +9,7 @@ import { FormMessage } from "@/components/form/FormMessage";
 import { PasswordField } from "@/components/form/PasswordField";
 import { SuccessMessage } from "@/components/form/SuccessMessage";
 import { SubmitButton } from "@/components/form/SubmitButton";
+import { GoogleButton } from "@/components/form/GoogleButton";
 import { signInAction, signUpAction } from "@/lib/actions/auth";
 import { initialAuthState } from "@/lib/actions/form-state";
 
@@ -128,6 +129,16 @@ export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
               </form>
             </>
           )}
+
+          <div className="mt-6 flex items-center gap-3" aria-hidden="true">
+            <span className="h-px flex-1 bg-charcoal" />
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-muted">or</span>
+            <span className="h-px flex-1 bg-charcoal" />
+          </div>
+
+          <div className="mt-6">
+            <GoogleButton redirectTo={redirectTo ?? undefined} />
+          </div>
         </div>
       </div>
     </div>

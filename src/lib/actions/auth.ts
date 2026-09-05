@@ -42,6 +42,15 @@ export async function signUpAction(
   });
 
   if (error) {
+    if (error.status === 429) {
+      return {
+        status: "error",
+        message: "Too many attempts. Please wait a moment and try again.",
+      };
+    }
+    if (error.code === "user_already_exists" || error.message.includes("already registered")) {
+      return { status: "error", message: "An account with this email already exists." };
+    }
     return { status: "error", message: error.message };
   }
 
@@ -77,6 +86,12 @@ export async function signInAction(
         message: "Please confirm your email address before signing in. Check your inbox.",
       };
     }
+    if (error.status === 429) {
+      return {
+        status: "error",
+        message: "Too many attempts. Please wait a moment and try again.",
+      };
+    }
     return { status: "error", message: "Incorrect email or password." };
   }
 
@@ -97,16 +112,62 @@ export async function forgotPasswordAction(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getSiteUrl()}/sign-in`,
+    redirectTo: `${getSiteUrl()}/auth/callback?redirectTo=/reset-password`,
   });
 
   if (error && error.code !== "user_not_found") {
+    if (error.status === 429) {
+      return {
+        status: "error",
+        message: "Too many attempts. Please wait a moment and try again.",
+      };
+    }
     return { status: "error", message: "Something went wrong. Please try again." };
   }
 
   return {
     status: "success",
     message: "Reset link sent. Check your email to continue.",
+  };
+}
+
+export async function updatePasswordAction(
+  _prevState: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  if (!password || !confirmPassword) {
+    return { status: "error", message: "Please fill in both fields." };
+  }
+  if (password.length < 8) {
+    return { status: "error", message: "Password must be at least 8 characters." };
+  }
+  if (password !== confirmPassword) {
+    return { status: "error", message: "Passwords do not match." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      status: "error",
+      message: "This reset link has expired or was already used. Request a new one.",
+    };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return { status: "error", message: "Could not update your password. Please try again." };
+  }
+
+  return {
+    status: "success",
+    message: "Password updated. You're signed in with your new password.",
   };
 }
 
