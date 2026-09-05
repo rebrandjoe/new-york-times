@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
@@ -84,6 +85,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           Skip to main content
         </a>
         <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
+        <Analytics />
       </body>
     </html>
   );

@@ -6,6 +6,8 @@ import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
 import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
+import { SourceAttribution } from "@/components/article/SourceAttribution";
+import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
@@ -112,7 +114,18 @@ export function ArticleView({
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <BlockRenderer blocks={bodyBlocks} />
         {premiumLocked && <PaywallNotice />}
+        {!premiumLocked && article.correctionNote && (
+          <div className="mt-6">
+            <CorrectionNotice note={article.correctionNote} />
+          </div>
+        )}
       </div>
+
+      {!premiumLocked && (
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <SourceAttribution source={article.source} />
+        </div>
+      )}
 
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <AuthorBlock name={article.author.name} title={article.author.title} />

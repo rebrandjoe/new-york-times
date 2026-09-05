@@ -5,7 +5,7 @@ import type { ArticleStatus, CmsArticle, CmsMedia } from "./types";
 export const ARTICLE_SELECT = `
   id, slug, title, excerpt, body, region, country,
   publication_date, updated_at, read_time_minutes, status, scheduled_at, premium,
-  seo_title, seo_description, canonical_url,
+  seo_title, seo_description, canonical_url, correction_note,
   source_name, source_author, source_institution, source_url, source_published_at, source_additional,
   category:categories!articles_category_id_fkey(id, name, slug),
   author:authors!articles_author_id_fkey(id, name, slug, title),
@@ -33,6 +33,7 @@ export interface RawArticleRow {
   seo_title: string | null;
   seo_description: string | null;
   canonical_url: string | null;
+  correction_note: string | null;
   source_name: string | null;
   source_author: string | null;
   source_institution: string | null;
@@ -95,6 +96,7 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
     seoTitle: row.seo_title,
     seoDescription: row.seo_description,
     canonicalUrl: row.canonical_url,
+    correctionNote: row.correction_note,
     socialImage: mapMedia(row.social_image),
     source: {
       name: row.source_name,

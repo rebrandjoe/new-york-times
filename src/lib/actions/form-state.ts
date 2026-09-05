@@ -40,3 +40,10 @@ export interface TickerFormState {
 }
 
 export const initialTickerFormState: TickerFormState = { status: "idle" };
+
+export interface NewsletterFormState {
+  status: "idle" | "error" | "success";
+  message?: string;
+}
+
+export const initialNewsletterState: NewsletterFormState = { status: "idle" };

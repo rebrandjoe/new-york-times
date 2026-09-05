@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { healthTopics } from "@/lib/mock-data";
+import { getTopics } from "@/lib/cms/queries";
 
 export const metadata: Metadata = {
   title: "Topics",
   description: "Browse all health topics covered by JOSEPH MMWA.",
+  alternates: { canonical: "/topics" },
 };
 
-export default function TopicsIndexPage() {
+export default async function TopicsIndexPage() {
+  const topics = await getTopics();
+
   return (
     <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8">
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
@@ -17,11 +20,11 @@ export default function TopicsIndexPage() {
         All Topics
       </h1>
       <p className="mt-4 max-w-xl text-base text-gray-secondary-light">
-        Browse health news by topic. Full topic pages are coming soon.
+        Browse health news by topic.
       </p>
 
       <div className="mt-10 flex flex-wrap gap-3">
-        {healthTopics.map((topic) => (
+        {topics.map((topic) => (
           <Link
             key={topic.id}
             href={`/topics/${topic.slug}`}

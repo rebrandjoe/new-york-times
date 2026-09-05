@@ -1,6 +1,13 @@
 "use client";
 
+import { useActionState } from "react";
+import { subscribeToNewsletter } from "@/lib/actions/newsletter";
+import { initialNewsletterState } from "@/lib/actions/form-state";
+import { SuccessMessage } from "@/components/form/SuccessMessage";
+
 export function Briefing() {
+  const [state, formAction, isPending] = useActionState(subscribeToNewsletter, initialNewsletterState);
+
   return (
     <section
       aria-labelledby="briefing-heading"
@@ -20,27 +27,38 @@ export function Briefing() {
           The week&apos;s most important health stories, explained — delivered to your
           inbox.
         </p>
-        <form
-          className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <label htmlFor="briefing-email" className="sr-only">
-            Email address
-          </label>
-          <input
-            id="briefing-email"
-            type="email"
-            required
-            placeholder="Your email address"
-            className="focus-ring w-full border border-charcoal bg-black px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted"
-          />
-          <button
-            type="submit"
-            className="focus-ring shrink-0 bg-accent px-6 py-3 text-sm font-bold text-black transition-opacity hover:opacity-90"
-          >
-            Sign up
-          </button>
-        </form>
+
+        {state.status === "success" ? (
+          <div className="mx-auto mt-8 max-w-md text-left">
+            <SuccessMessage>{state.message}</SuccessMessage>
+          </div>
+        ) : (
+          <form action={formAction} className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
+            <label htmlFor="briefing-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="briefing-email"
+              name="email"
+              type="email"
+              required
+              placeholder="Your email address"
+              className="focus-ring w-full border border-charcoal bg-black px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted"
+            />
+            <button
+              type="submit"
+              disabled={isPending}
+              className="focus-ring shrink-0 bg-accent px-6 py-3 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {isPending ? "Signing up…" : "Sign up"}
+            </button>
+          </form>
+        )}
+        {state.status === "error" && (
+          <p role="alert" className="mx-auto mt-4 max-w-md border border-live-red/40 bg-live-red/10 px-4 py-3 text-sm text-live-red">
+            {state.message}
+          </p>
+        )}
       </div>
     </section>
   );

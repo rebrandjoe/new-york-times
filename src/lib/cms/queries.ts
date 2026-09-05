@@ -32,8 +32,15 @@ export async function getPublishedArticles(options?: {
     if (category) query = query.eq("category_id", category.id);
   }
 
-  if (options?.limit) query = query.limit(options.limit);
-  if (options?.offset) query = query.range(options.offset, options.offset + (options.limit ?? 20) - 1);
+  // Topic filtering happens in memory below (no join-table filter at the
+  // query level), so fetch a larger candidate pool first rather than
+  // limiting before we know how many will actually match the topic.
+  if (options?.topicSlug) {
+    query = query.limit(200);
+  } else {
+    if (options?.limit) query = query.limit(options.limit);
+    if (options?.offset) query = query.range(options.offset, options.offset + (options.limit ?? 20) - 1);
+  }
 
   const { data, error } = await query;
   if (error || !data) return [];
@@ -42,9 +49,85 @@ export async function getPublishedArticles(options?: {
 
   if (options?.topicSlug) {
     articles = articles.filter((a) => a.topics.some((t) => t.slug === options.topicSlug));
+    if (options?.offset) articles = articles.slice(options.offset);
+    if (options?.limit) articles = articles.slice(0, options.limit);
   }
 
   return articles;
+}
+
+/** Searches published-only content by headline, excerpt, topic, category,
+ * and author name — never drafts or unpublished articles. */
+export async function searchPublishedArticles(rawQuery: string): Promise<CmsArticle[]> {
+  const query = rawQuery.trim();
+  if (!query) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("articles")
+    .select(ARTICLE_SELECT)
+    .or(publicVisibilityFilter())
+    .or(`title.ilike.%${query}%,excerpt.ilike.%${query}%`)
+    .order("publication_date", { ascending: false })
+    .limit(50);
+
+  if (error || !data) return [];
+
+  const titleMatches = (data as unknown as RawArticleRow[]).map(mapRowToCmsArticle);
+  const matchedIds = new Set(titleMatches.map((a) => a.id));
+
+  const [categories, topics, authors] = await Promise.all([
+    supabase.from("categories").select("id").ilike("name", `%${query}%`),
+    supabase.from("topics").select("id").ilike("name", `%${query}%`),
+    supabase.from("authors").select("id").ilike("name", `%${query}%`),
+  ]);
+
+  const extraFilters: string[] = [];
+  for (const id of (categories.data ?? []).map((c) => c.id)) extraFilters.push(`category_id.eq.${id}`);
+  for (const id of (authors.data ?? []).map((a) => a.id)) extraFilters.push(`author_id.eq.${id}`);
+
+  let extraArticles: CmsArticle[] = [];
+  if (extraFilters.length > 0) {
+    const { data: extraData } = await supabase
+      .from("articles")
+      .select(ARTICLE_SELECT)
+      .or(publicVisibilityFilter())
+      .or(extraFilters.join(","))
+      .order("publication_date", { ascending: false })
+      .limit(50);
+    extraArticles = (extraData as unknown as RawArticleRow[] | null)?.map(mapRowToCmsArticle) ?? [];
+  }
+
+  const topicIds = (topics.data ?? []).map((t) => t.id);
+  let topicArticles: CmsArticle[] = [];
+  if (topicIds.length > 0) {
+    const { data: topicLinks } = await supabase
+      .from("article_topics")
+      .select("article_id")
+      .in("topic_id", topicIds);
+    const articleIds = [...new Set((topicLinks ?? []).map((l) => l.article_id))];
+    if (articleIds.length > 0) {
+      const { data: topicArticleData } = await supabase
+        .from("articles")
+        .select(ARTICLE_SELECT)
+        .or(publicVisibilityFilter())
+        .in("id", articleIds)
+        .order("publication_date", { ascending: false })
+        .limit(50);
+      topicArticles = (topicArticleData as unknown as RawArticleRow[] | null)?.map(mapRowToCmsArticle) ?? [];
+    }
+  }
+
+  const combined = [...titleMatches];
+  for (const article of [...extraArticles, ...topicArticles]) {
+    if (!matchedIds.has(article.id)) {
+      matchedIds.add(article.id);
+      combined.push(article);
+    }
+  }
+
+  combined.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
+  return combined;
 }
 
 export async function getArticleBySlug(slug: string): Promise<CmsArticle | null> {

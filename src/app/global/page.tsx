@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { CategoryArchive } from "@/components/category/CategoryArchive";
 
-export const metadata: Metadata = { title: "Global" };
+export const metadata: Metadata = {
+  title: "Global",
+  description: "Global health and medical news, reported by JOSEPH MMWA.",
+  alternates: { canonical: "/global" },
+};
 
 export default function GlobalPage() {
-  return (
-    <PlaceholderPage
-      title="Global"
-      message="The Global regional news page is coming soon."
-    />
-  );
+  return <CategoryArchive categorySlug="global" categoryName="Global" />;
 }

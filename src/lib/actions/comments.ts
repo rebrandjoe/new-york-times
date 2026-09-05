@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/cms/admin-guard";
+import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import type { CommentFormState } from "./form-state";
 
 export interface CommentRow {
@@ -60,6 +60,19 @@ export async function postComment(
     return { status: "auth_required" };
   }
 
+  // Basic abuse throttle: one comment per user every 15 seconds.
+  const { data: recent } = await supabase
+    .from("comments")
+    .select("id")
+    .eq("user_id", user.id)
+    .gte("created_at", new Date(Date.now() - 15_000).toISOString())
+    .limit(1)
+    .maybeSingle();
+
+  if (recent) {
+    return { status: "error", message: "You're posting too quickly. Please wait a moment and try again." };
+  }
+
   const authorName =
     (user.user_metadata?.full_name as string | undefined)?.trim() || user.email?.split("@")[0] || "Reader";
 
@@ -79,22 +92,25 @@ export async function postComment(
 }
 
 export async function hideComment(commentId: string, articlePath: string) {
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
   await supabase.from("comments").update({ status: "hidden" }).eq("id", commentId);
+  await logAdminAction(supabase, user.email!, "hide_comment", "comments", commentId);
   revalidatePath(articlePath);
   revalidatePath("/admin/comments");
 }
 
 export async function unhideComment(commentId: string, articlePath: string) {
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
   await supabase.from("comments").update({ status: "visible" }).eq("id", commentId);
+  await logAdminAction(supabase, user.email!, "unhide_comment", "comments", commentId);
   revalidatePath(articlePath);
   revalidatePath("/admin/comments");
 }
 
 export async function deleteComment(commentId: string, articlePath: string) {
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
   await supabase.from("comments").delete().eq("id", commentId);
+  await logAdminAction(supabase, user.email!, "delete_comment", "comments", commentId);
   revalidatePath(articlePath);
   revalidatePath("/admin/comments");
 }

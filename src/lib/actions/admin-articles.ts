@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/cms/admin-guard";
+import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import { getArticleForEdit } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
 import { ARTICLE_SELECT, mapRowToCmsArticle, type RawArticleRow } from "@/lib/cms/mappers";
@@ -58,6 +58,7 @@ interface ArticleInput {
   seoTitle: string | null;
   seoDescription: string | null;
   canonicalUrl: string | null;
+  correctionNote: string | null;
   socialImageId: string | null;
   sourceName: string | null;
   sourceAuthor: string | null;
@@ -106,6 +107,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       seo_title: input.seoTitle,
       seo_description: input.seoDescription,
       canonical_url: input.canonicalUrl,
+      correction_note: input.correctionNote,
       social_image_id: input.socialImageId,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
@@ -173,6 +175,7 @@ export async function updateArticle(
       seo_title: input.seoTitle,
       seo_description: input.seoDescription,
       canonical_url: input.canonicalUrl,
+      correction_note: input.correctionNote,
       social_image_id: input.socialImageId,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
@@ -197,7 +200,7 @@ export async function setArticleStatus(
   status: "draft" | "scheduled" | "published" | "unpublished",
   scheduledAt?: string | null
 ): Promise<{ ok: true } | { error: string }> {
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
 
   const { error } = await supabase
     .from("articles")
@@ -210,15 +213,18 @@ export async function setArticleStatus(
 
   if (error) return { error: error.message };
 
+  await logAdminAction(supabase, user.email!, "set_article_status", "articles", articleId, { status });
+
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { ok: true };
 }
 
 export async function deleteArticle(articleId: string): Promise<{ ok: true } | { error: string }> {
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
   const { error } = await supabase.from("articles").delete().eq("id", articleId);
   if (error) return { error: error.message };
+  await logAdminAction(supabase, user.email!, "delete_article", "articles", articleId);
   revalidatePath("/admin/articles");
   return { ok: true };
 }

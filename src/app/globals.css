@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --brand-black: #0b0b0b;
+  --brand-black: #0a0a0a;
   --brand-charcoal: #1c1a17;
   --brand-charcoal-deep: #171512;
-  --brand-accent: #e8a33d;
+  --brand-accent: #f0a83a;
   --brand-white: #ffffff;
   --brand-offwhite: #f0ede7;
   --brand-gray-secondary: #a39d93;

@@ -37,12 +37,11 @@ export const footerEditorial: NavLink[] = [
   { label: "Editorial Standards", href: "/editorial-standards" },
   { label: "Corrections & Fact-Checking", href: "/corrections-and-fact-checking" },
   { label: "AI Policy", href: "/ai-policy" },
-  { label: "Terms of Service", href: "/terms-of-service" },
 ];
 
 export const footerLegal: NavLink[] = [
-  { label: "Privacy", href: "/privacy-policy" },
-  { label: "Terms", href: "/terms-of-service" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
 ];
 
 export interface SocialLink {

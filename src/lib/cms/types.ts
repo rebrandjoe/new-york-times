@@ -53,6 +53,7 @@ export interface CmsArticle {
   seoTitle: string | null;
   seoDescription: string | null;
   canonicalUrl: string | null;
+  correctionNote: string | null;
   socialImage: CmsMedia | null;
   source: {
     name: string | null;

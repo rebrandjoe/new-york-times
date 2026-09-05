@@ -69,6 +69,7 @@ export function ArticleEditor({
   const [seoTitle, setSeoTitle] = useState(initial?.seoTitle ?? "");
   const [seoDescription, setSeoDescription] = useState(initial?.seoDescription ?? "");
   const [canonicalUrl, setCanonicalUrl] = useState(initial?.canonicalUrl ?? "");
+  const [correctionNote, setCorrectionNote] = useState(initial?.correctionNote ?? "");
   const [socialImageId, setSocialImageId] = useState(initial?.socialImage?.id ?? "");
   const [sourceName, setSourceName] = useState(initial?.source.name ?? "");
   const [sourceAuthor, setSourceAuthor] = useState(initial?.source.author ?? "");
@@ -98,6 +99,7 @@ export function ArticleEditor({
       seoTitle: seoTitle || null,
       seoDescription: seoDescription || null,
       canonicalUrl: canonicalUrl || null,
+      correctionNote: correctionNote || null,
       socialImageId: socialImageId || null,
       sourceName: sourceName || null,
       sourceAuthor: sourceAuthor || null,
@@ -132,7 +134,7 @@ export function ArticleEditor({
   }, [
     title, slug, excerpt, body, featuredImageId, categoryId, topicIds, region, country,
     authorId, publicationDate, autoReadTime, readTimeMinutes, premium, seoTitle,
-    seoDescription, canonicalUrl, socialImageId, sourceName, sourceAuthor,
+    seoDescription, canonicalUrl, correctionNote, socialImageId, sourceName, sourceAuthor,
     sourceInstitution, sourceUrl, sourceAdditional,
   ]);
 
@@ -359,6 +361,22 @@ export function ArticleEditor({
                 <label className={labelClass()}>Additional attribution</label>
                 <textarea rows={2} value={sourceAdditional} onChange={(e) => setSourceAdditional(e.target.value)} className={fieldClass()} />
               </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">
+              Correction
+            </h2>
+            <div className="mt-4">
+              <label className={labelClass()}>Correction note (shown on the published article)</label>
+              <textarea
+                rows={3}
+                value={correctionNote}
+                onChange={(e) => setCorrectionNote(e.target.value)}
+                placeholder="Leave blank unless this article has a published correction."
+                className={fieldClass()}
+              />
             </div>
           </div>
 

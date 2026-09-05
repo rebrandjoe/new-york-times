@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
-import { healthTopics } from "@/lib/mock-data";
+import type { CmsTopic } from "@/lib/cms/types";
 
-export function HealthTopics() {
+export function HealthTopics({ topics }: { topics: CmsTopic[] }) {
+  if (topics.length === 0) return null;
+
   return (
     <section aria-labelledby="topics-heading" className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
       <h2 id="topics-heading" className="sr-only">
@@ -10,7 +12,7 @@ export function HealthTopics() {
       </h2>
       <SectionHeading title="Health Topics" />
       <div className="flex flex-wrap gap-3">
-        {healthTopics.map((topic) => (
+        {topics.map((topic) => (
           <Link
             key={topic.id}
             href={`/topics/${topic.slug}`}

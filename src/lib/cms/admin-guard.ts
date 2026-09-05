@@ -1,8 +1,31 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAIL } from "@/lib/constants";
+import type { Json } from "@/lib/supabase/database.types";
 
 export { ADMIN_EMAIL };
+
+/** Records who did what to which record — required for publish/unpublish/
+ * delete, comment moderation, and subscription changes. Uses the admin's
+ * own authenticated session (satisfies the admin-only RLS insert policy),
+ * not the service role. */
+export async function logAdminAction(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  adminEmail: string,
+  action: string,
+  targetTable: string,
+  targetId: string,
+  metadata?: Record<string, unknown>
+) {
+  await supabase.from("admin_audit_log").insert({
+    admin_email: adminEmail,
+    action,
+    target_table: targetTable,
+    target_id: targetId,
+    metadata: (metadata ?? null) as Json | null,
+  });
+}
 
 /**
  * Defense-in-depth on top of RLS: every admin page/action calls this first.

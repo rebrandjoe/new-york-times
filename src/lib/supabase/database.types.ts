@@ -115,6 +115,7 @@ export type Database = {
           body: Json
           canonical_url: string | null
           category_id: string
+          correction_note: string | null
           country: string | null
           created_at: string
           created_by: string | null
@@ -145,6 +146,7 @@ export type Database = {
           body?: Json
           canonical_url?: string | null
           category_id: string
+          correction_note?: string | null
           country?: string | null
           created_at?: string
           created_by?: string | null
@@ -175,6 +177,7 @@ export type Database = {
           body?: Json
           canonical_url?: string | null
           category_id?: string
+          correction_note?: string | null
           country?: string | null
           created_at?: string
           created_by?: string | null
@@ -753,7 +756,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      confirm_newsletter_subscription: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
+      unsubscribe_newsletter: { Args: { p_token: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

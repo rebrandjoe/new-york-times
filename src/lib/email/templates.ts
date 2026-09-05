@@ -1,6 +1,6 @@
 function wrap(bodyHtml: string): string {
-  return `<div style="font-family:Georgia,serif;background:#0b0b0b;color:#f0ede7;padding:32px;">
-    <p style="color:#e8a33d;font-weight:bold;letter-spacing:0.1em;font-size:12px;text-transform:uppercase;">JOSEPH MMWA</p>
+  return `<div style="font-family:Georgia,serif;background:#0a0a0a;color:#f0ede7;padding:32px;">
+    <p style="color:#f0a83a;font-weight:bold;letter-spacing:0.1em;font-size:12px;text-transform:uppercase;">JOSEPH MMWA</p>
     ${bodyHtml}
   </div>`;
 }
@@ -20,7 +20,7 @@ export function paymentFailedEmail(params: { planName: string }) {
   const html = wrap(
     `<h1 style="font-size:22px;">Your payment wasn't completed</h1>
      <p>We couldn't confirm your payment for the ${params.planName} membership. No subscription was activated.</p>
-     <p><a href="https://josephmmwa.com/premium" style="color:#e8a33d;">Try again</a></p>`
+     <p><a href="https://josephmmwa.com/premium" style="color:#f0a83a;">Try again</a></p>`
   );
   return { subject: "We couldn't complete your JOSEPH MMWA payment", html, text };
 }
@@ -39,7 +39,7 @@ export function subscriptionEndedEmail(params: { planName: string; reason: "canc
   const text = `Your ${params.planName} JOSEPH MMWA membership ${verb}. You can rejoin anytime at josephmmwa.com/premium.`;
   const html = wrap(
     `<h1 style="font-size:22px;">Your membership ${verb}</h1>
-     <p><a href="https://josephmmwa.com/premium" style="color:#e8a33d;">Rejoin anytime</a></p>`
+     <p><a href="https://josephmmwa.com/premium" style="color:#f0a83a;">Rejoin anytime</a></p>`
   );
   return { subject: `Your JOSEPH MMWA membership ${verb}`, html, text };
 }

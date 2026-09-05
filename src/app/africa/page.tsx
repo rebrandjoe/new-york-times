@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { CategoryArchive } from "@/components/category/CategoryArchive";
 
-export const metadata: Metadata = { title: "Africa" };
+export const metadata: Metadata = {
+  title: "Africa",
+  description: "Health and medical news from across Africa, reported by JOSEPH MMWA.",
+  alternates: { canonical: "/africa" },
+};
 
 export default function AfricaPage() {
-  return (
-    <PlaceholderPage
-      title="Africa"
-      message="The Africa regional news page is coming soon."
-    />
-  );
+  return <CategoryArchive categorySlug="africa" categoryName="Africa" />;
 }
