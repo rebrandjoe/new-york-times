@@ -42,7 +42,7 @@ export const footerEditorial: NavLink[] = [
 
 export const footerLegal: NavLink[] = [
   { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
+  { label: "Terms", href: "/terms-of-service" },
 ];
 
 export interface SocialLink {

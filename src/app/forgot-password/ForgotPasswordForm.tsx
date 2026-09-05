@@ -5,6 +5,7 @@ import { AuthLink, AuthShell } from "@/components/form/AuthShell";
 import { FormField } from "@/components/form/FormField";
 import { FormMessage } from "@/components/form/FormMessage";
 import { SubmitButton } from "@/components/form/SubmitButton";
+import { SuccessMessage } from "@/components/form/SuccessMessage";
 import { forgotPasswordAction } from "@/lib/actions/auth";
 import { initialAuthState } from "@/lib/actions/form-state";
 
@@ -19,7 +20,11 @@ export function ForgotPasswordForm() {
     >
       <form action={formAction} className="flex flex-col gap-5" noValidate>
         <FormField id="email" name="email" label="Email" type="email" autoComplete="email" />
-        <FormMessage status={state.status} message={state.message} />
+        {state.status === "success" && state.message ? (
+          <SuccessMessage>{state.message}</SuccessMessage>
+        ) : (
+          <FormMessage status={state.status} message={state.message} />
+        )}
         <SubmitButton>Send Reset Link</SubmitButton>
       </form>
     </AuthShell>

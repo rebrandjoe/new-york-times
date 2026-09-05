@@ -11,6 +11,7 @@
   --brand-gray-secondary-light: #c7c2b9;
   --brand-gray-muted: #8f897f;
   --brand-live-red: #ff2d2d;
+  --brand-success: #3f8f5c;
 
   --brand-font-serif: var(--brand-font-serif-display, Georgia), "TeX Gyre Pagella",
     "Times New Roman", serif;
@@ -28,6 +29,7 @@
   --color-gray-secondary-light: var(--brand-gray-secondary-light);
   --color-gray-muted: var(--brand-gray-muted);
   --color-live-red: var(--brand-live-red);
+  --color-success: var(--brand-success);
 
   --font-serif: var(--brand-font-serif);
   --font-sans: var(--brand-font-sans);

@@ -88,7 +88,7 @@ export function Footer() {
             <Link href="/privacy" className="focus-ring text-xs text-gray-muted hover:text-accent">
               Privacy
             </Link>
-            <Link href="/terms" className="focus-ring text-xs text-gray-muted hover:text-accent">
+            <Link href="/terms-of-service" className="focus-ring text-xs text-gray-muted hover:text-accent">
               Terms
             </Link>
           </div>
