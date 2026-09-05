@@ -139,12 +139,6 @@ export default function TermsOfServicePage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="13. Governing law">
-        <PolicyParagraph>
-          These Terms should be reviewed and finalised with qualified legal counsel to ensure they
-          appropriately reflect the laws applicable to JOSEPH MMWA and its operations.
-        </PolicyParagraph>
-      </PolicySection>
     </PolicyPage>
   );
 }
