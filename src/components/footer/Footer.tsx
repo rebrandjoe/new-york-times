@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Tagline, WordmarkLink } from "@/components/Wordmark";
 import {
   FacebookIcon,
+  InstagramIcon,
   LinkedInIcon,
+  TikTokIcon,
   XIcon,
   YouTubeIcon,
 } from "@/components/icons";
@@ -20,6 +22,8 @@ const socialIconMap = {
   LinkedIn: LinkedInIcon,
   YouTube: YouTubeIcon,
   X: XIcon,
+  Instagram: InstagramIcon,
+  TikTok: TikTokIcon,
 };
 
 function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {

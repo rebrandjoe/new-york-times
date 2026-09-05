@@ -55,6 +55,24 @@ export function YouTubeIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+export function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} {...props}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M16.6 3h-3.1v12.4a2.9 2.9 0 11-2.1-2.8v-3.2a6.1 6.1 0 104.9 6V9.4a7.6 7.6 0 004.3 1.3V7.6a4.4 4.4 0 01-4-4.6z" />
+    </svg>
+  );
+}
+
 export function EyeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} {...props}>
