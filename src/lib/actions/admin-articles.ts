@@ -55,11 +55,7 @@ interface ArticleInput {
   publicationDate: string;
   readTimeMinutes: number | null;
   premium: boolean;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  canonicalUrl: string | null;
   correctionNote: string | null;
-  socialImageId: string | null;
   sourceName: string | null;
   sourceAuthor: string | null;
   sourceInstitution: string | null;
@@ -104,11 +100,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       read_time_minutes: readTime,
       status: "draft",
       premium: input.premium,
-      seo_title: input.seoTitle,
-      seo_description: input.seoDescription,
-      canonical_url: input.canonicalUrl,
       correction_note: input.correctionNote,
-      social_image_id: input.socialImageId,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
       source_institution: input.sourceInstitution,
@@ -172,11 +164,7 @@ export async function updateArticle(
       publication_date: input.publicationDate,
       read_time_minutes: readTime,
       premium: input.premium,
-      seo_title: input.seoTitle,
-      seo_description: input.seoDescription,
-      canonical_url: input.canonicalUrl,
       correction_note: input.correctionNote,
-      social_image_id: input.socialImageId,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
       source_institution: input.sourceInstitution,
@@ -252,8 +240,6 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       read_time_minutes: original.readTimeMinutes,
       status: "draft",
       premium: original.premium,
-      seo_title: original.seoTitle,
-      seo_description: original.seoDescription,
       source_name: original.source.name,
       source_author: original.source.author,
       source_institution: original.source.institution,

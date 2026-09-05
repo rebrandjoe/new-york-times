@@ -11,7 +11,7 @@ import {
 } from "@/lib/actions/admin-articles";
 import type { ContentBlock } from "@/lib/cms/blocks";
 import type { CmsArticle, CmsAuthor, CmsCategory, CmsMedia, CmsTopic } from "@/lib/cms/types";
-import { BlockEditor } from "./BlockEditor";
+import { TiptapEditor } from "./editor/TiptapEditor";
 import { MediaPickerField } from "./MediaPickerField";
 
 type SaveState = "idle" | "unsaved" | "saving" | "saved" | "error";
@@ -66,11 +66,7 @@ export function ArticleEditor({
   const [autoReadTime, setAutoReadTime] = useState(true);
   const [readTimeMinutes, setReadTimeMinutes] = useState(initial?.readTimeMinutes ?? 3);
   const [premium, setPremium] = useState(initial?.premium ?? false);
-  const [seoTitle, setSeoTitle] = useState(initial?.seoTitle ?? "");
-  const [seoDescription, setSeoDescription] = useState(initial?.seoDescription ?? "");
-  const [canonicalUrl, setCanonicalUrl] = useState(initial?.canonicalUrl ?? "");
   const [correctionNote, setCorrectionNote] = useState(initial?.correctionNote ?? "");
-  const [socialImageId, setSocialImageId] = useState(initial?.socialImage?.id ?? "");
   const [sourceName, setSourceName] = useState(initial?.source.name ?? "");
   const [sourceAuthor, setSourceAuthor] = useState(initial?.source.author ?? "");
   const [sourceInstitution, setSourceInstitution] = useState(initial?.source.institution ?? "");
@@ -96,11 +92,7 @@ export function ArticleEditor({
       publicationDate: new Date(publicationDate).toISOString(),
       readTimeMinutes: autoReadTime ? null : readTimeMinutes,
       premium,
-      seoTitle: seoTitle || null,
-      seoDescription: seoDescription || null,
-      canonicalUrl: canonicalUrl || null,
       correctionNote: correctionNote || null,
-      socialImageId: socialImageId || null,
       sourceName: sourceName || null,
       sourceAuthor: sourceAuthor || null,
       sourceInstitution: sourceInstitution || null,
@@ -133,8 +125,8 @@ export function ArticleEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     title, slug, excerpt, body, featuredImageId, categoryId, topicIds, region, country,
-    authorId, publicationDate, autoReadTime, readTimeMinutes, premium, seoTitle,
-    seoDescription, canonicalUrl, correctionNote, socialImageId, sourceName, sourceAuthor,
+    authorId, publicationDate, autoReadTime, readTimeMinutes, premium,
+    correctionNote, sourceName, sourceAuthor,
     sourceInstitution, sourceUrl, sourceAdditional,
   ]);
 
@@ -332,7 +324,7 @@ export function ArticleEditor({
           <div>
             <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">Body</h2>
             <div className="mt-4">
-              <BlockEditor blocks={body} onChange={setBody} media={media} />
+              <TiptapEditor blocks={body} onChange={setBody} media={media} />
             </div>
           </div>
 
@@ -377,34 +369,6 @@ export function ArticleEditor({
                 placeholder="Leave blank unless this article has a published correction."
                 className={fieldClass()}
               />
-            </div>
-          </div>
-
-          <div>
-            <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">SEO</h2>
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className={labelClass()}>SEO title</label>
-                <input type="text" value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} className={fieldClass()} />
-              </div>
-              <div>
-                <label className={labelClass()}>Meta description</label>
-                <textarea rows={2} value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} className={fieldClass()} />
-              </div>
-              <div>
-                <label className={labelClass()}>Canonical URL</label>
-                <input type="url" value={canonicalUrl} onChange={(e) => setCanonicalUrl(e.target.value)} placeholder={id ? `https://josephmmwa.com/article/${slug}` : ""} className={fieldClass()} />
-              </div>
-              <div>
-                <label className={labelClass()}>Social share image</label>
-                <div className="mt-1.5">
-                  <MediaPickerField
-                    media={media.filter((m) => m.type === "image")}
-                    value={socialImageId}
-                    onChange={(m) => setSocialImageId(m?.id ?? "")}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

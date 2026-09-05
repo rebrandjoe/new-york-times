@@ -17,10 +17,10 @@ export async function generateMetadata({
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Article" };
 
-  const title = article.seoTitle || article.title;
-  const description = article.seoDescription || article.excerpt || undefined;
-  const canonical = article.canonicalUrl || `/article/${article.slug}`;
-  const image = article.socialImage?.url || article.featuredImage?.url;
+  const title = article.title;
+  const description = article.excerpt || undefined;
+  const canonical = `/article/${article.slug}`;
+  const image = article.featuredImage?.url;
 
   return {
     title,
@@ -56,7 +56,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     article.premium ? hasActivePremiumAccess(user?.id ?? null) : Promise.resolve(true),
   ]);
 
-  const canonicalUrl = article.canonicalUrl || `${SITE_URL}${articlePath}`;
+  const canonicalUrl = `${SITE_URL}${articlePath}`;
 
   return (
     <ArticleView

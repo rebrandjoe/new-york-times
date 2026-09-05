@@ -77,3 +77,80 @@ body {
     animation: none !important;
   }
 }
+
+/* Article body rich-text editor — mirrors the public article reading
+   typography (BlockRenderer) so the writing surface looks like the
+   published result, not a generic form field. */
+.tiptap-editor .ProseMirror {
+  min-height: 50vh;
+  outline: none;
+  text-align: left;
+  font-family: var(--brand-font-sans);
+  color: var(--brand-offwhite);
+}
+
+.tiptap-editor .ProseMirror p {
+  margin: 0 0 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3 {
+  font-family: var(--brand-font-serif);
+  font-weight: 800;
+  color: var(--brand-accent);
+}
+
+.tiptap-editor .ProseMirror h2 {
+  margin: 2rem 0 1rem;
+  font-size: 1.5rem;
+}
+
+.tiptap-editor .ProseMirror h3 {
+  margin: 1.75rem 0 0.75rem;
+  font-size: 1.25rem;
+}
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+  margin: 0 0 1.5rem 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.tiptap-editor .ProseMirror ul {
+  list-style: disc;
+}
+
+.tiptap-editor .ProseMirror ol {
+  list-style: decimal;
+}
+
+.tiptap-editor .ProseMirror li {
+  margin-bottom: 0.5rem;
+}
+
+.tiptap-editor .ProseMirror blockquote {
+  margin: 0 0 1.5rem;
+  border-left: 2px solid var(--brand-accent);
+  padding-left: 1.25rem;
+  font-size: 1.125rem;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--brand-gray-secondary-light);
+}
+
+.tiptap-editor .ProseMirror hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--brand-charcoal);
+}
+
+.tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+  height: 0;
+  float: left;
+  color: var(--brand-gray-muted);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}

@@ -22,8 +22,13 @@ function Block({ block }: { block: ContentBlock }) {
     case "heading": {
       const sizes = { 1: "text-3xl", 2: "text-2xl", 3: "text-xl" } as const;
       const Tag = (`h${block.level}`) as "h1" | "h2" | "h3";
+      // In-body H2/H3 subheadings render in the accent colour by default,
+      // giving long articles structure without manual styling each time —
+      // the main article Title (a separate element, not a body block) is
+      // unaffected and keeps the standard white headline treatment.
+      const color = block.level === 1 ? "text-white" : "text-accent";
       return (
-        <Tag className={`font-serif font-extrabold text-white ${sizes[block.level]}`}>
+        <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]}`}>
           {renderInlineMarkup(block.text)}
         </Tag>
       );

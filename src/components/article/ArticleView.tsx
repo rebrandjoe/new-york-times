@@ -8,6 +8,7 @@ import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
+import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
@@ -71,7 +72,9 @@ export function ArticleView({
         />
       )}
 
-      <div className="mx-auto max-w-3xl px-4 pt-12 sm:px-6 lg:px-8">
+      {interactive && <ReadingProgress />}
+
+      <div id="article-progress-start" className="mx-auto max-w-3xl px-4 pt-12 sm:px-6 lg:px-8">
         <Link
           href={`/${article.category.slug}`}
           className="focus-ring text-xs font-bold uppercase tracking-wider text-accent"
@@ -131,6 +134,8 @@ export function ArticleView({
         <AuthorBlock name={article.author.name} title={article.author.title} />
         {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
       </div>
+
+      <div id="article-progress-end" />
 
       {!premiumLocked && <RelatedArticles articles={related} />}
 
