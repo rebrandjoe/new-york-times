@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AuthTabsPage } from "@/components/form/AuthTabsPage";
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function SignUpPage() {
-  return <AuthTabsPage defaultTab="sign-up" />;
+  return (
+    <Suspense>
+      <AuthTabsPage defaultTab="sign-up" />
+    </Suspense>
+  );
 }

@@ -51,7 +51,7 @@ export async function signUpAction(
 
   return {
     status: "success",
-    message: "Account created. Check your email to confirm your address before signing in.",
+    message: "Account created. Check your email to confirm your registration.",
   };
 }
 
@@ -61,6 +61,7 @@ export async function signInAction(
 ): Promise<AuthFormState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const redirectTo = String(formData.get("redirectTo") ?? "");
 
   if (!email || !password) {
     return { status: "error", message: "Please enter your email and password." };
@@ -79,7 +80,9 @@ export async function signInAction(
     return { status: "error", message: "Incorrect email or password." };
   }
 
-  redirect("/");
+  // Only ever redirect to a same-site relative path — never an absolute URL,
+  // which could be used for an open-redirect if it ever came from elsewhere.
+  redirect(redirectTo.startsWith("/") ? redirectTo : "/");
 }
 
 export async function forgotPasswordAction(
@@ -103,7 +106,7 @@ export async function forgotPasswordAction(
 
   return {
     status: "success",
-    message: "If an account exists for that email, a reset link is on its way.",
+    message: "Reset link sent. Check your email to continue.",
   };
 }
 

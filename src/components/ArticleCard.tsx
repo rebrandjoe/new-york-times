@@ -15,7 +15,7 @@ function Meta({ article, className = "" }: { article: Article; className?: strin
 export function FeaturedCard({ article, className = "" }: { article: Article; className?: string }) {
   return (
     <Link
-      href={`/latest/${article.slug}`}
+      href={`/article/${article.slug}`}
       className={`focus-ring group block ${className}`}
     >
       <ArticleImage
@@ -41,7 +41,7 @@ export function FeaturedCard({ article, className = "" }: { article: Article; cl
 
 export function SecondaryCard({ article, className = "" }: { article: Article; className?: string }) {
   return (
-    <Link href={`/latest/${article.slug}`} className={`focus-ring group block ${className}`}>
+    <Link href={`/article/${article.slug}`} className={`focus-ring group block ${className}`}>
       <ArticleImage
         image={article.image}
         sizes="(min-width: 1024px) 30vw, 100vw"
@@ -63,7 +63,7 @@ export function SecondaryCard({ article, className = "" }: { article: Article; c
 export function ListItemCard({ article, className = "" }: { article: Article; className?: string }) {
   return (
     <Link
-      href={`/latest/${article.slug}`}
+      href={`/article/${article.slug}`}
       className={`focus-ring group flex items-center gap-4 border-b border-charcoal py-4 sm:gap-6 ${className}`}
     >
       <ArticleImage

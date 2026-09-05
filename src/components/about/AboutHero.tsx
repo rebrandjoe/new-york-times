@@ -1,4 +1,5 @@
 import { ProfilePhoto } from "./ProfilePhoto";
+import { AUTHOR_PHOTO_ALT, AUTHOR_PHOTO_SRC } from "@/lib/constants";
 
 export function AboutHero() {
   return (
@@ -14,8 +15,8 @@ export function AboutHero() {
       <div className="mt-10 grid grid-cols-1 gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
         <ProfilePhoto
           className="lg:col-span-5"
-          imageSrc="/images/joseph-mmwa.jpg"
-          imageAlt="Portrait of Joseph Mmwa, Health & Medical Journalist"
+          imageSrc={AUTHOR_PHOTO_SRC}
+          imageAlt={AUTHOR_PHOTO_ALT}
         />
         <div className="flex flex-col justify-center lg:col-span-7" />
       </div>

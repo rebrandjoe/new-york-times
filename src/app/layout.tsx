@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/header/Header";
-import { Footer } from "@/components/footer/Footer";
+import { SiteChrome } from "@/components/SiteChrome";
+import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
 const displaySerif = Playfair_Display({
   variable: "--brand-font-serif-display",
@@ -61,7 +61,13 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// Ticker headline is read with the cookie-free public client, so this can
+// revalidate on a timer instead of forcing every page to render dynamically.
+export const revalidate = 30;
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const tickerHeadline = await getActiveTickerHeadline();
+
   return (
     <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
       <head>
@@ -77,11 +83,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to main content
         </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
       </body>
     </html>
   );

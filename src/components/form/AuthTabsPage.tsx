@@ -1,11 +1,13 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { WordmarkLink } from "@/components/Wordmark";
 import { FormField } from "@/components/form/FormField";
 import { FormMessage } from "@/components/form/FormMessage";
+import { PasswordField } from "@/components/form/PasswordField";
+import { SuccessMessage } from "@/components/form/SuccessMessage";
 import { SubmitButton } from "@/components/form/SubmitButton";
 import { signInAction, signUpAction } from "@/lib/actions/auth";
 import { initialAuthState } from "@/lib/actions/form-state";
@@ -15,6 +17,8 @@ type Tab = "sign-in" | "sign-up";
 export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
   const [tab, setTab] = useState<Tab>(defaultTab);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
 
   const [signInState, signInFormAction] = useActionState(signInAction, initialAuthState);
   const [signUpState, signUpFormAction] = useActionState(signUpAction, initialAuthState);
@@ -72,12 +76,12 @@ export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
             <>
               <h2 className="mt-4 font-serif text-3xl font-extrabold text-white">Welcome back</h2>
               <form action={signInFormAction} className="mt-6 flex flex-col gap-5" noValidate>
+                {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
                 <FormField id="email" name="email" label="Email" type="email" autoComplete="email" />
-                <FormField
+                <PasswordField
                   id="password"
                   name="password"
                   label="Password"
-                  type="password"
                   autoComplete="current-password"
                 />
                 <div className="text-right">
@@ -103,21 +107,23 @@ export function AuthTabsPage({ defaultTab }: { defaultTab: Tab }) {
               <form action={signUpFormAction} className="mt-6 flex flex-col gap-5" noValidate>
                 <FormField id="fullName" name="fullName" label="Full name" autoComplete="name" />
                 <FormField id="email" name="email" label="Email" type="email" autoComplete="email" />
-                <FormField
+                <PasswordField
                   id="password"
                   name="password"
                   label="Password"
-                  type="password"
                   autoComplete="new-password"
                 />
-                <FormField
+                <PasswordField
                   id="confirmPassword"
                   name="confirmPassword"
                   label="Confirm password"
-                  type="password"
                   autoComplete="new-password"
                 />
-                <FormMessage status={signUpState.status} message={signUpState.message} />
+                {signUpState.status === "success" && signUpState.message ? (
+                  <SuccessMessage>{signUpState.message}</SuccessMessage>
+                ) : (
+                  <FormMessage status={signUpState.status} message={signUpState.message} />
+                )}
                 <SubmitButton>Create Account</SubmitButton>
               </form>
             </>

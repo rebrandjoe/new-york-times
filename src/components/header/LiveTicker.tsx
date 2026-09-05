@@ -1,8 +1,5 @@
-const TICKER_TEXT =
-  "Live coverage placeholder — this space carries a short line of breaking health-news text when a live story is active.";
-
-export function LiveTicker({ active = true }: { active?: boolean }) {
-  if (!active) return null;
+export function LiveTicker({ headline }: { headline: string | null }) {
+  if (!headline) return null;
 
   return (
     <div
@@ -23,13 +20,13 @@ export function LiveTicker({ active = true }: { active?: boolean }) {
         <div className="relative @container flex-1 overflow-hidden">
           <div className="flex w-max animate-ticker whitespace-nowrap motion-reduce:animate-none">
             <span className="min-w-[100cqw] px-4 text-[11px] text-gray-muted">
-              {TICKER_TEXT}
+              {headline}
             </span>
             <span
               className="min-w-[100cqw] px-4 text-[11px] text-gray-muted"
               aria-hidden="true"
             >
-              {TICKER_TEXT}
+              {headline}
             </span>
           </div>
         </div>

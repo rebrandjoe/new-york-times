@@ -4,13 +4,18 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
 import { Tagline, WordmarkLink } from "@/components/Wordmark";
+import { signOutAction } from "@/lib/actions/auth";
+import { ADMIN_EMAIL } from "@/lib/constants";
+import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { primaryNav } from "@/lib/nav";
 import { LiveTicker } from "./LiveTicker";
 import { TopicsMenu } from "./TopicsMenu";
 
-export function Header() {
+export function Header({ tickerHeadline = null }: { tickerHeadline?: string | null }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topicsExpanded, setTopicsExpanded] = useState(false);
+  const user = useAuthUser();
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
@@ -21,7 +26,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-black">
-      <LiveTicker />
+      <LiveTicker headline={tickerHeadline} />
 
       <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-start justify-between gap-4">
@@ -38,12 +43,35 @@ export function Header() {
             >
               <SearchIcon className="h-5 w-5" />
             </Link>
-            <Link
-              href="/sign-in"
-              className="focus-ring text-sm font-semibold text-offwhite transition-colors hover:text-accent"
-            >
-              Sign in
-            </Link>
+            {user === undefined ? (
+              <span className="inline-block h-5 w-14" aria-hidden="true" />
+            ) : user ? (
+              <div className="flex items-center gap-5">
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="focus-ring text-sm font-semibold text-offwhite transition-colors hover:text-accent"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <form action={signOutAction}>
+                  <button
+                    type="submit"
+                    className="focus-ring text-sm font-semibold text-offwhite transition-colors hover:text-accent"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="focus-ring text-sm font-semibold text-offwhite transition-colors hover:text-accent"
+              >
+                Sign in
+              </Link>
+            )}
             <Link
               href="/subscribe"
               className="focus-ring bg-accent px-4 py-2 text-sm font-bold text-black transition-opacity hover:opacity-90"
@@ -121,13 +149,36 @@ export function Header() {
               >
                 Subscribe
               </Link>
-              <Link
-                href="/sign-in"
-                onClick={() => setDrawerOpen(false)}
-                className="focus-ring border border-charcoal px-4 py-3 text-center text-sm font-semibold text-offwhite"
-              >
-                Sign in
-              </Link>
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setDrawerOpen(false)}
+                      className="focus-ring border border-charcoal px-4 py-3 text-center text-sm font-semibold text-offwhite"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                  <form action={signOutAction}>
+                    <button
+                      type="submit"
+                      onClick={() => setDrawerOpen(false)}
+                      className="focus-ring w-full border border-charcoal px-4 py-3 text-center text-sm font-semibold text-offwhite"
+                    >
+                      Sign out
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <Link
+                  href="/sign-in"
+                  onClick={() => setDrawerOpen(false)}
+                  className="focus-ring border border-charcoal px-4 py-3 text-center text-sm font-semibold text-offwhite"
+                >
+                  Sign in
+                </Link>
+              )}
             </div>
 
             <nav aria-label="Mobile" className="mt-6 flex flex-col divide-y divide-charcoal border-t border-charcoal">
