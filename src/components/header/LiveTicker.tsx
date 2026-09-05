@@ -20,10 +20,15 @@ export function LiveTicker({ active = true }: { active?: boolean }) {
             LIVE
           </span>
         </span>
-        <div className="relative flex-1 overflow-hidden">
+        <div className="relative @container flex-1 overflow-hidden">
           <div className="flex w-max animate-ticker whitespace-nowrap motion-reduce:animate-none">
-            <span className="px-4 text-[11px] text-gray-muted">{TICKER_TEXT}</span>
-            <span className="px-4 text-[11px] text-gray-muted" aria-hidden="true">
+            <span className="min-w-[100cqw] px-4 text-[11px] text-gray-muted">
+              {TICKER_TEXT}
+            </span>
+            <span
+              className="min-w-[100cqw] px-4 text-[11px] text-gray-muted"
+              aria-hidden="true"
+            >
               {TICKER_TEXT}
             </span>
           </div>

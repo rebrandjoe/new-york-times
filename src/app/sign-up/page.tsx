@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SignUpForm } from "./SignUpForm";
+import { AuthTabsPage } from "@/components/form/AuthTabsPage";
 
 export const metadata: Metadata = {
   title: "Create Your Account",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignUpPage() {
-  return <SignUpForm />;
+  return <AuthTabsPage defaultTab="sign-up" />;
 }
