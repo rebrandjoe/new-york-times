@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SerwistProvider } from "@serwist/next/react";
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
 const displaySerif = Playfair_Display({
@@ -39,6 +41,10 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — If it's health, it's here`,
     description: SITE_DESCRIPTION,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A0A0A",
 };
 
 const jsonLd = {
@@ -92,7 +98,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to main content
         </a>
-        <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
+        <SerwistProvider
+          swUrl="/sw.js"
+          disable={process.env.NODE_ENV !== "production"}
+          reloadOnOnline={false}
+        >
+          <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
+          <InstallPrompt />
+        </SerwistProvider>
         <Analytics />
       </body>
     </html>

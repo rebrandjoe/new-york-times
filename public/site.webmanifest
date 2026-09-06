@@ -1,10 +1,15 @@
 {
   "name": "Joseph Mmwa",
   "short_name": "Joseph Mmwa",
+  "description": "Global health and medical journalism from Joseph Mmwa — clear, accurate, and accessible.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "portrait-primary",
   "icons": [
     { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
-  ],
-  "theme_color": "#0A0A0A",
-  "background_color": "#0A0A0A"
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }

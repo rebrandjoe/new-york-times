@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Service worker: runs in the worker global scope, bundled separately by esbuild.
+    "src/sw.ts",
+    "public/sw.js",
   ]),
 ]);
 
