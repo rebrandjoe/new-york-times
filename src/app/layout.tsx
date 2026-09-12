@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto_Slab, PT_Serif } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SerwistProvider } from "@serwist/next/react";
 import "./globals.css";
@@ -7,24 +7,10 @@ import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
-// Headline / subheading font — bold slab serif, matching the Guardian
-// Egyptian Headline look from the reference screenshot. (Guardian's own
-// fonts are proprietary and not licensable via Google Fonts, so this is
-// the closest freely-licensed match.)
-const displaySerif = Roboto_Slab({
+const displaySerif = Playfair_Display({
   variable: "--brand-font-serif-display",
   subsets: ["latin"],
   weight: ["700", "800", "900"],
-  display: "swap",
-});
-
-// Article body-copy font — classic reading serif, matching the Guardian
-// Text Egyptian look from the reference screenshot.
-const bodySerif = PT_Serif({
-  variable: "--brand-font-serif-body",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -90,10 +76,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const tickerHeadline = await getActiveTickerHeadline();
 
   return (
-    <html
-      lang="en"
-      className={`h-full antialiased ${displaySerif.variable} ${bodySerif.variable}`}
-    >
+    <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
