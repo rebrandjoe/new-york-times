@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Source_Serif_4 } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SerwistProvider } from "@serwist/next/react";
@@ -8,10 +8,10 @@ import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
-const displaySerif = Playfair_Display({
+const displaySerif = Source_Serif_4({
   variable: "--brand-font-serif-display",
   subsets: ["latin"],
-  weight: ["700", "800", "900"],
+  weight: ["400", "600", "700", "800", "900"],
   display: "swap",
 });
 
