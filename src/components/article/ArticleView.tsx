@@ -85,7 +85,9 @@ export function ArticleView({
           {article.title}
         </h1>
         {article.excerpt && (
-          <p className="mt-4 text-lg text-gray-secondary-light sm:text-xl">{article.excerpt}</p>
+          <p className="font-serif-article mt-4 text-lg text-gray-secondary-light sm:text-xl">
+            {article.excerpt}
+          </p>
         )}
         <div className="mt-4 flex items-center gap-2 text-sm text-gray-muted">
           <time dateTime={article.publicationDate}>{formatDate(article.publicationDate)}</time>
