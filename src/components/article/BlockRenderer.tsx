@@ -16,9 +16,7 @@ function Block({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
       return (
-        <p className="font-serif-article text-lg leading-relaxed text-offwhite">
-          {renderInlineMarkup(block.text)}
-        </p>
+        <p className="font-serif text-[17px] md:text-[18px] leading-[1.65] text-offwhite">{renderInlineMarkup(block.text)}</p>
       );
 
     case "heading": {
@@ -30,7 +28,7 @@ function Block({ block }: { block: ContentBlock }) {
       // unaffected and keeps the standard white headline treatment.
       const color = block.level === 1 ? "text-white" : "text-accent";
       return (
-        <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]}`}>
+        <Tag className={`font-serif font-bold tracking-tight leading-snug ${color} ${sizes[block.level]}`}>
           {renderInlineMarkup(block.text)}
         </Tag>
       );
@@ -40,7 +38,7 @@ function Block({ block }: { block: ContentBlock }) {
       const ListTag = block.style === "numbered" ? "ol" : "ul";
       return (
         <ListTag
-          className={`font-serif-article ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
+          className={`ml-6 space-y-2 font-serif text-[17px] md:text-[18px] leading-[1.65] text-offwhite ${
             block.style === "numbered" ? "list-decimal" : "list-disc"
           }`}
         >
@@ -53,7 +51,7 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "blockquote":
       return (
-        <blockquote className="font-serif-article border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
+        <blockquote className="border-l-2 border-accent pl-5 font-serif text-[17px] md:text-[18px] italic leading-[1.65] text-gray-secondary-light">
           {renderInlineMarkup(block.text)}
         </blockquote>
       );
@@ -61,7 +59,7 @@ function Block({ block }: { block: ContentBlock }) {
     case "pullquote":
       return (
         <figure className="border-y border-charcoal py-6 text-center">
-          <blockquote className="font-serif text-2xl font-bold leading-snug text-white sm:text-3xl">
+          <blockquote className="font-serif text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl">
             {renderInlineMarkup(block.text)}
           </blockquote>
           {block.attribution && (
