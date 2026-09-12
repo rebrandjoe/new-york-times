@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Source_Serif_4 } from "next/font/google";
-import Script from "next/script";
+import { Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SerwistProvider } from "@serwist/next/react";
 import "./globals.css";
@@ -8,10 +7,10 @@ import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
-const displaySerif = Source_Serif_4({
+const displaySerif = Playfair_Display({
   variable: "--brand-font-serif-display",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800", "900"],
+  weight: ["700", "800", "900"],
   display: "swap",
 });
 
@@ -91,18 +90,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-QEWD0P1QC1"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-QEWD0P1QC1');
-          `}
-        </Script>
       </head>
       <body className="min-h-full flex flex-col bg-black text-offwhite">
         <a
