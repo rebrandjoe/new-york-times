@@ -81,13 +81,11 @@ export function ArticleView({
         >
           {article.category.name}
         </Link>
-        <h1 className="mt-3 font-serif text-3xl font-extrabold leading-[1.1] text-white sm:text-5xl">
+        <h1 className="mt-3 font-serif text-3xl font-bold tracking-tight leading-[1.12] text-white sm:text-5xl">
           {article.title}
         </h1>
         {article.excerpt && (
-          <p className="font-serif-article mt-4 text-lg text-gray-secondary-light sm:text-xl">
-            {article.excerpt}
-          </p>
+          <p className="mt-4 font-serif text-lg leading-relaxed text-gray-secondary-light sm:text-xl">{article.excerpt}</p>
         )}
         <div className="mt-4 flex items-center gap-2 text-sm text-gray-muted">
           <time dateTime={article.publicationDate}>{formatDate(article.publicationDate)}</time>
