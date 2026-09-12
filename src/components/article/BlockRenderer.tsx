@@ -16,17 +16,19 @@ function Block({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
       return (
-        <p className="text-lg leading-relaxed text-offwhite font-sans">{renderInlineMarkup(block.text)}</p>
+        <p className="text-lg leading-relaxed text-offwhite">{renderInlineMarkup(block.text)}</p>
       );
 
     case "heading": {
-      const sizes = { 1: "text-4xl sm:text-5xl", 2: "text-3xl sm:text-4xl", 3: "text-2xl sm:text-3xl" } as const;
+      const sizes = { 1: "text-3xl", 2: "text-2xl", 3: "text-xl" } as const;
       const Tag = (`h${block.level}`) as "h1" | "h2" | "h3";
-      // In-body H1/H2/H3 subheadings render in the accent colour or white depending on level,
-      // giving long articles clear and readable structure across all subheadings.
+      // In-body H2/H3 subheadings render in the accent colour by default,
+      // giving long articles structure without manual styling each time —
+      // the main article Title (a separate element, not a body block) is
+      // unaffected and keeps the standard white headline treatment.
       const color = block.level === 1 ? "text-white" : "text-accent";
       return (
-        <Tag className={`font-serif font-bold tracking-tight leading-[1.15] ${color} ${sizes[block.level]}`}>
+        <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]}`}>
           {renderInlineMarkup(block.text)}
         </Tag>
       );
@@ -36,7 +38,7 @@ function Block({ block }: { block: ContentBlock }) {
       const ListTag = block.style === "numbered" ? "ol" : "ul";
       return (
         <ListTag
-          className={`ml-6 space-y-2 text-lg leading-relaxed text-offwhite font-sans ${
+          className={`ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
             block.style === "numbered" ? "list-decimal" : "list-disc"
           }`}
         >
@@ -49,7 +51,7 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "blockquote":
       return (
-        <blockquote className="border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light font-sans">
+        <blockquote className="border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
           {renderInlineMarkup(block.text)}
         </blockquote>
       );
@@ -57,11 +59,11 @@ function Block({ block }: { block: ContentBlock }) {
     case "pullquote":
       return (
         <figure className="border-y border-charcoal py-6 text-center">
-          <blockquote className="font-serif text-3xl font-bold leading-snug tracking-tight text-white sm:text-4xl">
+          <blockquote className="font-serif text-2xl font-bold leading-snug text-white sm:text-3xl">
             {renderInlineMarkup(block.text)}
           </blockquote>
           {block.attribution && (
-            <figcaption className="mt-3 text-sm text-gray-muted italic">{block.attribution}</figcaption>
+            <figcaption className="mt-3 text-sm text-gray-muted">{block.attribution}</figcaption>
           )}
         </figure>
       );
@@ -73,7 +75,7 @@ function Block({ block }: { block: ContentBlock }) {
             <Image src={block.url} alt={block.alt} fill sizes="720px" className="object-cover" />
           </div>
           {(block.caption || block.credit) && (
-            <figcaption className="mt-2 text-sm text-gray-muted italic">
+            <figcaption className="mt-2 text-sm text-gray-muted">
               {block.caption}
               {block.caption && block.credit && " — "}
               {block.credit && <span>{block.credit}</span>}
@@ -94,7 +96,7 @@ function Block({ block }: { block: ContentBlock }) {
             />
           </div>
           {(block.caption || block.credit) && (
-            <figcaption className="mt-2 text-sm text-gray-muted italic">
+            <figcaption className="mt-2 text-sm text-gray-muted">
               {block.caption}
               {block.caption && block.credit && " — "}
               {block.credit && <span>{block.credit}</span>}
