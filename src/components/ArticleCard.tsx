@@ -27,7 +27,7 @@ export function FeaturedCard({ article, className = "" }: { article: Article; cl
         <span className="text-xs font-bold uppercase tracking-wider text-accent">
           {article.category.name}
         </span>
-        <h3 className="mt-2 font-serif text-2xl font-bold leading-tight text-white transition-colors group-hover:text-accent sm:text-3xl">
+        <h3 className="mt-2 font-sans text-2xl font-bold leading-tight tracking-tight text-white transition-colors group-hover:text-accent sm:text-3xl">
           {article.headline}
         </h3>
         <p className="mt-2 max-w-2xl text-sm text-gray-secondary-light">
@@ -51,7 +51,7 @@ export function SecondaryCard({ article, className = "" }: { article: Article; c
         <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
           {article.category.name}
         </span>
-        <h4 className="mt-1.5 font-serif text-lg font-bold leading-snug text-white transition-colors group-hover:text-accent">
+        <h4 className="mt-1.5 font-sans text-lg font-bold leading-snug tracking-tight text-white transition-colors group-hover:text-accent">
           {article.headline}
         </h4>
         <Meta article={article} className="mt-2" />
@@ -75,7 +75,7 @@ export function ListItemCard({ article, className = "" }: { article: Article; cl
         <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
           {article.category.name}
         </span>
-        <h4 className="mt-1 font-serif text-base font-bold leading-snug text-white transition-colors group-hover:text-accent sm:text-lg">
+        <h4 className="mt-1 font-sans text-base font-bold leading-snug tracking-tight text-white transition-colors group-hover:text-accent sm:text-lg">
           {article.headline}
         </h4>
         <Meta article={article} className="mt-1.5" />
