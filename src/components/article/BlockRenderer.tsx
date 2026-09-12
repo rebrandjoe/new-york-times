@@ -16,7 +16,9 @@ function Block({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
       return (
-        <p className="text-lg leading-relaxed text-offwhite">{renderInlineMarkup(block.text)}</p>
+        <p className="font-serif-article text-lg leading-relaxed text-offwhite">
+          {renderInlineMarkup(block.text)}
+        </p>
       );
 
     case "heading": {
@@ -38,7 +40,7 @@ function Block({ block }: { block: ContentBlock }) {
       const ListTag = block.style === "numbered" ? "ol" : "ul";
       return (
         <ListTag
-          className={`ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
+          className={`font-serif-article ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
             block.style === "numbered" ? "list-decimal" : "list-disc"
           }`}
         >
@@ -51,7 +53,7 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "blockquote":
       return (
-        <blockquote className="border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
+        <blockquote className="font-serif-article border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
           {renderInlineMarkup(block.text)}
         </blockquote>
       );
