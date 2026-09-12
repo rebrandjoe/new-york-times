@@ -21,7 +21,12 @@ export async function getPublishedArticles(options?: {
     .from("articles")
     .select(ARTICLE_SELECT)
     .or(publicVisibilityFilter())
-    .order("publication_date", { ascending: false });
+    // Same-day articles all carry an identical midnight-UTC publication_date
+    // (it comes from a date-only picker in the editor), so without a
+    // tiebreaker same-day stories fall back to unpredictable database order
+    // instead of true publish order. created_at breaks the tie correctly.
+    .order("publication_date", { ascending: false })
+    .order("created_at", { ascending: false });
 
   if (options?.categorySlug) {
     const { data: category } = await supabase
@@ -69,6 +74,7 @@ export async function searchPublishedArticles(rawQuery: string): Promise<CmsArti
     .or(publicVisibilityFilter())
     .or(`title.ilike.%${query}%,excerpt.ilike.%${query}%`)
     .order("publication_date", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(50);
 
   if (error || !data) return [];
@@ -94,6 +100,7 @@ export async function searchPublishedArticles(rawQuery: string): Promise<CmsArti
       .or(publicVisibilityFilter())
       .or(extraFilters.join(","))
       .order("publication_date", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(50);
     extraArticles = (extraData as unknown as RawArticleRow[] | null)?.map(mapRowToCmsArticle) ?? [];
   }
@@ -113,6 +120,7 @@ export async function searchPublishedArticles(rawQuery: string): Promise<CmsArti
         .or(publicVisibilityFilter())
         .in("id", articleIds)
         .order("publication_date", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(50);
       topicArticles = (topicArticleData as unknown as RawArticleRow[] | null)?.map(mapRowToCmsArticle) ?? [];
     }
@@ -156,6 +164,7 @@ export async function getRelatedArticles(article: CmsArticle, limit = 4): Promis
     .or(publicVisibilityFilter())
     .neq("id", article.id)
     .order("publication_date", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(40);
 
   if (error || !data) return [];
