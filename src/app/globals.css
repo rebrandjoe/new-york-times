@@ -52,8 +52,14 @@ body {
   font-family: var(--brand-font-sans);
 }
 
-/* Global Heading Style Update for all headline areas */
-h1, h2, h3, h4, h5, h6 {
+/* TARGETED HEADLINE UPDATE: 
+   Only updates article post titles, content headings, and article cards 
+   to the modern sans-serif style, leaving homepage banners & taglines alone. */
+article h1,
+article h2,
+article h3,
+.article-title,
+.post-headline {
   font-family: var(--brand-font-sans);
   font-weight: 700;
   letter-spacing: -0.02em;
