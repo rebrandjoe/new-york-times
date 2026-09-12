@@ -26,7 +26,7 @@ function Block({ block }: { block: ContentBlock }) {
       // giving long articles clear and readable structure across all subheadings.
       const color = block.level === 1 ? "text-white" : "text-accent";
       return (
-        <Tag className={`font-headline font-bold tracking-tight leading-[1.15] ${color} ${sizes[block.level]}`}>
+        <Tag className={`font-serif font-bold tracking-tight leading-[1.15] ${color} ${sizes[block.level]}`}>
           {renderInlineMarkup(block.text)}
         </Tag>
       );
@@ -57,7 +57,7 @@ function Block({ block }: { block: ContentBlock }) {
     case "pullquote":
       return (
         <figure className="border-y border-charcoal py-6 text-center">
-          <blockquote className="font-headline text-3xl font-bold leading-snug tracking-tight text-white sm:text-4xl">
+          <blockquote className="font-serif text-3xl font-bold leading-snug tracking-tight text-white sm:text-4xl">
             {renderInlineMarkup(block.text)}
           </blockquote>
           {block.attribution && (
