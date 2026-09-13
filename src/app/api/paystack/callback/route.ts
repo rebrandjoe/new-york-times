@@ -19,7 +19,6 @@ export async function GET(request: Request) {
   const verification = await verifyRes.json();
 
   if (verification.status && verification.data?.status === "success") {
-    // Optional: Update user premium status in Supabase if email/metadata matches
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -27,9 +26,10 @@ export async function GET(request: Request) {
       await supabase.from("subscriptions").upsert({
         user_id: user.id,
         status: "active",
-        reference,
         updated_at: new Date().toISOString(),
-      });
+        // Store reference in metadata or remove if column doesn't exist:
+        metadata: { paystack_reference: reference },
+      } as any);
     }
 
     return NextResponse.redirect(new URL("/?payment=success", request.url));
