@@ -9,6 +9,7 @@ import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
+import { MemberAccessCard } from "@/components/MemberAccessCard";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
@@ -43,6 +44,12 @@ export function ArticleView({
   premiumLocked?: boolean;
 }) {
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
+  
+  // Split blocks roughly in half for mid-article sign-up insertion
+  const midpoint = Math.ceil(bodyBlocks.length / 2);
+  const firstHalfBlocks = bodyBlocks.slice(0, midpoint);
+  const secondHalfBlocks = bodyBlocks.slice(midpoint);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -115,7 +122,9 @@ export function ArticleView({
       ) : null}
 
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={bodyBlocks} />
+        <BlockRenderer blocks={firstHalfBlocks} />
+        {!premiumLocked && <MemberAccessCard />}
+        <BlockRenderer blocks={secondHalfBlocks} />
         {premiumLocked && <PaywallNotice />}
         {!premiumLocked && article.correctionNote && (
           <div className="mt-6">
