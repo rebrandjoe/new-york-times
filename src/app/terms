@@ -1,0 +1,293 @@
+import type { Metadata } from "next";
+import { PolicyList, PolicyPage, PolicyParagraph, PolicySection } from "@/components/policy/PolicyPage";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "Terms of Service for JosephMmwa.com",
+  alternates: { canonical: "/terms" },
+  openGraph: {
+    title: "Terms of Service — Joseph Mmwa",
+    description: "Terms of Service for JosephMmwa.com",
+    url: "/terms",
+  },
+};
+
+export default function TermsOfServicePage() {
+  return (
+    <PolicyPage
+      eyebrow="Terms of Service"
+      title="Terms of Service"
+      intro="Effective date: September 13, 2026"
+    >
+      <PolicyParagraph>Welcome to JosephMmwa.com.</PolicyParagraph>
+      <PolicyParagraph>
+        These Terms of Service govern your use of JosephMmwa.com, an independent health and medical news platform providing reporting, research, analysis and explanations of health and medical developments from Kenya, Africa and around the world.
+      </PolicyParagraph>
+      <PolicyParagraph>
+        By accessing or using the website, you agree to these Terms of Service. If you do not agree with these terms, please do not use the website.
+      </PolicyParagraph>
+
+      <PolicySection heading="1. About Joseph Mmwa">
+        <PolicyParagraph>
+          JosephMmwa.com is operated under the personal brand of Joseph Mmwa.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          The website publishes health and medical journalism, reporting, research-based information, analysis, explanations and related editorial content.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Joseph Mmwa is a health and medical journalist/editor, not a medical doctor, and information published on the website should not be interpreted as a personal medical diagnosis or individualized medical advice.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="2. Use of the website">
+        <PolicyParagraph>You may use JosephMmwa.com for lawful purposes, including:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Reading and sharing published articles</>,
+            <>Creating an account where available</>,
+            <>Participating in comments where available</>,
+            <>Subscribing to newsletters</>,
+            <>Contacting Joseph Mmwa</>,
+            <>Accessing publicly available health and medical information</>,
+          ]}
+        />
+        <PolicyParagraph>You agree not to use the website to:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Break applicable laws</>,
+            <>Attempt to gain unauthorized access to the website or its systems</>,
+            <>Interfere with website security or operation</>,
+            <>Introduce malicious software</>,
+            <>Impersonate another person</>,
+            <>Submit fraudulent or misleading information</>,
+            <>Abuse, threaten or harass other users</>,
+            <>Publish unlawful, defamatory or abusive material</>,
+            <>Scrape, copy or reproduce substantial amounts of content without permission</>,
+            <>Use the website to distribute spam or unsolicited commercial material</>,
+          ]}
+        />
+      </PolicySection>
+
+      <PolicySection heading="3. User accounts">
+        <PolicyParagraph>Some features may require you to create an account.</PolicyParagraph>
+        <PolicyParagraph>You are responsible for providing accurate information and keeping your account credentials secure. You should not share your account credentials with another person.</PolicyParagraph>
+        <PolicyParagraph>
+          You are responsible for activity conducted through your account unless the activity resulted from circumstances outside your reasonable control.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          We reserve the right to suspend or terminate accounts that are used in violation of these Terms.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="4. Google Sign-In">
+        <PolicyParagraph>
+          Where Google Sign-In is available, you may use your Google Account to authenticate your Joseph Mmwa account.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Your use of Google Sign-In is also subject to Google&apos;s applicable terms and policies.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Joseph Mmwa does not receive your Google password through the normal Google Sign-In authentication process.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          The information we receive from Google is described in our Privacy Policy.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="5. Comments and user-generated content">
+        <PolicyParagraph>Where comments are enabled, users may submit comments and other content.</PolicyParagraph>
+        <PolicyParagraph>You are responsible for the content you submit.</PolicyParagraph>
+        <PolicyParagraph>You must not submit content that is:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Illegal</>,
+            <>Defamatory</>,
+            <>Threatening</>,
+            <>Abusive</>,
+            <>Harassing</>,
+            <>Fraudulent</>,
+            <>Infringing of another person&apos;s intellectual-property rights</>,
+            <>Deliberately misleading</>,
+            <>Malicious</>,
+            <>Sexually explicit where inappropriate for the website</>,
+            <>Intended to promote unlawful activity</>,
+            <>Designed to impersonate another person or organization</>,
+          ]}
+        />
+        <PolicyParagraph>
+          We reserve the right to remove, restrict or moderate comments that violate these Terms or our editorial standards. Submitting a comment does not guarantee that it will be published or remain published.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="6. Health and medical information">
+        <PolicyParagraph>
+          JosephMmwa.com provides health and medical journalism and information for general educational and informational purposes.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          The website does not provide individualized medical diagnosis, treatment or emergency medical services.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Health information can change as scientific evidence develops. We make reasonable efforts to verify information and correct significant errors when identified, but no publication can guarantee that every piece of information will remain current or error-free.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Do not delay seeking professional medical care because of information read on this website. If you have a medical emergency, contact an appropriate emergency service or qualified healthcare professional.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="7. Editorial independence">
+        <PolicyParagraph>
+          Joseph Mmwa aims to publish accurate, evidence-based and independently produced health and medical journalism.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Advertising, sponsorship, partnerships or commercial relationships, where applicable, do not automatically constitute editorial endorsement. Editorial content and commercial material may be identified separately where appropriate.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="8. Accuracy and corrections">
+        <PolicyParagraph>We make reasonable efforts to verify information before publication.</PolicyParagraph>
+        <PolicyParagraph>
+          If a significant factual error is identified, we may correct or update the relevant content.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Readers may submit correction requests through: contact@josephmmwa.com
+        </PolicyParagraph>
+        <PolicyParagraph>
+          A correction request does not guarantee that a change will be made. Corrections are assessed based on available evidence and editorial standards.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="9. Intellectual property">
+        <PolicyParagraph>
+          Unless otherwise stated, original articles, text, graphics, branding, logos, design elements and other materials created for JosephMmwa.com are protected by applicable intellectual-property laws.
+        </PolicyParagraph>
+        <PolicyParagraph>You may:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Read the content</>,
+            <>Share links to published articles</>,
+            <>Quote reasonable portions for legitimate purposes where permitted by law and with appropriate attribution</>,
+          ]}
+        />
+        <PolicyParagraph>
+          You may not reproduce, republish, sell, distribute or commercially exploit substantial portions of our original content without permission, except where permitted by applicable law.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Third-party photographs, videos, quotations, logos and other materials remain the property of their respective owners.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="10. Third-party content and links">
+        <PolicyParagraph>
+          JosephMmwa.com may link to external websites, research papers, government agencies, health organizations, news organizations and other sources.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          These links are provided for reference or additional information. We do not control external websites and are not responsible for their content, availability, security or privacy practices.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="11. Newsletters and communications">
+        <PolicyParagraph>Where newsletter services are available, users may voluntarily subscribe.</PolicyParagraph>
+        <PolicyParagraph>
+          You may unsubscribe from newsletters at any time using the unsubscribe option provided in the email or by contacting us. Necessary communications relating to your account or requested services may still be sent where required to provide those services.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="12. Paid services and subscriptions">
+        <PolicyParagraph>
+          If JosephMmwa.com introduces paid subscriptions, memberships, advertising services or other paid features, additional terms may apply. Prices, billing periods, renewal arrangements, cancellation procedures and payment terms will be disclosed before a paid transaction is completed. Payments may be processed through third-party payment providers.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="13. Availability of the website">
+        <PolicyParagraph>
+          We aim to keep JosephMmwa.com available and functioning reliably, but we do not guarantee uninterrupted availability.
+        </PolicyParagraph>
+        <PolicyParagraph>The website may occasionally be unavailable because of:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Maintenance</>,
+            <>Technical problems</>,
+            <>Security incidents</>,
+            <>Hosting or infrastructure failures</>,
+            <>Third-party service interruptions</>,
+            <>Events beyond our reasonable control</>,
+          ]}
+        />
+      </PolicySection>
+
+      <PolicySection heading="14. Prohibited technical activity">
+        <PolicyParagraph>You must not attempt to:</PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Circumvent security controls</>,
+            <>Access restricted areas without authorization</>,
+            <>Probe or scan the website for vulnerabilities without authorization</>,
+            <>Introduce malware</>,
+            <>Interfere with servers or networks</>,
+            <>Attempt to obtain another user&apos;s account information</>,
+            <>Use automated systems in a manner that places unreasonable load on the website</>,
+          ]}
+        />
+        <PolicyParagraph>
+          Security vulnerabilities may be reported to: contact@josephmmwa.com
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="15. Disclaimer">
+        <PolicyParagraph>JosephMmwa.com is provided on an &quot;as available&quot; basis.</PolicyParagraph>
+        <PolicyParagraph>
+          While reasonable efforts are made to maintain accurate and reliable content, we do not guarantee that:
+        </PolicyParagraph>
+        <PolicyList
+          items={[
+            <>Every article is completely error-free</>,
+            <>Information will always be current</>,
+            <>The website will always be available</>,
+            <>External websites or linked resources will remain available</>,
+            <>Content will be suitable for every individual circumstance</>,
+          ]}
+        />
+        <PolicyParagraph>
+          Nothing in these Terms excludes rights or protections that cannot legally be excluded under applicable law.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="16. Limitation of liability">
+        <PolicyParagraph>
+          To the extent permitted by applicable law, Joseph Mmwa will not be responsible for losses arising solely from your reliance on general information published on the website where such liability cannot reasonably be attributed to a failure required by law.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Nothing in these Terms is intended to exclude liability that cannot legally be excluded.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="17. Privacy">
+        <PolicyParagraph>
+          Your use of the website is also governed by our Privacy Policy, which explains how personal information is collected and processed.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="18. Changes to these Terms">
+        <PolicyParagraph>
+          We may update these Terms of Service when the website, services or applicable legal requirements change. Updated terms will be published on this page.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Your continued use of the website after updated terms become effective constitutes acceptance of the updated Terms, to the extent permitted by applicable law.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="19. Governing law">
+        <PolicyParagraph>
+          These Terms are intended to operate in accordance with the laws of Kenya, subject to any mandatory rights or protections that apply to users under applicable law.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="20. Contact">
+        <PolicyParagraph>Questions regarding these Terms of Service can be sent to:</PolicyParagraph>
+        <PolicyParagraph>
+          Joseph Mmwa — Email: contact@josephmmwa.com — Website: josephmmwa.com
+        </PolicyParagraph>
+      </PolicySection>
+    </PolicyPage>
+  );
+}
