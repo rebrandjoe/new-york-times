@@ -39,7 +39,7 @@ export async function initializePaystackTransaction({
     },
     body: JSON.stringify({
       email: user.email,
-      amount: Math.round(amountInKes * 100), // Convert KES to smallest currency unit (cents/kobo)
+      amount: Math.round(amountInKes * 100), // Convert KES to smallest currency unit (cents)
       callback_url: `${siteUrl}/api/paystack/callback`,
       metadata: {
         user_id: user.id,
