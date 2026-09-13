@@ -19,126 +19,107 @@ export default function AiPolicyPage() {
     <PolicyPage
       eyebrow="AI Policy"
       title="AI Policy"
-      intro="Technology can assist journalism. It cannot replace editorial responsibility."
+      intro="AI can support journalism. Editorial responsibility remains human."
     >
-      <PolicyParagraph>Artificial intelligence is becoming part of the modern information environment.</PolicyParagraph>
       <PolicyParagraph>
-        JOSEPH MMWA uses AI tools where they can improve efficiency, research workflow or
-        presentation.
+        Artificial intelligence is increasingly used across journalism and the wider information environment. At JOSEPH MMWA, AI tools may be used selectively to support research, organisation, production and presentation.
       </PolicyParagraph>
-      <PolicyParagraph>But there is an important boundary:</PolicyParagraph>
-      <PolicyLead>AI may assist the work. A human editor remains responsible for the work.</PolicyLead>
+      <PolicyParagraph>
+        The use of AI does not change our editorial standards. Accuracy, verification, independence and accountability remain the responsibility of the human editor.
+      </PolicyParagraph>
 
-      <PolicySection heading="Human editorial judgment">
-        <PolicyParagraph>AI does not decide what JOSEPH MMWA publishes.</PolicyParagraph>
+      <PolicySection heading="Editorial oversight">
+        <PolicyParagraph>AI does not determine what JOSEPH MMWA publishes.</PolicyParagraph>
         <PolicyParagraph>
-          It does not determine what is important, whether evidence is sufficient, whether a claim is
-          credible or whether a story is ready for readers.
+          Editorial decisions—including what to report, which sources to use, whether evidence is sufficient and whether material is ready for publication—remain subject to human judgment.
         </PolicyParagraph>
-        <PolicyParagraph>Those remain human editorial decisions.</PolicyParagraph>
+        <PolicyParagraph>
+          AI-assisted material is reviewed before publication where its use could affect the accuracy, meaning or presentation of published content.
+        </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Where AI may assist">
-        <PolicyParagraph>Depending on the task, AI tools may assist with:</PolicyParagraph>
+      <PolicySection heading="How AI may be used">
+        <PolicyParagraph>AI tools may assist with:</PolicyParagraph>
         <PolicyList
           items={[
-            "organising information;",
-            "summarising material for internal review;",
-            "identifying claims requiring further verification;",
-            "transcription;",
-            "translation;",
-            "formatting;",
-            "research workflow;",
-            "identifying inconsistencies;",
-            "drafting material for human review.",
+            <>research and information organisation;</>,
+            <>summarising material for editorial review;</>,
+            <>identifying claims that require verification;</>,
+            <>transcription and translation;</>,
+            <>editing, formatting and production;</>,
+            <>identifying inconsistencies or gaps;</>,
+            <>developing initial drafts for human review.</>,
           ]}
         />
-        <PolicyParagraph>The use of AI is a tool choice, not an editorial standard.</PolicyParagraph>
+        <PolicyParagraph>These applications support the editorial process; they do not replace it.</PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="AI is not evidence">
-        <PolicyParagraph>AI-generated information is treated as unverified.</PolicyParagraph>
+      <PolicySection heading="Verification and sources">
+        <PolicyParagraph>AI-generated information is not treated as an authoritative source.</PolicyParagraph>
         <PolicyParagraph>
-          Artificial intelligence systems can produce inaccurate, incomplete, outdated or fabricated
-          information.
+          Because AI systems can produce inaccurate, incomplete or outdated information, factual claims must be checked against appropriate primary sources, official records, scientific literature or credible original reporting.
         </PolicyParagraph>
         <PolicyParagraph>
-          We therefore do not treat an AI response as a source simply because it sounds authoritative.
+          Particular care is taken with health and medical information, where inaccurate reporting can have significant consequences.
         </PolicyParagraph>
-        <PolicyParagraph>Important claims must be independently verified against appropriate evidence.</PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="No fabricated journalism">
-        <PolicyParagraph>JOSEPH MMWA does not knowingly use AI to fabricate:</PolicyParagraph>
+      <PolicySection heading="Accuracy and integrity">
+        <PolicyParagraph>JOSEPH MMWA does not knowingly present AI-generated material as authentic reporting or use AI to invent:</PolicyParagraph>
         <PolicyList
           items={[
-            "sources;",
-            "quotations;",
-            "experts;",
-            "patients;",
-            "research findings;",
-            "statistics;",
-            "institutions;",
-            "events;",
-            "medical evidence.",
+            <>sources or quotations;</>,
+            <>people, experts or patients;</>,
+            <>research findings or statistics;</>,
+            <>institutions or events;</>,
+            <>medical evidence or claims.</>,
           ]}
         />
-        <PolicyParagraph>Synthetic information must never be presented as authentic reporting.</PolicyParagraph>
-      </PolicySection>
-
-      <PolicySection heading="Health requires greater caution">
-        <PolicyParagraph>Medical information can have real consequences.</PolicyParagraph>
         <PolicyParagraph>
-          For stories involving treatments, vaccines, diseases, clinical research, public-health
-          recommendations or medical risks, AI-assisted material must receive appropriate human
-          scrutiny and source verification.
-        </PolicyParagraph>
-        <PolicyParagraph>The more consequential the claim, the greater the need for verification.</PolicyParagraph>
-      </PolicySection>
-
-      <PolicySection heading="Attribution remains human">
-        <PolicyParagraph>
-          AI does not replace the journalist, researcher or institution that originally produced
-          information.
-        </PolicyParagraph>
-        <PolicyParagraph>
-          Where our journalism relies on reporting or research produced elsewhere, we seek to identify
-          and attribute the original work.
+          Information originating from another journalist, publication, institution or research organisation should be appropriately attributed. AI does not replace or obscure the original source of information.
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="AI-generated images and media">
-        <PolicyParagraph>We distinguish between authentic editorial imagery and synthetic material.</PolicyParagraph>
+      <PolicySection heading="Health and medical journalism">
         <PolicyParagraph>
-          AI-generated imagery must not be presented as a genuine photograph of a real person, event
-          or medical situation.
+          For reporting involving diseases, treatments, medicines, vaccines, clinical research, public-health guidance or medical risks, AI-assisted material is subject to appropriate source verification and editorial scrutiny.
+        </PolicyParagraph>
+        <PolicyParagraph>The potential impact of a claim determines the level of care required before publication.</PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="Synthetic images and media">
+        <PolicyParagraph>
+          AI-generated images or other synthetic media must not be presented as authentic photographs, recordings or depictions of real people, events or medical situations.
         </PolicyParagraph>
         <PolicyParagraph>
-          Where synthetic media is materially relevant to a story, its nature should be made clear.
+          Where synthetic media is materially relevant to published content, its nature will be made clear to readers.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Authentic editorial photographs, illustrations and other media remain subject to appropriate attribution and contextual accuracy.
         </PolicyParagraph>
       </PolicySection>
 
       <PolicySection heading="Transparency">
-        <PolicyParagraph>Not every use of AI requires a public label.</PolicyParagraph>
         <PolicyParagraph>
-          Routine assistance with transcription, formatting, spelling or workflow is different from
-          publishing synthetic material.
+          Not every routine use of AI requires disclosure. Assistance with tasks such as transcription, formatting, translation or basic editing is different from publishing synthetic content.
         </PolicyParagraph>
         <PolicyParagraph>
-          Where AI materially contributes to the creation or presentation of published content in a
-          way that could reasonably affect a reader&apos;s understanding, we may disclose that use.
+          Where AI makes a material contribution to published content or its presentation in a way that could reasonably affect a reader&apos;s understanding, JOSEPH MMWA may disclose that use.
         </PolicyParagraph>
       </PolicySection>
 
       <PolicySection heading="Accountability">
-        <PolicyParagraph>If an AI-assisted story contains an error, responsibility remains with JOSEPH MMWA.</PolicyParagraph>
-        <PolicyParagraph>We do not blame the software.</PolicyParagraph>
-        <PolicyParagraph>The publication process is accountable.</PolicyParagraph>
+        <PolicyParagraph>
+          The use of AI does not transfer editorial responsibility to a technology provider or software system.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          JOSEPH MMWA remains responsible for the accuracy, integrity and presentation of the journalism it publishes.
+        </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Our principle">
-        <PolicyParagraph>Technology should make journalism more efficient.</PolicyParagraph>
-        <PolicyParagraph>It should never make journalism less trustworthy.</PolicyParagraph>
+      <PolicySection heading="Our standard">
+        <PolicyParagraph>AI is a tool within the editorial process—not a substitute for journalism.</PolicyParagraph>
+        <PolicyParagraph>Technology may assist the work. Human judgment remains accountable for the result.</PolicyParagraph>
         <PolicyLead>The tool can be artificial. The accountability cannot be.</PolicyLead>
       </PolicySection>
     </PolicyPage>
