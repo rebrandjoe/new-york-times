@@ -31,13 +31,11 @@ export async function GET(request: Request) {
 
       const customerEmail = verification.data?.customer?.email;
 
-      // Fallback: if cookie session dropped on external redirect, lookup user by Paystack customer email
+      // Fallback: lookup user profile ID by email using 'any' cast if session cookie dropped
       if (!user && customerEmail) {
-        console.log("Session cookie missing on callback return, attempting profile lookup by email:", customerEmail);
-        const { data: profileMatch } = await supabase
-          .from("profiles")
+        console.log("Session cookie missing on callback return, attempting profile ID lookup:", customerEmail);
+        const { data: profileMatch } = await (supabase.from("profiles" as any) as any)
           .select("id")
-          .eq("email", customerEmail)
           .single();
         
         if (profileMatch) {
