@@ -10,43 +10,61 @@ export async function GET(request: Request) {
   }
 
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-    headers: {
-      Authorization: `Bearer ${secretKey}`,
-    },
-  });
+  if (!secretKey) {
+    console.error("Missing PAYSTACK_SECRET_KEY server environment variable.");
+    return NextResponse.redirect(new URL("/?payment=error", request.url));
+  }
 
-  const verification = await verifyRes.json();
+  try {
+    const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+      },
+    });
 
-  if (verification.status && verification.data?.status === "success") {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const verification = await verifyRes.json();
 
-    if (user) {
-      // Fetch first available plan ID from subscription_plans
+    if (verification.status && verification.data?.status === "success") {
+      const supabase = await createClient();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        console.error("User unauthenticated during paystack callback redirection.");
+        return NextResponse.redirect(new URL("/sign-in?redirect=/premium", request.url));
+      }
+
+      // Safely query first available plan ID without triggering TS null-assign errors
       const { data: planData } = await supabase
         .from("subscription_plans")
         .select("id")
         .limit(1)
         .single();
 
-      const { error } = await supabase.from("subscriptions").upsert(
-        {
-          user_id: user.id,
-          plan_id: planData?.id || null, // remove if plan_id is not required, or ensure planData exists
-          status: "active",
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+      const upsertPayload: Record<string, any> = {
+        user_id: user.id,
+        status: "active",
+        updated_at: new Date().toISOString(),
+        metadata: { paystack_reference: reference },
+      };
 
-      if (error) {
-        console.error("Supabase upsert error details:", error);
+      if (planData?.id) {
+        upsertPayload.plan_id = planData.id;
       }
+
+      const { error: upsertError } = await supabase
+        .from("subscriptions")
+        .upsert(upsertPayload, { onConflict: "user_id" });
+
+      if (upsertError) {
+        console.error("Supabase subscription upsert error:", upsertError);
+      }
+
+      return NextResponse.redirect(new URL("/?payment=success", request.url));
     }
 
-    return NextResponse.redirect(new URL("/?payment=success", request.url));
+    return NextResponse.redirect(new URL("/?payment=failed", request.url));
+  } catch (error) {
+    console.error("Paystack verification exception:", error);
+    return NextResponse.redirect(new URL("/?payment=error", request.url));
   }
-
-  return NextResponse.redirect(new URL("/?payment=failed", request.url));
 }
