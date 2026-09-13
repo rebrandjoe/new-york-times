@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!secretKey || !supabaseUrl || !serviceRoleKey) {
-    console.error("Missing required environment variables (PAYSTACK_SECRET_KEY, SUPABASE_URL, or SERVICE_ROLE_KEY).");
+    console.error("Missing environment variables.");
     return NextResponse.redirect(new URL("/?payment=error", request.url));
   }
 
@@ -24,48 +24,31 @@ export async function GET(request: Request) {
 
   try {
     const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-      },
+      headers: { Authorization: `Bearer ${secretKey}` },
     });
 
     const verification = await verifyRes.json();
-    console.log("Paystack verification data:", JSON.stringify(verification?.data?.status));
+    console.log("Paystack Verification Response:", JSON.stringify(verification?.data?.status));
 
     if (verification.status && verification.data?.status === "success") {
-      const customerEmail = verification.data?.customer?.email;
+      const txData = verification.data;
+      const metadataUserId = txData?.metadata?.user_id || txData?.metadata?.custom_fields?.find((f: any) => f.variable_name === 'user_id')?.value;
+      const customerEmail = txData?.customer?.email;
 
-      if (!customerEmail) {
-        console.error("No customer email returned in Paystack verification payload.");
-        return NextResponse.redirect(new URL("/?payment=error", request.url));
-      }
+      let targetUserId = metadataUserId;
 
-      // Lookup user UUID from auth.users or profiles by email
-      const { data: profileMatch, error: profileError } = await (adminSupabase.from("profiles" as any) as any)
-        .select("id")
-        .eq("email", customerEmail)
-        .single();
-
-      if (profileError) {
-        console.warn("Profile email match warning:", profileError.message);
-      }
-
-      let targetUserId = profileMatch?.id;
-
-      // Fallback: search auth users admin API or match by email if profile not found
-      if (!targetUserId) {
-        const { data: { users }, error: listErr } = await adminSupabase.auth.admin.listUsers();
-        if (listErr) console.warn("Admin listUsers warning:", listErr.message);
-        const matchedAuthUser = users?.find((u) => u.email === customerEmail);
-        targetUserId = matchedAuthUser?.id;
+      // Fallback to email match if metadata user_id wasn't captured on gateway return
+      if (!targetUserId && customerEmail) {
+        const { data: { users } } = await adminSupabase.auth.admin.listUsers();
+        targetUserId = users?.find((u) => u.email === customerEmail)?.id;
       }
 
       if (!targetUserId) {
-        console.error(`No user found matching email ${customerEmail}`);
+        console.error("Could not resolve targetUserId from metadata or email:", { metadataUserId, customerEmail });
         return NextResponse.redirect(new URL("/sign-in?redirect=/premium", request.url));
       }
 
-      // Fetch first available plan ID from subscription_plans
+      // Fetch first active subscription plan or use default uuid check
       const { data: planData } = await adminSupabase
         .from("subscription_plans")
         .select("id")
@@ -82,16 +65,18 @@ export async function GET(request: Request) {
         upsertPayload.plan_id = planData.id;
       }
 
+      console.log("Attempting Supabase subscriptions upsert:", upsertPayload);
+
       const { error: upsertError } = await adminSupabase
         .from("subscriptions")
         .upsert(upsertPayload, { onConflict: "user_id" });
 
       if (upsertError) {
-        console.error("Supabase upsert failure:", JSON.stringify(upsertError, null, 2));
+        console.error("Supabase upsert failure full details:", JSON.stringify(upsertError, null, 2));
         return NextResponse.redirect(new URL("/?payment=error", request.url));
       }
 
-      console.log("Subscription activated for user:", targetUserId);
+      console.log("Subscription activated successfully for user:", targetUserId);
       return NextResponse.redirect(new URL("/?payment=success", request.url));
     }
 
