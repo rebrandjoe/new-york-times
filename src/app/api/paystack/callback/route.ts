@@ -23,17 +23,34 @@ export async function GET(request: Request) {
     });
 
     const verification = await verifyRes.json();
+    console.log("Paystack verification response status:", verification?.data?.status);
 
     if (verification.status && verification.data?.status === "success") {
       const supabase = await createClient();
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      let { data: { user } } = await supabase.auth.getUser();
 
-      if (authError || !user) {
-        console.error("User unauthenticated during paystack callback redirection.");
+      const customerEmail = verification.data?.customer?.email;
+
+      // Fallback: if cookie session dropped on external redirect, lookup user by Paystack customer email
+      if (!user && customerEmail) {
+        console.log("Session cookie missing on callback return, attempting profile lookup by email:", customerEmail);
+        const { data: profileMatch } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", customerEmail)
+          .single();
+        
+        if (profileMatch) {
+          user = { id: profileMatch.id, email: customerEmail } as any;
+        }
+      }
+
+      if (!user) {
+        console.error("Could not resolve authenticated user or profile match for paystack callback.");
         return NextResponse.redirect(new URL("/sign-in?redirect=/premium", request.url));
       }
 
-      // Safely query first available plan ID without triggering TS null-assign errors
+      // Fetch first available plan ID from subscription_plans
       const { data: planData } = await supabase
         .from("subscription_plans")
         .select("id")
@@ -56,7 +73,9 @@ export async function GET(request: Request) {
         .upsert(upsertPayload, { onConflict: "user_id" });
 
       if (upsertError) {
-        console.error("Supabase subscription upsert error:", upsertError);
+        console.error("Supabase subscription upsert full error:", JSON.stringify(upsertError, null, 2));
+      } else {
+        console.log("Subscription record upserted successfully for user:", user.id);
       }
 
       return NextResponse.redirect(new URL("/?payment=success", request.url));
