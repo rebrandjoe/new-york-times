@@ -23,21 +23,25 @@ export async function GET(request: Request) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
-      // Optional: fetch a default/monthly plan_id if your schema requires plan_id foreign key
-      // If plan_id is nullable in your table, you can omit it or pass null.
-      const { data: plans } = await supabase.from("subscription_plans").select("id").limit(1);
-      const defaultPlanId = plans?.[0]?.id || null;
+      // Fetch first available plan ID from subscription_plans
+      const { data: planData } = await supabase
+        .from("subscription_plans")
+        .select("id")
+        .limit(1)
+        .single();
 
-      const { error } = await supabase.from("subscriptions").upsert({
-        user_id: user.id,
-        plan_id: defaultPlanId,
-        status: "active",
-        updated_at: new Date().toISOString(),
-        metadata: { paystack_reference: reference },
-      } as any, { onConflict: "user_id" });
+      const { error } = await supabase.from("subscriptions").upsert(
+        {
+          user_id: user.id,
+          plan_id: planData?.id || null, // remove if plan_id is not required, or ensure planData exists
+          status: "active",
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
 
       if (error) {
-        console.error("Supabase subscription upsert error:", error);
+        console.error("Supabase upsert error details:", error);
       }
     }
 
