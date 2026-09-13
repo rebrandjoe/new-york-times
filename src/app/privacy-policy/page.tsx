@@ -206,10 +206,7 @@ export default function PrivacyPolicyPage() {
 
       <PolicySection heading="10. Account deletion">
         <PolicyParagraph>
-          You may request deletion of your Joseph Mmwa account and associated personal information by contacting:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a>
+          You may request deletion of your Joseph Mmwa account and associated personal information by contacting: contact@josephmmwa.com
         </PolicyParagraph>
         <PolicyParagraph>
           Some information may need to be retained where required by law, necessary for legitimate security purposes, necessary to resolve disputes, or otherwise permitted by applicable law. Deleting your account may also remove or affect content associated with that account, including comments, where technically and legally appropriate.
@@ -224,10 +221,7 @@ export default function PrivacyPolicyPage() {
           Kenya&apos;s data-protection framework recognizes rights including being informed, accessing personal data, objecting to processing, correcting inaccurate data and requesting deletion of false or misleading data.
         </PolicyParagraph>
         <PolicyParagraph>
-          To exercise a privacy right, contact:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a>
+          To exercise a privacy right, contact: contact@josephmmwa.com
         </PolicyParagraph>
       </PolicySection>
 
@@ -245,17 +239,13 @@ export default function PrivacyPolicyPage() {
 
       <PolicySection heading="14. Children's privacy">
         <PolicyParagraph>
-          JosephMmwa.com is a general-audience health and medical news website. The website is not specifically directed at children, and we do not knowingly request personal information from children for purposes that are not appropriate under applicable law. If you believe that a child has provided personal information to us inappropriately, please contact us at{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a>
-          .
+          JosephMmwa.com is a general-audience health and medical news website. The website is not specifically directed at children, and we do not knowingly request personal information from children for purposes that are not appropriate under applicable law. If you believe that a child has provided personal information to us inappropriately, please contact us at contact@josephmmwa.com.
         </PolicyParagraph>
       </PolicySection>
 
       <PolicySection heading="15. Third-party websites">
         <PolicyParagraph>
-          JosephMmwa.com may contain links to external websites, including news organizations, research institutions, government agencies, social-media platforms and other sources. We are not responsible for the privacy practices or content of external websites. You should review the privacy policy of any third-party website you visit.
+          JosephMmwa.com may contain links to external external websites, including news organizations, research institutions, government agencies, social-media platforms and other sources. We are not responsible for the privacy practices or content of external websites. You should review the privacy policy of any third-party website you visit.
         </PolicyParagraph>
       </PolicySection>
 
@@ -268,12 +258,7 @@ export default function PrivacyPolicyPage() {
       <PolicySection heading="17. Contact">
         <PolicyParagraph>Questions, requests or concerns about this Privacy Policy can be sent to:</PolicyParagraph>
         <PolicyParagraph>
-          Joseph Mmwa<br />
-          Email:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a><br />
-          Website: <span className="text-white">josephmmwa.com</span>
+          Joseph Mmwa — Email: contact@josephmmwa.com — Website: josephmmwa.com
         </PolicyParagraph>
       </PolicySection>
     </PolicyPage>
