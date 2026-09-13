@@ -59,7 +59,6 @@ export async function GET(request: Request) {
         user_id: user.id,
         status: "active",
         updated_at: new Date().toISOString(),
-        metadata: { paystack_reference: reference },
       };
 
       if (planData?.id) {
