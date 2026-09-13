@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { initializePaystackTransaction } from "@/lib/actions/paystack";
 
-export function PaystackCheckoutButton({ amountInKes = 500 }: { amountInKes?: number }) {
+export function PaystackCheckoutButton({ amountInKes = 390 }: { amountInKes?: number }) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -23,13 +23,13 @@ export function PaystackCheckoutButton({ amountInKes = 500 }: { amountInKes?: nu
   };
 
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className="flex flex-col items-center gap-2">
       <button
         onClick={handlePay}
         disabled={loading}
-        className="rounded-full bg-accent px-6 py-3 text-sm font-bold text-black transition-transform hover:scale-[1.02] disabled:opacity-50"
+        className="w-full rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] disabled:opacity-50"
       >
-        {loading.valueOf() ? "Redirecting..." : `Pay KES ${amountInKes}`}
+        {loading ? "Redirecting to Paystack..." : `Pay KES ${amountInKes}`}
       </button>
       {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
     </div>
