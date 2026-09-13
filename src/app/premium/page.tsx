@@ -31,11 +31,19 @@ export default function PremiumPage() {
         </div>
 
         <h1 className="mt-4 font-serif text-3xl font-extrabold text-white sm:text-4xl">
-          Unlock Full Investigative Health Reports
+          Unlock Premium Health Journalism
         </h1>
 
-        <p className="mt-4 text-sm text-gray-secondary-light leading-relaxed">
-          Get unrestricted access to global medical research breakdowns, exclusive archive reports, and zero ads.
+        <p className="mt-4 font-serif text-lg font-semibold text-white">
+          Go beyond the headline.
+        </p>
+
+        <p className="mt-3 text-sm text-gray-secondary-light leading-relaxed">
+          Gain access to in-depth investigative health reports, original analysis of medical research, and selected reports from the JOSEPH MMWA archive.
+        </p>
+
+        <p className="mt-3 text-sm text-gray-muted leading-relaxed">
+          Premium members also enjoy an uninterrupted, ad-free reading experience across the site.
         </p>
 
         {/* Currency & Tier Controls */}
@@ -86,9 +94,25 @@ export default function PremiumPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-accent">
                 {pricing[tier].label}
               </span>
-              <p className="mt-1 text-xs text-gray-muted">Full access to clinical & policy reporting</p>
+              <div className="mt-3 text-left">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-muted mb-2">Premium includes</div>
+                <ul className="space-y-1.5 text-xs text-gray-secondary-light">
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Investigative health reporting
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" /> In-depth medical research analysis
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Selected archive reports
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Ad-free reading
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div className="mt-2 sm:mt-0 text-left sm:text-right">
+            <div className="mt-4 sm:mt-0 text-left sm:text-right">
               <span className="font-serif text-3xl font-extrabold text-white">
                 {currency} {amount}
               </span>
@@ -188,7 +212,7 @@ export default function PremiumPage() {
           </div>
 
           <p className="mt-6 text-center text-xs text-gray-muted">
-            Supports M-Pesa, Visa, and Mastercard via Paystack • Instant access activation upon verification.
+            The full story. The evidence behind it. The context that matters.
           </p>
         </div>
       </div>
