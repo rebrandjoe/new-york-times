@@ -18,7 +18,6 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/?payment=error", request.url));
   }
 
-  // Use service role client to bypass cookie drop during external redirect
   const adminSupabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false },
   });
@@ -42,17 +41,21 @@ export async function GET(request: Request) {
       }
 
       // Lookup user UUID from auth.users or profiles by email
-      const { data: profileMatch, profileError } = await adminSupabase
-        .from("profiles")
+      const { data: profileMatch, error: profileError } = await (adminSupabase.from("profiles" as any) as any)
         .select("id")
         .eq("email", customerEmail)
         .single();
+
+      if (profileError) {
+        console.warn("Profile email match warning:", profileError.message);
+      }
 
       let targetUserId = profileMatch?.id;
 
       // Fallback: search auth users admin API or match by email if profile not found
       if (!targetUserId) {
         const { data: { users }, error: listErr } = await adminSupabase.auth.admin.listUsers();
+        if (listErr) console.warn("Admin listUsers warning:", listErr.message);
         const matchedAuthUser = users?.find((u) => u.email === customerEmail);
         targetUserId = matchedAuthUser?.id;
       }
