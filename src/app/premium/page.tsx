@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import { useState, Suspense } from "react";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 
@@ -17,6 +16,25 @@ export default function PremiumPage() {
   const pricing = {
     monthly: { KES: 390, USD: 4, label: "Monthly Access", period: "/ month" },
     annual: { KES: 3900, USD: 39, label: "Annual Access", period: "/ year (Save ~16%)" },
+  };
+
+  const handleGatewaySelect = (gateway: PaymentGateway) => {
+    setSelectedGateway(gateway);
+    if (gateway === "card" || gateway === "paypal") {
+      setCurrency("USD");
+    } else if (gateway === "mpesa") {
+      setCurrency("KES");
+    }
+  };
+
+  const handleCurrencyChange = (newCurrency: "KES" | "USD") => {
+    setCurrency(newCurrency);
+    // Enforce rule: if KES is selected manually, switch/keep mpesa; if USD, default to card/paypal if on mpesa
+    if (newCurrency === "KES" && selectedGateway !== "mpesa") {
+      setSelectedGateway("mpesa");
+    } else if (newCurrency === "USD" && selectedGateway === "mpesa") {
+      setSelectedGateway("card");
+    }
   };
 
   const amount = pricing[tier][currency];
@@ -50,7 +68,7 @@ export default function PremiumPage() {
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <div className="inline-flex rounded-xl border border-charcoal bg-[#0F0F0F] p-1">
             <button
-              onClick={() => setCurrency("KES")}
+              onClick={() => handleCurrencyChange("KES")}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 currency === "KES" ? "bg-accent text-black" : "text-gray-muted hover:text-white"
               }`}
@@ -58,7 +76,7 @@ export default function PremiumPage() {
               KES
             </button>
             <button
-              onClick={() => setCurrency("USD")}
+              onClick={() => handleCurrencyChange("USD")}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                 currency === "USD" ? "bg-accent text-black" : "text-gray-muted hover:text-white"
               }`}
@@ -128,7 +146,7 @@ export default function PremiumPage() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <button
                 type="button"
-                onClick={() => setSelectedGateway("mpesa")}
+                onClick={() => handleGatewaySelect("mpesa")}
                 className={`flex flex-col items-center justify-center rounded-xl border p-4 transition ${
                   selectedGateway === "mpesa"
                     ? "border-[#22c55e] bg-[#22c55e]/10 text-white shadow-lg shadow-[#22c55e]/10"
@@ -138,12 +156,12 @@ export default function PremiumPage() {
                 <div className="mb-2 flex h-8 items-center rounded bg-[#41B649] px-2.5 font-sans text-xs font-black tracking-tight text-white">
                   M-PESA
                 </div>
-                <span className="text-[11px] font-medium">STK Push</span>
+                <span className="text-[11px] font-medium">STK Push (KES)</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setSelectedGateway("card")}
+                onClick={() => handleGatewaySelect("card")}
                 className={`flex flex-col items-center justify-center rounded-xl border p-4 transition ${
                   selectedGateway === "card"
                     ? "border-blue-500 bg-blue-500/10 text-white shadow-lg shadow-blue-500/10"
@@ -157,12 +175,12 @@ export default function PremiumPage() {
                     <span className="h-4 w-4 rounded-full bg-[#F79E1B]/90" />
                   </div>
                 </div>
-                <span className="text-[11px] font-medium">Card / Paystack</span>
+                <span className="text-[11px] font-medium">Card / Paystack (USD)</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setSelectedGateway("paypal")}
+                onClick={() => handleGatewaySelect("paypal")}
                 className={`flex flex-col items-center justify-center rounded-xl border p-4 transition ${
                   selectedGateway === "paypal"
                     ? "border-[#0070ba] bg-[#0070ba]/10 text-white shadow-lg shadow-[#0070ba]/10"
@@ -172,7 +190,7 @@ export default function PremiumPage() {
                 <div className="mb-2 flex h-8 items-center rounded bg-[#003087] px-2.5 font-serif text-xs font-extrabold italic text-[#0070ba]">
                   <span className="text-white">Pay</span><span className="text-[#0079C1]">Pal</span>
                 </div>
-                <span className="text-[11px] font-medium">International</span>
+                <span className="text-[11px] font-medium">International (USD)</span>
               </button>
             </div>
           </div>
@@ -181,7 +199,7 @@ export default function PremiumPage() {
             {selectedGateway === "mpesa" && (
               <div className="space-y-3">
                 <div className="rounded-lg border border-[#22c55e]/30 bg-[#22c55e]/5 p-3 text-left text-xs text-[#22c55e]">
-                  ✓ Selected M-Pesa ({currency} {amount}): Instant STK push to your mobile number via Paystack.
+                  ✓ Selected M-Pesa (KES {effectiveKesAmount}): Instant STK push to your mobile number via Paystack.
                 </div>
                 <PaystackCheckoutButton amountInKes={effectiveKesAmount} />
               </div>
@@ -190,7 +208,7 @@ export default function PremiumPage() {
             {selectedGateway === "card" && (
               <div className="space-y-3">
                 <div className="rounded-lg border border-blue-500/35 bg-blue-500/5 p-3 text-left text-xs text-blue-400">
-                  ✓ Selected Visa / Mastercard: Secure card gateway via Paystack.
+                  ✓ Selected Visa / Mastercard (USD {amount}): Secure card gateway via Paystack.
                 </div>
                 <PaystackCheckoutButton amountInKes={effectiveKesAmount} />
               </div>
@@ -199,13 +217,13 @@ export default function PremiumPage() {
             {selectedGateway === "paypal" && (
               <div className="space-y-3">
                 <div className="rounded-lg border border-[#0070ba]/35 bg-[#0070ba]/5 p-3 text-left text-xs text-[#38bdf8]">
-                  ✓ Selected PayPal: Redirecting to international PayPal checkout.
+                  ✓ Selected PayPal (USD {amount}): Redirecting to international PayPal checkout.
                 </div>
                 <a
                   href={`/api/checkout/paypal?tier=${tier}&currency=${currency}`}
                   className="block w-full rounded-xl bg-[#0070ba] px-6 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#003087]"
                 >
-                  Pay with PayPal ({currency} {amount})
+                  Pay with PayPal (USD {amount})
                 </a>
               </div>
             )}
