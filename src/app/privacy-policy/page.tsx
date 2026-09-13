@@ -4,11 +4,11 @@ import { PolicyList, PolicyPage, PolicyParagraph, PolicySection } from "@/compon
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How JosephMmwa.com collects, uses, stores, and shares your information, including Google user data.",
-  alternates: { canonical: "/privacy" },
+  alternates: { canonical: "/privacy-policy" },
   openGraph: {
     title: "Privacy Policy — Joseph Mmwa",
     description: "How JosephMmwa.com collects, uses, stores, and shares your information, including Google user data.",
-    url: "/privacy",
+    url: "/privacy-policy",
   },
 };
 
@@ -267,7 +267,7 @@ export default function PrivacyPolicyPage() {
 
       <PolicySection heading="17. Contact">
         <PolicyParagraph>Questions, requests or concerns about this Privacy Policy can be sent to:</PolicyParagraph>
-        <PolicyParagraph className="not-italic">
+        <PolicyParagraph>
           Joseph Mmwa<br />
           Email:{" "}
           <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
