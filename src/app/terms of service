@@ -149,10 +149,7 @@ export default function TermsOfServicePage() {
           If a significant factual error is identified, we may correct or update the relevant content.
         </PolicyParagraph>
         <PolicyParagraph>
-          Readers may submit correction requests through:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a>
+          Readers may submit correction requests through: contact@josephmmwa.com
         </PolicyParagraph>
         <PolicyParagraph>
           A correction request does not guarantee that a change will be made. Corrections are assessed based on available evidence and editorial standards.
@@ -232,10 +229,7 @@ export default function TermsOfServicePage() {
           ]}
         />
         <PolicyParagraph>
-          Security vulnerabilities may be reported to:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a>
+          Security vulnerabilities may be reported to: contact@josephmmwa.com
         </PolicyParagraph>
       </PolicySection>
 
@@ -290,13 +284,8 @@ export default function TermsOfServicePage() {
 
       <PolicySection heading="20. Contact">
         <PolicyParagraph>Questions regarding these Terms of Service can be sent to:</PolicyParagraph>
-        <PolicyParagraph className="not-italic">
-          Joseph Mmwa<br />
-          Email:{" "}
-          <a href="mailto:contact@josephmmwa.com" className="text-accent hover:underline">
-            contact@josephmmwa.com
-          </a><br />
-          Website: <span className="text-white">josephmmwa.com</span>
+        <PolicyParagraph>
+          Joseph Mmwa — Email: contact@josephmmwa.com — Website: josephmmwa.com
         </PolicyParagraph>
       </PolicySection>
     </PolicyPage>
