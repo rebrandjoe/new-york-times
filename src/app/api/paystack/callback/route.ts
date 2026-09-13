@@ -27,7 +27,6 @@ export async function GET(request: Request) {
         user_id: user.id,
         status: "active",
         updated_at: new Date().toISOString(),
-        // Store reference in metadata or remove if column doesn't exist:
         metadata: { paystack_reference: reference },
       } as any);
     }
