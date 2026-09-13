@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 
+export const dynamic = "force-dynamic"; // Forces dynamic server-side rendering for auth/cookies
+
 export const metadata: Metadata = {
   title: "Premium Membership",
   description: "Join JOSEPH MMWA — full access to in-depth health and medical journalism.",
@@ -10,14 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PremiumPage() {
-  let userEmail: string | null = null;
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    userEmail = user?.email || null;
-  } catch (e) {
-    console.error("Auth check warning:", e);
-  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <Suspense fallback={<div className="py-20 text-center text-white">Loading membership options...</div>}>
