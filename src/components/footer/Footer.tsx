@@ -64,6 +64,16 @@ export function Footer() {
           <Tagline className="mt-2 text-sm text-gray-secondary" />
         </div>
 
+        {/* Required Google Verification / About Description block */}
+        <div className="mt-10 mx-auto max-w-2xl text-center space-y-2 border-t border-charcoal pt-8">
+          <h4 className="text-xs font-bold uppercase tracking-[0.15em] text-white">
+            About Joseph Mmwa
+          </h4>
+          <p className="text-xs text-gray-secondary-light leading-relaxed">
+            Joseph Mmwa is an independent health and medical news platform providing verified reporting, research, analysis and explanations of major health developments from Kenya, Africa and around the world. Readers can access health news, research and medical information, create an account, participate in article discussions and manage their account preferences.
+          </p>
+        </div>
+
         <div className="mt-10 flex flex-col items-center gap-4">
           <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
             Follow me
@@ -88,13 +98,18 @@ export function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-2 border-t border-charcoal pt-6">
-          <div className="flex gap-4">
-            <Link href="/privacy-policy" className="focus-ring text-xs text-gray-muted hover:text-accent">
-              Privacy
+          <div className="flex gap-4 items-center">
+            <Link href="/privacy" className="focus-ring text-xs text-gray-muted hover:text-accent">
+              Privacy Policy
             </Link>
-            <Link href="/terms-of-service" className="focus-ring text-xs text-gray-muted hover:text-accent">
-              Terms
+            <span className="text-gray-muted">|</span>
+            <Link href="/terms" className="focus-ring text-xs text-gray-muted hover:text-accent">
+              Terms of Service
             </Link>
+            <span className="text-gray-muted">|</span>
+            <a href="mailto:contact@josephmmwa.com" className="focus-ring text-xs text-gray-muted hover:text-accent">
+              Contact
+            </a>
           </div>
           <p className="text-xs text-gray-muted">
             © 2026 Joseph Mmwa. All rights reserved
