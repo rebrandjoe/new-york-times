@@ -99,11 +99,11 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col items-center gap-2 border-t border-charcoal pt-6">
           <div className="flex gap-4 items-center">
-            <Link href="/privacy" className="focus-ring text-xs text-gray-muted hover:text-accent">
+            <Link href="/privacy-policy" className="focus-ring text-xs text-gray-muted hover:text-accent">
               Privacy Policy
             </Link>
             <span className="text-gray-muted">|</span>
-            <Link href="/terms" className="focus-ring text-xs text-gray-muted hover:text-accent">
+            <Link href="/terms-of-service" className="focus-ring text-xs text-gray-muted hover:text-accent">
               Terms of Service
             </Link>
             <span className="text-gray-muted">|</span>
