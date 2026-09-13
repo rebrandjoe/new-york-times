@@ -29,7 +29,6 @@ export default function PremiumPage() {
 
   const handleCurrencyChange = (newCurrency: "KES" | "USD") => {
     setCurrency(newCurrency);
-    // Enforce rule: if KES is selected manually, switch/keep mpesa; if USD, default to card/paypal if on mpesa
     if (newCurrency === "KES" && selectedGateway !== "mpesa") {
       setSelectedGateway("mpesa");
     } else if (newCurrency === "USD" && selectedGateway === "mpesa") {
