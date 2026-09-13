@@ -17,7 +17,6 @@ export function PremiumCheckoutClient({ userEmail }: { userEmail?: string | null
   };
 
   const amount = pricing[tier][currency];
-  // Calculate KES equivalent if USD is toggled (approx 130 rate or pass USD support to backend)
   const effectiveKesAmount = currency === "KES" ? amount : Math.round(amount * 130);
 
   return (
