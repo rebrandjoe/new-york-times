@@ -6,18 +6,43 @@ export interface NavLink {
 export const primaryNav: NavLink[] = [
   { label: "HOME", href: "/" },
   { label: "LATEST", href: "/latest" },
-  { label: "AFRICA", href: "/africa" },
   { label: "KENYA", href: "/kenya" },
   { label: "GLOBAL", href: "/global" },
+  { label: "REGIONS", href: "/regions" },
   { label: "TOPICS", href: "/topics" },
-  { label: "ABOUT", href: "/about" },
 ];
+
+export const majorRegions = [
+  { name: "Africa", slug: "africa" },
+  { name: "Asia", slug: "asia" },
+  { name: "Europe", slug: "europe" },
+  { name: "North America", slug: "north-america" },
+  { name: "South America", slug: "south-america" },
+  { name: "Oceania", slug: "oceania" },
+] as const;
+
+export const primaryTopics = [
+  { name: "Diseases & Conditions", slug: "diseases-conditions", searchPlaceholder: "Search by disease..." },
+  { name: "Disease Outbreaks & Epidemics", slug: "disease-outbreaks-epidemics", searchPlaceholder: "Search by disease..." },
+  { name: "Treatments & Medicines", slug: "treatments-medicines", searchPlaceholder: "Search by treatment or medicine..." },
+  { name: "Medical Research", slug: "medical-research", searchPlaceholder: "Search research..." },
+  { name: "Medical Innovation & Technology", slug: "medical-innovation-technology", searchPlaceholder: "Search by technology or innovation..." },
+  { name: "Vaccines & Immunization", slug: "vaccines-immunization", searchPlaceholder: "Search by vaccine..." },
+  { name: "HIV & AIDS", slug: "hiv-aids", searchPlaceholder: "Search HIV & AIDS stories..." },
+  { name: "Cancer", slug: "cancer", searchPlaceholder: "Search by disease..." },
+  { name: "Maternal & Child Health", slug: "maternal-child-health", searchPlaceholder: "Search maternal & child health..." },
+  { name: "Mental Health", slug: "mental-health", searchPlaceholder: "Search mental health..." },
+  { name: "Public Health", slug: "public-health", searchPlaceholder: "Search public health..." },
+  { name: "Health Policy & Systems", slug: "health-policy-systems", searchPlaceholder: "Search policy or systems..." },
+  { name: "Nutrition", slug: "nutrition", searchPlaceholder: "Search nutrition..." },
+  { name: "Health & Environment", slug: "health-environment", searchPlaceholder: "Search environmental health..." },
+] as const;
 
 export const footerNews: NavLink[] = [
   { label: "Latest", href: "/latest" },
-  { label: "Africa", href: "/africa" },
   { label: "Kenya", href: "/kenya" },
   { label: "Global", href: "/global" },
+  { label: "Regions", href: "/regions" },
 ];
 
 export const footerInformation: NavLink[] = [
@@ -28,8 +53,8 @@ export const footerInformation: NavLink[] = [
 
 export const footerTopics: NavLink[] = [
   { label: "HIV & AIDS", href: "/topics/hiv-aids" },
-  { label: "Vaccines", href: "/topics/vaccines" },
-  { label: "Research", href: "/topics/medical-research" },
+  { label: "Vaccines & Immunization", href: "/topics/vaccines-immunization" },
+  { label: "Medical Research", href: "/topics/medical-research" },
   { label: "All topics", href: "/topics" },
 ];
 
