@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ListItemCard } from "@/components/ArticleCard";
 import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
 import { toHomepageArticle } from "@/lib/cms/mappers";
-import { TopicArticlesClient, type ArticleItem } from "@/components/TopicArticlesClient";
+import { TopicArticlesClient } from "@/components/TopicArticlesClient";
 
 export async function generateStaticParams() {
   const topics = await getTopics();
@@ -37,20 +38,7 @@ export default async function TopicPage({
   if (!topic) notFound();
 
   const rows = await getPublishedArticles({ topicSlug: slug, limit: 100 });
-  const articles: ArticleItem[] = rows.map((row) => {
-    const item = toHomepageArticle(row);
-    return {
-      id: item.id,
-      slug: item.slug,
-      title: item.title,
-      excerpt: item.excerpt,
-      read_time_minutes: item.read_time_minutes,
-      publication_date: item.publication_date,
-      category: item.category,
-      author: item.author,
-      featured_image: item.featured_image,
-    };
-  });
+  const articles = rows.map(toHomepageArticle);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
@@ -60,7 +48,7 @@ export default async function TopicPage({
       </h1>
 
       <TopicArticlesClient
-        articles={articles}
+        articles={articles as any}
         topicName={topic.name}
         topicSlug={topic.slug}
       />
