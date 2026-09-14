@@ -1,71 +1,57 @@
-"use client";
-
-import { useState, useMemo } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ListItemCard } from "@/components/ArticleCard";
+import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
+import { toHomepageArticle } from "@/lib/cms/mappers";
 
-interface TopicArticlesClientProps {
-  articles: any[];
-  topicName: string;
-  topicSlug: string;
+export async function generateStaticParams() {
+  const topics = await getTopics();
+  return topics.map((topic) => ({ slug: topic.slug }));
 }
 
-function getPlaceholder(slug: string): string {
-  switch (slug) {
-    case "diseases-conditions":
-    case "disease-outbreaks-epidemics":
-    case "cancer":
-      return "Search by disease...";
-    case "treatments-medicines":
-      return "Search by treatment or medicine...";
-    case "medical-innovation-technology":
-      return "Search by technology or innovation...";
-    case "medical-research":
-      return "Search research...";
-    case "vaccines-immunization":
-      return "Search by vaccine...";
-    default:
-      return "Search stories...";
-  }
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const topics = await getTopics();
+  const topic = topics.find((t) => t.slug === slug);
+  if (!topic) return { title: "Topic" };
+
+  return {
+    title: topic.name,
+    description: `Health and medical news on ${topic.name}, reported by JOSEPH MMWA.`,
+    alternates: { canonical: `/topics/${topic.slug}` },
+  };
 }
 
-export function TopicArticlesClient({ articles, topicName, topicSlug }: TopicArticlesClientProps) {
-  const [query, setQuery] = useState("");
-  const placeholder = getPlaceholder(topicSlug);
+export default async function TopicPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const topics = await getTopics();
+  const topic = topics.find((t) => t.slug === slug);
+  if (!topic) notFound();
 
-  const filtered = useMemo(() => {
-    if (!query.trim()) return articles;
-    const q = query.toLowerCase();
-    return articles.filter(
-      (a) =>
-        a.title?.toLowerCase().includes(q) ||
-        (a.excerpt && a.excerpt.toLowerCase().includes(q))
-    );
-  }, [articles, query]);
+  const rows = await getPublishedArticles({ topicSlug: slug, limit: 30 });
+  const articles = rows.map(toHomepageArticle);
 
   return (
-    <div className="mt-8">
-      <div className="mb-8">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={`🔍 ${placeholder}`}
-          className="w-full rounded-xl border border-charcoal bg-[#0F0F0F] px-4 py-3 text-sm text-white placeholder-gray-muted focus:border-accent focus:outline-none"
-        />
-      </div>
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Topic</p>
+      <h1 className="mt-3 font-serif text-4xl font-extrabold text-white sm:text-5xl">{topic.name}</h1>
 
       {articles.length === 0 ? (
         <p className="mt-10 text-base text-gray-secondary-light">
-          No stories on {topicName} have been published yet. Check back soon.
+          No stories on {topic.name} have been published yet. Check back soon.
         </p>
-      ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-charcoal bg-[#0F0F0F] p-8 text-center text-sm text-gray-muted">
-          No stories found matching &ldquo;{query}&rdquo;.
-        </div>
       ) : (
-        <div className="space-y-4">
-          {filtered.map((article) => (
-            <ListItemCard key={article.id} article={article} />
+        <div className="mt-10">
+          {articles.map((article) => (
+            <ListItemCard key={article.id} article={article as any} />
           ))}
         </div>
       )}
