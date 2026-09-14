@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
 import { toHomepageArticle } from "@/lib/cms/mappers";
-import { TopicArticlesClient } from "@/components/TopicArticlesClient";
+import { TopicArticlesClient, type ArticleItem } from "@/components/TopicArticlesClient";
 
 export async function generateStaticParams() {
   const topics = await getTopics();
@@ -37,7 +37,20 @@ export default async function TopicPage({
   if (!topic) notFound();
 
   const rows = await getPublishedArticles({ topicSlug: slug, limit: 100 });
-  const articles = rows.map(toHomepageArticle);
+  const articles: ArticleItem[] = rows.map((row) => {
+    const mapped = toHomepageArticle(row);
+    return {
+      id: mapped.id,
+      slug: mapped.slug,
+      title: mapped.title,
+      excerpt: mapped.excerpt,
+      read_time_minutes: mapped.read_time_minutes,
+      publication_date: mapped.publication_date,
+      category: mapped.category,
+      author: mapped.author,
+      featured_image: mapped.featured_image,
+    };
+  });
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
