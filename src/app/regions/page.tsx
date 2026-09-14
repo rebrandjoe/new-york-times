@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { majorRegions } from "@/lib/nav";
 import { SectionHeading } from "@/components/SectionHeading";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Regions | JOSEPH MMWA",
   description: "Browse health journalism coverage across major global regions.",
 };
