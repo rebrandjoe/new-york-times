@@ -75,14 +75,8 @@ export interface SocialLink {
 }
 
 export const socialLinks: SocialLink[] = [
-  {
-    label: "Facebook",
-    href: "https://www.facebook.com/share/19UtYycjr7/",
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/joseph-mmwa-08177a2a0?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-  },
+  { label: "Facebook", href: "https://www.facebook.com/share/19UtYycjr7/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/joseph-mmwa-08177a2a0?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
   { label: "YouTube", href: "https://youtube.com/@josephmmwa?si=FjP7SJcCAduNziJ3" },
   { label: "X", href: "https://x.com/Joseph_Mmwa" },
   { label: "Instagram", href: "https://www.instagram.com/mmwa_joseph?stkn=ZmVqdHl4d2ZrcTlv" },
