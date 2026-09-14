@@ -2,10 +2,21 @@
 
 import { useState, useMemo } from "react";
 import { ListItemCard } from "@/components/ArticleCard";
-import type { HomepageArticle } from "@/lib/cms/types";
+
+export interface ArticleItem {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  read_time_minutes?: number;
+  publication_date?: string;
+  category?: { name: string; slug: string } | null;
+  author?: { name: string; slug: string } | null;
+  featured_image?: { url: string; alt_text?: string | null } | null;
+}
 
 interface TopicArticlesClientProps {
-  articles: HomepageArticle[];
+  articles: ArticleItem[];
   topicName: string;
   topicSlug: string;
 }
@@ -45,7 +56,6 @@ export function TopicArticlesClient({ articles, topicName, topicSlug }: TopicArt
 
   return (
     <div className="mt-8">
-      {/* Live Search Input */}
       <div className="mb-8">
         <input
           type="text"
@@ -67,7 +77,7 @@ export function TopicArticlesClient({ articles, topicName, topicSlug }: TopicArt
       ) : (
         <div className="space-y-4">
           {filtered.map((article) => (
-            <ListItemCard key={article.id} article={article} />
+            <ListItemCard key={article.id} article={article as any} />
           ))}
         </div>
       )}
