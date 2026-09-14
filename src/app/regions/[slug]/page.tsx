@@ -21,16 +21,13 @@ export default function RegionDetailPage({ params }: { params: Promise<{ slug: s
   const regionName = regionObj ? regionObj.name : slug.replace("-", " ").toUpperCase();
 
   const [searchQuery, setSearchQuery] = useState("");
-  // In your production app, fetch initial articles matching `region === regionObj?.name` or `region === slug` from Supabase server/client component props.
-  // Here we hook into standard filtering pattern:
-  const [articles] = useState<ArticleItem[]>([]); // populated via server loader or client fetch pattern
+  // In your production app, populate this via server loader or client fetch matching region
+  const [articles] = useState<ArticleItem[]>([]);
 
   const filteredArticles = useMemo(() => {
     if (!searchQuery.trim()) return articles;
     const q = searchQuery.toLowerCase();
-    return articles.load
-      ? articles.filter((a) => (a.country || "").toLowerCase().includes(q))
-      : [];
+    return articles.filter((a) => (a.country || "").toLowerCase().includes(q));
   }, [articles, searchQuery]);
 
   return (
