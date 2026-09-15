@@ -13,6 +13,7 @@ import type { ContentBlock } from "@/lib/cms/blocks";
 import type { CmsArticle, CmsAuthor, CmsCategory, CmsMedia, CmsTopic } from "@/lib/cms/types";
 import { TiptapEditor } from "./editor/TiptapEditor";
 import { MediaPickerField } from "./MediaPickerField";
+import { CountryField } from "./CountryField";
 
 type SaveState = "idle" | "unsaved" | "saving" | "saved" | "error";
 
@@ -426,7 +427,7 @@ export function ArticleEditor({
             </div>
             <div>
               <label className={labelClass()}>Country</label>
-              <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} className={fieldClass()} />
+              <CountryField value={country} onChange={setCountry} className={fieldClass()} />
             </div>
           </div>
 
