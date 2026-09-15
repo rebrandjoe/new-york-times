@@ -3,20 +3,13 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ListItemCard } from "@/components/ArticleCard";
+import type { Article } from "@/lib/types";
 
-export interface ArticleItem {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt?: string | null;
-  country?: string;
-  region?: string;
-  publication_date?: string;
-  read_time_minutes?: number;
-  category?: { name: string; slug: string } | null;
-  author?: { name: string; slug: string } | null;
-  featured_image?: { url: string; alt_text?: string | null } | null;
-}
+// Same shape ListItemCard already renders everywhere else on the site
+// (headline/description/image/publication), plus the one extra field this
+// page's live filter needs: the article's country, which isn't part of the
+// standard homepage article shape.
+export type ArticleItem = Article & { country?: string | null };
 
 interface RegionArticlesClientProps {
   articles: ArticleItem[];

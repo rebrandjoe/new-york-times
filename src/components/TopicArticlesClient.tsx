@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ListItemCard } from "@/components/ArticleCard";
+import { primaryTopics } from "@/lib/nav";
 
 export function TopicArticlesClient({
   articles,
@@ -13,6 +14,8 @@ export function TopicArticlesClient({
   topicSlug: string;
 }) {
   const [query, setQuery] = useState("");
+  const placeholder =
+    primaryTopics.find((t) => t.slug === topicSlug)?.searchPlaceholder ?? "Search stories...";
 
   const filtered = useMemo(() => {
     if (!query.trim()) return articles;
@@ -31,7 +34,7 @@ export function TopicArticlesClient({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="🔍 Search stories..."
+          placeholder={`🔍 ${placeholder}`}
           className="w-full rounded-xl border border-charcoal bg-[#0F0F0F] px-4 py-3 text-sm text-white placeholder-gray-muted focus:border-accent focus:outline-none"
         />
       </div>

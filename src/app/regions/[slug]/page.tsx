@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ListItemCard } from "@/components/ArticleCard";
-import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
+import { getArticlesByRegion } from "@/lib/cms/queries";
 import { toHomepageArticle } from "@/lib/cms/mappers";
+import { RegionArticlesClient, type ArticleItem } from "@/components/RegionArticlesClient";
+import { majorRegions } from "@/lib/nav";
 
 export async function generateStaticParams() {
-  const topics = await getTopics();
-  return topics.map((topic) => ({ slug: topic.slug }));
+  return majorRegions.map((region) => ({ slug: region.slug }));
 }
 
 export async function generateMetadata({
@@ -15,50 +15,34 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const topics = await getTopics();
-  const topic = topics.find((t) => t.slug === slug);
-  if (!topic) return { title: "Topic Not Found" };
+  const region = majorRegions.find((r) => r.slug === slug);
+  if (!region) return { title: "Region" };
 
   return {
-    title: `${topic.name} | JOSEPH MMWA`,
-    description: `Health and medical news on ${topic.name}, reported by JOSEPH MMWA.`,
-    alternates: { canonical: `/topics/${topic.slug}` },
+    title: `${region.name} | JOSEPH MMWA`,
+    description: `Health and medical news from ${region.name}, reported by JOSEPH MMWA.`,
+    alternates: { canonical: `/regions/${region.slug}` },
   };
 }
 
-export default async function TopicPage({
+export default async function RegionPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const topics = await getTopics();
-  const topic = topics.find((t) => t.slug === slug);
-  if (!topic) notFound();
+  const region = majorRegions.find((r) => r.slug === slug);
+  if (!region) notFound();
 
-  const rows = await getPublishedArticles({ topicSlug: slug, limit: 30 });
-  const articles = rows.map(toHomepageArticle);
+  const rows = await getArticlesByRegion(region.name, 100);
+  const articles: ArticleItem[] = rows.map((row) => ({
+    ...toHomepageArticle(row),
+    country: row.country,
+  }));
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Topic</p>
-        <h1 className="mt-3 font-serif text-4xl font-extrabold text-white sm:text-5xl">
-          {topic.name}
-        </h1>
-
-        {articles.length === 0 ? (
-          <p className="mt-10 text-base text-gray-secondary-light">
-            No stories on {topic.name} have been published yet. Check back soon.
-          </p>
-        ) : (
-          <div className="mt-10 space-y-4">
-            {articles.map((article) => (
-              <ListItemCard key={article.id} article={article as any} />
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <RegionArticlesClient articles={articles} regionName={region.name} />
     </div>
   );
 }

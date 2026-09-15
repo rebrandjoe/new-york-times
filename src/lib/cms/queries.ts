@@ -174,6 +174,29 @@ export async function getRelatedArticles(article: CmsArticle, limit = 4): Promis
   return scored.slice(0, limit).map((s) => s.candidate);
 }
 
+/**
+ * Fetches articles by geographic region (Africa, Asia, Europe, North America,
+ * South America, Oceania) — matched against the free-text `region` column.
+ * This is distinct from `categorySlug` above, which filters by the
+ * Kenya/Africa/Global editorial category tabs; a single article can belong
+ * to one category ("Africa" tab) while its `region` column also reads
+ * "Africa" for geographic browsing. Both are correct at once, by design.
+ */
+export async function getArticlesByRegion(regionName: string, limit = 100): Promise<CmsArticle[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("articles")
+    .select(ARTICLE_SELECT)
+    .or(publicVisibilityFilter())
+    .ilike("region", regionName)
+    .order("publication_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) return [];
+  return (data as unknown as RawArticleRow[]).map(mapRowToCmsArticle);
+}
+
 export async function getCategories(): Promise<CmsCategory[]> {
   const supabase = await createClient();
   const { data } = await supabase.from("categories").select("id, name, slug").order("name");
