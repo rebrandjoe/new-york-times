@@ -114,6 +114,8 @@ function formatDate(iso: string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 

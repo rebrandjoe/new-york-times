@@ -17,8 +17,12 @@ import { CountryField } from "./CountryField";
 
 type SaveState = "idle" | "unsaved" | "saving" | "saved" | "error";
 
-function toDateInputValue(iso: string): string {
-  return new Date(iso).toISOString().slice(0, 10);
+function toDatetimeLocalValue(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+    d.getMinutes()
+  )}`;
 }
 
 function fieldClass() {
@@ -63,7 +67,7 @@ export function ArticleEditor({
   const [country, setCountry] = useState(initial?.country ?? "");
   const [authorId, setAuthorId] = useState(initial?.author.id ?? authors[0]?.id ?? "");
   const [publicationDate, setPublicationDate] = useState(
-    initial ? toDateInputValue(initial.publicationDate) : toDateInputValue(new Date().toISOString())
+    initial ? toDatetimeLocalValue(initial.publicationDate) : toDatetimeLocalValue(new Date().toISOString())
   );
   const [autoReadTime, setAutoReadTime] = useState(true);
   const [readTimeMinutes, setReadTimeMinutes] = useState(initial?.readTimeMinutes ?? 3);
@@ -441,9 +445,9 @@ export function ArticleEditor({
           </div>
 
           <div>
-            <label className={labelClass()}>Publication date</label>
+            <label className={labelClass()}>Publication date & time</label>
             <input
-              type="date"
+              type="datetime-local"
               value={publicationDate}
               onChange={(e) => setPublicationDate(e.target.value)}
               className={fieldClass()}

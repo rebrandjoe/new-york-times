@@ -15,7 +15,13 @@ import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 /** The real production article layout — shared by the public /article/[slug]
