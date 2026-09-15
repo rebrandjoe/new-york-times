@@ -14,6 +14,7 @@ import type { CmsArticle, CmsAuthor, CmsCategory, CmsMedia, CmsTopic } from "@/l
 import { TiptapEditor } from "./editor/TiptapEditor";
 import { MediaPickerField } from "./MediaPickerField";
 import { CountryField } from "./CountryField";
+import { majorRegions } from "@/lib/nav";
 
 type SaveState = "idle" | "unsaved" | "saving" | "saved" | "error";
 
@@ -427,7 +428,14 @@ export function ArticleEditor({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelClass()}>Region</label>
-              <input type="text" value={region} onChange={(e) => setRegion(e.target.value)} className={fieldClass()} />
+              <select value={region} onChange={(e) => setRegion(e.target.value)} className={fieldClass()}>
+                <option value="">Select a region...</option>
+                {majorRegions.map((r) => (
+                  <option key={r.slug} value={r.name}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className={labelClass()}>Country</label>
