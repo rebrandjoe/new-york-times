@@ -7,15 +7,6 @@ export function WhoIAm() {
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
       <SectionHeading title="Who I Am" />
       <div className="max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
-        <div>
-          <h2 className="font-serif text-3xl font-extrabold text-white sm:text-4xl">
-            Joseph Mmwa
-          </h2>
-          <p className="mt-1 text-sm font-medium uppercase tracking-wider text-accent">
-            Health news editor and journalist
-          </p>
-        </div>
-
         <p className="pt-2">
           Joseph Mmwa is a Kenyan health news editor and journalist focused on
           making health and medical news clear, accessible and meaningful to
