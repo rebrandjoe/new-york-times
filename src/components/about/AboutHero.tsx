@@ -9,7 +9,7 @@ export function AboutHero() {
         JOSEPH MMWA
       </h1>
       <p className="mt-2 text-lg font-medium text-gray-secondary-light sm:text-xl">
-        Health News Publisher &amp; Aggregator
+        Health news editor and journalist
       </p>
 
       <div className="mt-10 grid grid-cols-1 gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
