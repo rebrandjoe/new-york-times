@@ -70,7 +70,7 @@ export function Footer() {
             About Joseph Mmwa
           </h4>
           <p className="text-xs text-gray-secondary-light leading-relaxed">
-            Joseph Mmwa is an independent health and medical news platform covering major developments in Kenya, Africa and around the world. I report and explain breaking health news, medical research, public health, diseases, vaccines, healthcare policy and scientific developments—with context, evidence and a focus on why the story matters. Clear. Credible. Health news as it happens.
+            Joseph Mmwa is an independent health and medical news platform covering major developments in Kenya, Africa and around the world. I report and explain breaking health news, medical research, public health, diseases, vaccines, healthcare policy and scientific developments—with context, evidence and a focus on why the story matters.
           </p>
         </div>
 
