@@ -5,13 +5,16 @@ import { getCategories } from "@/lib/cms/queries";
 import { ArticleRowActions } from "@/components/admin/ArticleRowActions";
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return (
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }) + " UTC"
+  );
 }
 
 const STATUSES: { value: AdminArticleFilters["status"]; label: string }[] = [

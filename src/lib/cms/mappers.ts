@@ -4,7 +4,7 @@ import type { ArticleStatus, CmsArticle, CmsMedia } from "./types";
 
 export const ARTICLE_SELECT = `
   id, slug, title, excerpt, body, region, country,
-  publication_date, updated_at, read_time_minutes, status, scheduled_at, premium, featured,
+  publication_date, updated_at, read_time_minutes, status, scheduled_at, premium,
   seo_title, seo_description, canonical_url, correction_note,
   source_name, source_author, source_institution, source_url, source_published_at, source_additional,
   category:categories!articles_category_id_fkey(id, name, slug),
@@ -30,7 +30,6 @@ export interface RawArticleRow {
   status: string;
   scheduled_at: string | null;
   premium: boolean;
-  featured: boolean;
   seo_title: string | null;
   seo_description: string | null;
   canonical_url: string | null;
@@ -94,7 +93,6 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
     status: row.status as ArticleStatus,
     scheduledAt: row.scheduled_at,
     premium: row.premium,
-    featured: row.featured,
     seoTitle: row.seo_title,
     seoDescription: row.seo_description,
     canonicalUrl: row.canonical_url,
@@ -112,13 +110,16 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return (
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }) + " UTC"
+  );
 }
 
 /** Adapts a CmsArticle to the existing homepage `Article` shape so the

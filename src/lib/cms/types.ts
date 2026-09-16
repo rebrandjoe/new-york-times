@@ -50,10 +50,6 @@ export interface CmsArticle {
   status: ArticleStatus;
   scheduledAt: string | null;
   premium: boolean;
-  /** Editor-set flag to manually pin this story as the homepage/section
-   * lead regardless of publish time, the way a newsroom picks its top
-   * story. */
-  featured: boolean;
   seoTitle: string | null;
   seoDescription: string | null;
   canonicalUrl: string | null;

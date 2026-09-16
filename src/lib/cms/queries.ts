@@ -21,12 +21,9 @@ export async function getPublishedArticles(options?: {
     .from("articles")
     .select(ARTICLE_SELECT)
     .or(publicVisibilityFilter())
-    // Featured sorts first (an editor's manual pick for the lead story),
-    // then by true recency as before — same tiebreaker reasoning as the
-    // comment below applies beneath the featured pin.
-    .order("featured", { ascending: false })
-    // Multiple articles can share the same publication_date to the minute
-    // (or, for older articles saved with the old date-only picker, the same
+    // Fully automatic: sorted purely by recency, no manual pin. Multiple
+    // articles can share the same publication_date to the minute (or, for
+    // older articles saved with the old date-only picker, the same
     // midnight timestamp) — created_at breaks the tie so the most recently
     // published article always sorts first.
     .order("publication_date", { ascending: false })

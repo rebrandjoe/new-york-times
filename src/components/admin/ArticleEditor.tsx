@@ -73,7 +73,6 @@ export function ArticleEditor({
   const [autoReadTime, setAutoReadTime] = useState(true);
   const [readTimeMinutes, setReadTimeMinutes] = useState(initial?.readTimeMinutes ?? 3);
   const [premium, setPremium] = useState(initial?.premium ?? false);
-  const [featured, setFeatured] = useState(initial?.featured ?? false);
   const [correctionNote, setCorrectionNote] = useState(initial?.correctionNote ?? "");
   const [sourceName, setSourceName] = useState(initial?.source.name ?? "");
   const [sourceAuthor, setSourceAuthor] = useState(initial?.source.author ?? "");
@@ -104,7 +103,6 @@ export function ArticleEditor({
       publicationDate: new Date(publicationDate).toISOString(),
       readTimeMinutes: autoReadTime ? null : readTimeMinutes,
       premium,
-      featured,
       correctionNote: correctionNote || null,
       sourceName: sourceName || null,
       sourceAuthor: sourceAuthor || null,
@@ -138,7 +136,7 @@ export function ArticleEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     title, slug, excerpt, body, featuredImageId, categoryId, topicIds, region, country,
-    authorId, publicationDate, autoReadTime, readTimeMinutes, premium, featured,
+    authorId, publicationDate, autoReadTime, readTimeMinutes, premium,
     correctionNote, sourceName, sourceAuthor,
     sourceInstitution, sourceUrl, sourceAdditional,
   ]);
@@ -463,6 +461,9 @@ export function ArticleEditor({
               onChange={(e) => setPublicationDate(e.target.value)}
               className={fieldClass()}
             />
+            <p className="mt-1 text-xs text-gray-muted">
+              Entered in your local time zone. Shown to readers site-wide as UTC.
+            </p>
           </div>
 
           <div>
@@ -500,19 +501,6 @@ export function ArticleEditor({
             />
             <label htmlFor="premium" className="text-sm text-gray-secondary-light">
               Premium article
-            </label>
-          </div>
-
-          <div className="flex items-center gap-2 border border-charcoal p-3">
-            <input
-              type="checkbox"
-              id="featured"
-              checked={featured}
-              onChange={(e) => setFeatured(e.target.checked)}
-              className="h-4 w-4 accent-[var(--brand-accent)]"
-            />
-            <label htmlFor="featured" className="text-sm text-gray-secondary-light">
-              Featured (pin as homepage/section lead story)
             </label>
           </div>
         </div>

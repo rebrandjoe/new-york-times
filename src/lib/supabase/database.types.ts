@@ -120,7 +120,6 @@ export type Database = {
           created_at: string
           created_by: string | null
           excerpt: string | null
-          featured: boolean
           featured_image_id: string | null
           id: string
           premium: boolean
@@ -153,7 +152,6 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
-          featured?: boolean
           featured_image_id?: string | null
           id?: string
           premium?: boolean
@@ -186,7 +184,6 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
-          featured?: boolean
           featured_image_id?: string | null
           id?: string
           premium?: boolean
