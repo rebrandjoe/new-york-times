@@ -8,7 +8,7 @@ export function WhoIAm() {
       <SectionHeading title="About Joseph Mmwa" />
       <div className="max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
         <p>
-          Joseph Mmwa is a Kenyan health news editor and aggregator focused on
+          Joseph Mmwa is a Kenyan health news editor and journalist focused on
           making health and medical news clear, accessible and meaningful to
           everyone.
         </p>
@@ -19,8 +19,9 @@ export function WhoIAm() {
         </p>
         <p>
           My work is about finding the stories that matter, understanding what
-          they mean, verifying the information and presenting them clearly so
-          people can better understand the health issues affecting their lives.
+          they mean, verifying the information, attributing it to the original
+          sources and presenting it clearly so people can better understand the
+          health issues affecting their lives.
         </p>
 
         <p className="!mt-8 font-semibold text-offwhite">My approach is simple:</p>
@@ -41,8 +42,8 @@ export function WhoIAm() {
         </div>
 
         <p className="!mt-8">
-          My mission is simple: to make sure no important health story goes
-          unnoticed, misunderstood or unexplained.
+          My mission is simple: to make important health stories easier to find,
+          understand and put into context.
         </p>
       </div>
     </section>
