@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
-import { getArticleForEdit } from "@/lib/cms/admin-queries";
+import { getArticleForEdit, getAdminArticles } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
 import { ARTICLE_SELECT, mapRowToCmsArticle, type RawArticleRow } from "@/lib/cms/mappers";
 import type { Json } from "@/lib/supabase/database.types";
@@ -265,4 +265,27 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
 export async function deleteArticleAndRedirect(articleId: string) {
   await deleteArticle(articleId);
   redirect("/admin/articles");
+}
+
+/** Used by the article body editor's "link to another article" search —
+ * only searches published articles, so an internal link never points at a
+ * draft a reader can't actually see. */
+export async function searchArticlesForLinking(
+  query: string,
+  excludeId?: string
+): Promise<{ id: string; title: string; slug: string }[]> {
+  const { supabase } = await requireAdmin();
+  if (!query.trim()) return [];
+
+  const rows = await getAdminArticles(supabase, {
+    status: "published",
+    search: query.trim(),
+    sort: "publication_date",
+    sortDirection: "desc",
+  });
+
+  return rows
+    .filter((r) => r.id !== excludeId)
+    .slice(0, 8)
+    .map((r) => ({ id: r.id, title: r.title, slug: r.slug }));
 }

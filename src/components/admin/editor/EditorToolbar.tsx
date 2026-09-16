@@ -1,6 +1,7 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
+import { LinkButton } from "./LinkButton";
 
 function buttonClass(active: boolean) {
   return `focus-ring border px-2.5 py-1.5 text-sm font-semibold ${
@@ -14,7 +15,7 @@ function Divider() {
 
 /** Sticky formatting toolbar above the writing canvas — one continuous
  * surface, no per-block controls. */
-export function EditorToolbar({ editor }: { editor: Editor }) {
+export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId?: string }) {
   return (
     <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1.5 border border-charcoal bg-charcoal-deep p-2">
       <button
@@ -33,6 +34,7 @@ export function EditorToolbar({ editor }: { editor: Editor }) {
       >
         I
       </button>
+      <LinkButton editor={editor} articleId={articleId} />
 
       <Divider />
 

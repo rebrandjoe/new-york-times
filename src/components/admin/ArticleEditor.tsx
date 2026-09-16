@@ -341,6 +341,7 @@ export function ArticleEditor({
                 onChange={setBody}
                 media={mediaList}
                 onMediaUploaded={handleMediaUploaded}
+                articleId={id}
               />
             </div>
           </div>

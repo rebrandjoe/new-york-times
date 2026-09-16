@@ -8,7 +8,7 @@ import type { ContentBlock } from "./blocks";
  * are — only the admin authoring surface changes.
  */
 
-const INLINE_PATTERN = /\*\*(.+?)\*\*|\*(.+?)\*|\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g;
+const INLINE_PATTERN = /\*\*(.+?)\*\*|\*(.+?)\*|\[(.+?)\]\(((?:https?:\/\/|\/)[^\s)]+)\)/g;
 
 /** "**bold** *italic* [text](url)" -> Tiptap inline text nodes with marks. */
 function inlineFromText(text: string): JSONContent[] {

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
 import type { ContentBlock } from "@/lib/cms/blocks";
 import type { CmsMedia } from "@/lib/cms/types";
 import { blocksToTiptapDoc, tiptapDocToBlocks } from "@/lib/cms/tiptap-blocks";
@@ -21,17 +22,27 @@ export function TiptapEditor({
   onChange,
   media,
   onMediaUploaded,
+  articleId,
 }: {
   blocks: ContentBlock[];
   onChange: (blocks: ContentBlock[]) => void;
   media: CmsMedia[];
   onMediaUploaded?: (media: CmsMedia) => void;
+  /** Current article's own id, so the "link to another article" search
+   * excludes this article from its own results. Undefined for a new,
+   * unsaved draft — nothing to exclude yet. */
+  articleId?: string;
 }) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
       Placeholder.configure({ placeholder: "Start writing…" }),
+      Link.configure({
+        openOnClick: false,
+        autolink: false,
+        HTMLAttributes: { class: "text-accent underline underline-offset-2" },
+      }),
       ArticleImage.configure({ media, onUploaded: onMediaUploaded }),
       ArticleVideo,
       PullQuote,
@@ -60,7 +71,7 @@ export function TiptapEditor({
 
   return (
     <div className="tiptap-editor border border-charcoal bg-charcoal-deep">
-      <EditorToolbar editor={editor} />
+      <EditorToolbar editor={editor} articleId={articleId} />
       <EditorContent editor={editor} />
     </div>
   );
