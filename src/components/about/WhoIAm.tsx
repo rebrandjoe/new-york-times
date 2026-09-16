@@ -5,9 +5,18 @@ const steps = ["Read", "Understand", "Verify", "Attribute", "Write", "Publish"];
 export function WhoIAm() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-      <SectionHeading title="About Joseph Mmwa" />
+      <SectionHeading title="Who I Am" />
       <div className="max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
-        <p>
+        <div>
+          <h2 className="font-serif text-3xl font-extrabold text-white sm:text-4xl">
+            Joseph Mmwa
+          </h2>
+          <p className="mt-1 text-sm font-medium uppercase tracking-wider text-accent">
+            Health news editor and journalist
+          </p>
+        </div>
+
+        <p className="pt-2">
           Joseph Mmwa is a Kenyan health news editor and journalist focused on
           making health and medical news clear, accessible and meaningful to
           everyone.
@@ -20,11 +29,11 @@ export function WhoIAm() {
         <p>
           My work is about finding the stories that matter, understanding what
           they mean, verifying the information, attributing it to the original
-          sources and presenting it clearly so people can better understand the
-          health issues affecting their lives.
+          sources and presenting it clearly — with people at the centre, helping
+          them understand the health issues around them and why they matter.
         </p>
 
-        <p className="!mt-8 font-semibold text-offwhite">My approach is simple:</p>
+        <p className="!mt-8 font-semibold text-offwhite">My approach:</p>
 
         <div className="!mt-3 flex flex-wrap items-center gap-x-3 gap-y-3">
           {steps.map((step, i) => (
@@ -42,8 +51,10 @@ export function WhoIAm() {
         </div>
 
         <p className="!mt-8">
-          My mission is simple: to make important health stories easier to find,
-          understand and put into context.
+          I envision a health news platform that takes African health stories to
+          the world and brings important global health developments to African
+          audiences — making health and medicine better understood across
+          borders.
         </p>
       </div>
     </section>
