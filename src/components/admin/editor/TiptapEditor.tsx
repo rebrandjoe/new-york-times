@@ -5,9 +5,10 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
+import { Fragment, Slice } from "@tiptap/pm/model";
 import type { ContentBlock } from "@/lib/cms/blocks";
 import type { CmsMedia } from "@/lib/cms/types";
-import { blocksToTiptapDoc, tiptapDocToBlocks } from "@/lib/cms/tiptap-blocks";
+import { blocksToTiptapDoc, tiptapDocToBlocks, inlineFromText } from "@/lib/cms/tiptap-blocks";
 import { ArticleImage } from "./ArticleImageExtension";
 import { ArticleVideo } from "./ArticleVideoExtension";
 import { PullQuote } from "./PullQuoteExtension";
@@ -52,6 +53,43 @@ export function TiptapEditor({
     editorProps: {
       attributes: {
         class: "px-5 py-6 sm:px-8 sm:py-8",
+      },
+      // Lets a plain-text draft that already contains **bold**, *italic*,
+      // or [text](url) source links (e.g. a draft handed over from chat,
+      // with the exact source URLs already written in) turn into real
+      // formatting and working links the moment it's pasted — no manual
+      // re-linking of every "according to CDC" needed. Only intercepts
+      // when that markdown pattern is actually present; a normal paste of
+      // plain prose (or an image, or anything else) is untouched and
+      // falls through to Tiptap's default paste handling.
+      handlePaste: (view, event) => {
+        const text = event.clipboardData?.getData("text/plain") ?? "";
+        const looksLikeMarkdown = /\*\*.+?\*\*|\[.+?\]\((?:https?:\/\/|\/)[^\s)]+\)/.test(text);
+        if (!text || !looksLikeMarkdown) return false;
+
+        event.preventDefault();
+        const paragraphs = text
+          .split(/\n{2,}/)
+          .map((p) => p.trim())
+          .filter(Boolean);
+
+        const { schema } = view.state;
+        const nodes = paragraphs.map((p) =>
+          schema.nodes.paragraph.create(
+            null,
+            inlineFromText(p).map((n) =>
+              schema.text(
+                n.text ?? "",
+                (n.marks ?? []).map((m) => schema.marks[m.type].create(m.attrs))
+              )
+            )
+          )
+        );
+
+        const fragment = Fragment.fromArray(nodes);
+        const tr = view.state.tr.replaceSelection(new Slice(fragment, 0, 0));
+        view.dispatch(tr);
+        return true;
       },
     },
   });

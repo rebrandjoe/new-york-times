@@ -10,8 +10,10 @@ import type { ContentBlock } from "./blocks";
 
 const INLINE_PATTERN = /\*\*(.+?)\*\*|\*(.+?)\*|\[(.+?)\]\(((?:https?:\/\/|\/)[^\s)]+)\)/g;
 
-/** "**bold** *italic* [text](url)" -> Tiptap inline text nodes with marks. */
-function inlineFromText(text: string): JSONContent[] {
+/** "**bold** *italic* [text](url)" -> Tiptap inline text nodes with marks.
+ * Exported for the paste handler below, which reuses this exact parser so
+ * pasted draft text and stored article text are interpreted identically. */
+export function inlineFromText(text: string): JSONContent[] {
   if (!text) return [];
   const nodes: JSONContent[] = [];
   let lastIndex = 0;
