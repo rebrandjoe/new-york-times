@@ -22,7 +22,7 @@ export interface Topic {
   slug: string;
 }
 
-export type RegionSlug = "africa" | "kenya" | "global";
+export type RegionSlug = "kenya" | "global";
 
 export interface Region {
   id: string;

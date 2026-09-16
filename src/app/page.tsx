@@ -10,15 +10,13 @@ import { toHomepageArticle } from "@/lib/cms/mappers";
 import type { RegionSlug } from "@/lib/types";
 
 const REGIONS: { slug: RegionSlug; label: string; href: string }[] = [
-  { slug: "africa", label: "Africa", href: "/africa" },
   { slug: "kenya", label: "Kenya", href: "/kenya" },
   { slug: "global", label: "Global", href: "/global" },
 ];
 
 export default async function Home() {
-  const [latestRows, africaRows, kenyaRows, globalRows, topics] = await Promise.all([
+  const [latestRows, kenyaRows, globalRows, topics] = await Promise.all([
     getPublishedArticles({ limit: 10 }),
-    getPublishedArticles({ categorySlug: "africa", limit: 4 }),
     getPublishedArticles({ categorySlug: "kenya", limit: 4 }),
     getPublishedArticles({ categorySlug: "global", limit: 4 }),
     getTopics(),
@@ -30,7 +28,6 @@ export default async function Home() {
   const latestNewsArticles = latest.slice(4, 10);
 
   const regionRows: Record<RegionSlug, ReturnType<typeof toHomepageArticle>[]> = {
-    africa: africaRows.map(toHomepageArticle),
     kenya: kenyaRows.map(toHomepageArticle),
     global: globalRows.map(toHomepageArticle),
   };

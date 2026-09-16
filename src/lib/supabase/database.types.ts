@@ -120,6 +120,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           excerpt: string | null
+          featured: boolean
           featured_image_id: string | null
           id: string
           premium: boolean
@@ -138,6 +139,7 @@ export type Database = {
           source_published_at: string | null
           source_url: string | null
           status: string
+          subtopic: string | null
           title: string
           updated_at: string
         }
@@ -151,6 +153,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
+          featured?: boolean
           featured_image_id?: string | null
           id?: string
           premium?: boolean
@@ -169,6 +172,7 @@ export type Database = {
           source_published_at?: string | null
           source_url?: string | null
           status?: string
+          subtopic?: string | null
           title: string
           updated_at?: string
         }
@@ -182,6 +186,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           excerpt?: string | null
+          featured?: boolean
           featured_image_id?: string | null
           id?: string
           premium?: boolean
@@ -200,6 +205,7 @@ export type Database = {
           source_published_at?: string | null
           source_url?: string | null
           status?: string
+          subtopic?: string | null
           title?: string
           updated_at?: string
         }

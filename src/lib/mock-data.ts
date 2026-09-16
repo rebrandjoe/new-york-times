@@ -32,14 +32,6 @@ export const latestArticles: Article[] = Array.from({ length: 6 }, (_, i) =>
 );
 
 export const regionalArticles: Record<RegionSlug, { featured: Article; supporting: Article[] }> = {
-  africa: {
-    featured: placeholderArticle("africa-featured", "africa"),
-    supporting: [
-      placeholderArticle("africa-1", "africa"),
-      placeholderArticle("africa-2", "africa"),
-      placeholderArticle("africa-3", "africa"),
-    ],
-  },
   kenya: {
     featured: placeholderArticle("kenya-featured", "kenya"),
     supporting: [

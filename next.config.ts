@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
       { source: "/subscribe", destination: "/premium", permanent: true },
       { source: "/latest/:slug", destination: "/article/:slug", permanent: true },
+      // "Africa" category retired (redundant with Regions -> Africa, which
+      // covers this properly with live country filtering).
+      { source: "/africa", destination: "/regions/africa", permanent: true },
     ];
   },
   async headers() {

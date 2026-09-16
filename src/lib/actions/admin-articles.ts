@@ -55,6 +55,7 @@ interface ArticleInput {
   publicationDate: string;
   readTimeMinutes: number | null;
   premium: boolean;
+  featured: boolean;
   correctionNote: string | null;
   sourceName: string | null;
   sourceAuthor: string | null;
@@ -100,6 +101,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       read_time_minutes: readTime,
       status: "draft",
       premium: input.premium,
+      featured: input.featured,
       correction_note: input.correctionNote,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
@@ -164,6 +166,7 @@ export async function updateArticle(
       publication_date: input.publicationDate,
       read_time_minutes: readTime,
       premium: input.premium,
+      featured: input.featured,
       correction_note: input.correctionNote,
       source_name: input.sourceName,
       source_author: input.sourceAuthor,
@@ -240,6 +243,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       read_time_minutes: original.readTimeMinutes,
       status: "draft",
       premium: original.premium,
+      featured: original.featured,
       source_name: original.source.name,
       source_author: original.source.author,
       source_institution: original.source.institution,
