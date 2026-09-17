@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SerwistProvider } from "@serwist/next/react";
+import Script from "next/script";
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -54,7 +55,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": `${SITE_URL}/#person`,
       name: "Joseph Mmwa",
-      jobTitle: "Health & Medical Journalist",
+      jobTitle: "Health news editor and journalist",
       url: SITE_URL,
     },
     {
@@ -68,8 +69,6 @@ const jsonLd = {
   ],
 };
 
-// Ticker headline is read with the cookie-free public client, so this can
-// revalidate on a timer instead of forcing every page to render dynamically.
 export const revalidate = 30;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -78,6 +77,25 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
       <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-0237X6C4K5"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-0237X6C4K5');
+            `,
+          }}
+        />
+
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
