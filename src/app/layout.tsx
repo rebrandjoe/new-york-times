@@ -77,6 +77,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
       <head>
+        {/* Bing Webmaster Tools Verification */}
+        <meta name="msvalidate.01" content="247FF23E5CD84F2D25422610639BE5BF" />
+
         {/* Google tag (gtag.js) */}
         <Script
           async
