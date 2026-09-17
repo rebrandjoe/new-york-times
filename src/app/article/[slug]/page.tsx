@@ -57,15 +57,52 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   ]);
 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
+  const imageUrl = article.featuredImage?.url || `${SITE_URL}/og-default.jpg`;
+
+  // Structured NewsArticle Schema for Google News & Microsoft aggregators
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.title,
+    description: article.excerpt,
+    image: [imageUrl],
+    datePublished: article.publicationDate,
+    dateModified: article.updatedAt || article.publicationDate,
+    author: {
+      "@type": "Person",
+      name: article.author?.name || "Joseph Mmwa",
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "JOSEPH MMWA",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+  };
 
   return (
-    <ArticleView
-      article={article}
-      related={related}
-      comments={comments}
-      articlePath={articlePath}
-      canonicalUrl={canonicalUrl}
-      premiumLocked={article.premium && !premiumAccess}
-    />
+    <>
+      {/* Inject NewsArticle Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
+      <ArticleView
+        article={article}
+        related={related}
+        comments={comments}
+        articlePath={articlePath}
+        canonicalUrl={canonicalUrl}
+        premiumLocked={article.premium && !premiumAccess}
+      />
+    </>
   );
 }
