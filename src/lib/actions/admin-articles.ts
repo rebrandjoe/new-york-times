@@ -6,6 +6,7 @@ import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import { getArticleForEdit, getAdminArticles } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
 import { ARTICLE_SELECT, mapRowToCmsArticle, type RawArticleRow } from "@/lib/cms/mappers";
+import { sendNewArticlePush } from "@/lib/push/send";
 import type { Json } from "@/lib/supabase/database.types";
 
 // Content blocks are a closed set of interfaces, not an index-signature type,
@@ -216,6 +217,22 @@ export async function setArticleStatus(
   if (error) return { error: error.message };
 
   await logAdminAction(supabase, user.email!, "set_article_status", "articles", articleId, { status });
+
+  if (status === "published") {
+    // Fire-and-forget: never let a push-sending problem block or fail the
+    // publish action itself — every individual send failure is already
+    // caught inside sendNewArticlePush, this just guards the lookup above it.
+    try {
+      const { data: article } = await supabase
+        .from("articles")
+        .select("title, slug")
+        .eq("id", articleId)
+        .single();
+      if (article) await sendNewArticlePush(article);
+    } catch (err) {
+      console.error("[push] failed to send new-article notification:", err);
+    }
+  }
 
   revalidatePath("/admin/articles");
   revalidatePath("/");

@@ -6,6 +6,7 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
 import { getActiveTickerHeadline } from "@/lib/cms/ticker";
 
 const displaySerif = Playfair_Display({
@@ -125,7 +126,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           reloadOnOnline={false}
         >
           <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
-          <InstallPrompt />
+          <div className="fixed inset-x-0 bottom-0 z-40 flex flex-col-reverse">
+            <InstallPrompt />
+            <NotificationPrompt />
+          </div>
         </SerwistProvider>
         <Analytics />
       </body>
