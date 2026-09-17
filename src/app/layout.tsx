@@ -72,7 +72,7 @@ const jsonLd = {
 
 export const revalidate = 30;
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const tickerHeadline = await getActiveTickerHeadline();
 
   return (
@@ -83,6 +83,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
         {/* Google AdSense Script */}
         <Script
+          id="google-adsense"
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7003579645111885"
           crossOrigin="anonymous"
