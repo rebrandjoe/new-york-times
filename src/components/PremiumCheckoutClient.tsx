@@ -1,15 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 
 type PaymentGateway = "mpesa" | "card" | "paypal" | null;
 type BillingTier = "monthly" | "annual";
 
 export function PremiumCheckoutClient({ userEmail }: { userEmail?: string | null }) {
+  const [isMounted, setIsMounted] = useState(false);
   const [tier, setTier] = useState<BillingTier>("monthly");
   const [selectedGateway, setSelectedGateway] = useState<PaymentGateway>("mpesa");
   const [currency, setCurrency] = useState<"KES" | "USD">("KES");
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div className="py-12 text-center text-xs text-gray-muted">Loading secure checkout...</div>;
+  }
 
   const pricing = {
     monthly: { KES: 390, USD: 4, label: "Monthly Access", period: "/ month" },
