@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
 import { requireAdmin } from "@/lib/cms/admin-guard";
 import { getArticleForEdit, getArticleTopicIds } from "@/lib/cms/admin-queries";
-import { getCategories, getAuthors, getTopics } from "@/lib/cms/queries";
+import { getAuthors, getTopics } from "@/lib/cms/queries";
 import { listMedia } from "@/lib/actions/admin-media";
 
 export default async function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,8 +12,7 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
   const article = await getArticleForEdit(supabase, id);
   if (!article) notFound();
 
-  const [categories, topics, authors, media, initialTopicIds] = await Promise.all([
-    getCategories(),
+  const [topics, authors, media, initialTopicIds] = await Promise.all([
     getTopics(),
     getAuthors(),
     listMedia(),
@@ -25,7 +24,6 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
       articleId={article.id}
       initial={article}
       initialTopicIds={initialTopicIds}
-      categories={categories}
       topics={topics}
       authors={authors}
       media={media}

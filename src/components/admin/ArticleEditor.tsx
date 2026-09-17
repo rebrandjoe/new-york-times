@@ -10,7 +10,7 @@ import {
   updateArticle,
 } from "@/lib/actions/admin-articles";
 import type { ContentBlock } from "@/lib/cms/blocks";
-import type { CmsArticle, CmsAuthor, CmsCategory, CmsMedia, CmsTopic } from "@/lib/cms/types";
+import type { CmsArticle, CmsAuthor, CmsMedia, CmsTopic } from "@/lib/cms/types";
 import { TiptapEditor } from "./editor/TiptapEditor";
 import { MediaPickerField } from "./MediaPickerField";
 import { CountryField } from "./CountryField";
@@ -38,7 +38,6 @@ export function ArticleEditor({
   articleId,
   initial,
   initialTopicIds = [],
-  categories,
   topics,
   authors,
   media,
@@ -46,7 +45,6 @@ export function ArticleEditor({
   articleId?: string;
   initial?: CmsArticle;
   initialTopicIds?: string[];
-  categories: CmsCategory[];
   topics: CmsTopic[];
   authors: CmsAuthor[];
   media: CmsMedia[];
@@ -62,7 +60,6 @@ export function ArticleEditor({
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [body, setBody] = useState<ContentBlock[]>(initial?.body ?? []);
   const [featuredImageId, setFeaturedImageId] = useState(initial?.featuredImage?.id ?? "");
-  const [categoryId, setCategoryId] = useState(initial?.category.id ?? categories[0]?.id ?? "");
   const [topicIds, setTopicIds] = useState<string[]>(initialTopicIds);
   const [region, setRegion] = useState(initial?.region ?? "");
   const [country, setCountry] = useState(initial?.country ?? "");
@@ -95,7 +92,6 @@ export function ArticleEditor({
       excerpt,
       body,
       featuredImageId: featuredImageId || null,
-      categoryId,
       topicIds,
       region: region || null,
       country: country || null,
@@ -135,7 +131,7 @@ export function ArticleEditor({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    title, slug, excerpt, body, featuredImageId, categoryId, topicIds, region, country,
+    title, slug, excerpt, body, featuredImageId, topicIds, region, country,
     authorId, publicationDate, autoReadTime, readTimeMinutes, premium,
     correctionNote, sourceName, sourceAuthor,
     sourceInstitution, sourceUrl, sourceAdditional,
@@ -393,15 +389,6 @@ export function ArticleEditor({
 
         <div className="space-y-6">
           <div>
-            <label className={labelClass()}>Category</label>
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass()}>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
             <label className={labelClass()}>Topics</label>
             <div className="mt-2 flex flex-wrap gap-2">
               {topics.map((topic) => {
@@ -441,6 +428,9 @@ export function ArticleEditor({
             <div>
               <label className={labelClass()}>Country</label>
               <CountryField value={country} onChange={setCountry} className={fieldClass()} />
+              <p className="mt-1 text-xs text-gray-muted">
+                Section: {country.trim().toLowerCase() === "kenya" ? "Kenya" : "Global"} (set automatically from country)
+              </p>
             </div>
           </div>
 

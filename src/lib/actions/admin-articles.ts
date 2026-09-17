@@ -15,6 +15,21 @@ function toJson(blocks: ContentBlock[]): Json {
   return blocks as unknown as Json;
 }
 
+/** Category is no longer an editor choice — it's derived automatically from
+ * the article's country, the way the site's Kenya/Global sections are
+ * actually meant to work: Kenya-specific stories vs. everything else.
+ * Falls back to Global if, for any reason, neither category row exists
+ * (shouldn't happen — both are seeded — but this keeps article creation
+ * from hard-failing on a missing lookup). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function resolveCategoryId(supabase: any, country: string | null): Promise<string> {
+  const slug = country?.trim().toLowerCase() === "kenya" ? "kenya" : "global";
+  const { data } = await supabase.from("categories").select("id").eq("slug", slug).single();
+  if (data?.id) return data.id;
+  const fallback = await supabase.from("categories").select("id").eq("slug", "global").single();
+  return fallback.data.id;
+}
+
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -47,7 +62,6 @@ interface ArticleInput {
   excerpt: string;
   body: ContentBlock[];
   featuredImageId: string | null;
-  categoryId: string;
   topicIds: string[];
   region: string | null;
   country: string | null;
@@ -92,7 +106,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       excerpt: input.excerpt || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
-      category_id: input.categoryId,
+      category_id: await resolveCategoryId(supabase, input.country),
       region: input.region,
       country: input.country,
       author_id: input.authorId,
@@ -157,7 +171,7 @@ export async function updateArticle(
       excerpt: input.excerpt || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
-      category_id: input.categoryId,
+      category_id: await resolveCategoryId(supabase, input.country),
       region: input.region,
       country: input.country,
       author_id: input.authorId,
@@ -232,7 +246,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       excerpt: original.excerpt,
       body: toJson(original.body as ContentBlock[]),
       featured_image_id: original.featuredImage?.id ?? null,
-      category_id: original.category.id,
+      category_id: await resolveCategoryId(supabase, original.country),
       region: original.region,
       country: original.country,
       author_id: original.author.id,
