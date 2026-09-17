@@ -81,6 +81,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Bing Webmaster Tools Verification */}
         <meta name="msvalidate.01" content="247FF23E5CD84F2D25422610639BE5BF" />
 
+        {/* Google AdSense Script */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7003579645111885"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Google tag (gtag.js) */}
         <Script
           async
