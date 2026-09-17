@@ -81,14 +81,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Bing Webmaster Tools Verification */}
         <meta name="msvalidate.01" content="247FF23E5CD84F2D25422610639BE5BF" />
 
-        {/* Google AdSense Script */}
-        <Script
-          id="google-adsense"
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7003579645111885"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        {/* Google AdSense Meta Tag Verification */}
+        <meta name="google-adsense-account" content="ca-pub-7003579645111885" />
 
         {/* Google tag (gtag.js) */}
         <Script
