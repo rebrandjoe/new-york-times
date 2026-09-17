@@ -40,6 +40,8 @@ export async function initializePaystackTransaction({
     body: JSON.stringify({
       email: user.email,
       amount: Math.round(amountInKes * 100), // Convert KES to smallest currency unit (cents)
+      currency: "KES", // CRITICAL: Specifies Kenyan Shillings for M-Pesa compatibility
+      channels: ["mobile_money", "card"], // Enables M-Pesa STK push and Card options explicitly
       callback_url: `${siteUrl}/api/paystack/callback`,
       metadata: {
         user_id: user.id,
