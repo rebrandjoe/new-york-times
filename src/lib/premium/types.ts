@@ -20,7 +20,7 @@ export type SubscriptionStatus =
   | "payment_failed"
   | "suspended";
 
-export type PaymentProvider = "flutterwave" | "paypal";
+export type PaymentProvider = "flutterwave" | "paypal" | "paystack";
 export type PaymentMethod = "mpesa" | "card" | "paypal";
 
 export type PaymentStatus =
