@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { initializePaystackTransaction } from "@/lib/actions/paystack";
 
 export function PaystackCheckoutButton({ amountInKes = 390 }: { amountInKes?: number }) {
+  const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handlePay = async () => {
     try {
@@ -21,6 +26,14 @@ export function PaystackCheckoutButton({ amountInKes = 390 }: { amountInKes?: nu
       setLoading(false);
     }
   };
+
+  if (!isMounted) {
+    return (
+      <div className="w-full rounded-full bg-accent/50 px-6 py-3.5 text-center text-sm font-bold text-black">
+        Loading payment...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-2">
