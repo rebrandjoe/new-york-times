@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { getCurrentUser } from "@/lib/premium/require-user";
 import { getPlanBySlug } from "@/lib/premium/plans";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -17,6 +18,8 @@ function getSiteUrl() {
   return "http://localhost:3000";
 }
 
+type PaystackMethod = "mpesa" | "card";
+
 type PaystackInitResult =
   | { error: "not_authenticated" }
   | { error: "plan_not_found" }
@@ -25,17 +28,21 @@ type PaystackInitResult =
 
 const CONFIG_ERROR_MESSAGE = "Payments aren't fully set up yet. Please try again later.";
 
+const ALLOWED_METHODS = new Set<PaystackMethod>(["mpesa", "card"]);
+
 /**
  * Initialize a Paystack checkout for an existing subscription plan.
  *
  * Security model:
- * - Client may only send a plan slug (never an amount).
+ * - Client may only send planSlug + optional method (never an amount).
  * - Server loads the active plan from the database and uses its authoritative KES price.
  * - A payments row is created first (pending) so webhook/callback can resolve user + plan.
  * - Paystack is initialized with the DB amount only; client amount is never trusted.
  */
 export async function initializePaystackTransaction(params: {
   planSlug: string;
+  /** Informational method stored on the payment row. Defaults to mpesa. */
+  method?: PaystackMethod;
 }): Promise<PaystackInitResult> {
   try {
     if (!params?.planSlug || typeof params.planSlug !== "string") {
@@ -44,6 +51,9 @@ export async function initializePaystackTransaction(params: {
 
     const planSlug = params.planSlug.trim();
     if (!planSlug) return { error: "plan_not_found" };
+
+    const method: PaystackMethod =
+      params.method && ALLOWED_METHODS.has(params.method) ? params.method : "mpesa";
 
     let user;
     try {
@@ -86,7 +96,7 @@ export async function initializePaystackTransaction(params: {
       return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
     }
 
-    const reference = `psk_${crypto.randomUUID().replace(/-/g, "")}`;
+    const reference = `psk_${randomUUID().replace(/-/g, "")}`;
 
     const { data: payment, error: insertError } = await supabase
       .from("payments")
@@ -94,7 +104,7 @@ export async function initializePaystackTransaction(params: {
         user_id: user.id,
         plan_id: plan.id,
         provider: "paystack",
-        method: "mpesa",
+        method,
         provider_reference: reference,
         amount: amountKes,
         currency: "KES",
@@ -114,6 +124,10 @@ export async function initializePaystackTransaction(params: {
     const siteUrl = getSiteUrl();
     const amountMinor = Math.round(amountKes * 100);
 
+    // Prefer the selected method first, but keep both channels so Paystack UI can offer either.
+    const channels =
+      method === "card" ? ["card", "mobile_money"] : ["mobile_money", "card"];
+
     let data: {
       status?: boolean;
       message?: string;
@@ -132,13 +146,14 @@ export async function initializePaystackTransaction(params: {
           amount: amountMinor,
           currency: "KES",
           reference,
-          channels: ["mobile_money", "card"],
+          channels,
           callback_url: `${siteUrl}/api/paystack/callback`,
           metadata: {
             payment_id: payment.id,
             user_id: user.id,
             plan_id: plan.id,
             plan_slug: plan.slug,
+            method,
           },
         }),
       });
