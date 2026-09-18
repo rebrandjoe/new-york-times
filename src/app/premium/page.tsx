@@ -16,7 +16,6 @@ export default function PremiumPage() {
     setIsMounted(true);
   }, []);
 
-  // CRITICAL: Guard against SSR mismatch before computing values
   if (!isMounted) {
     return (
       <div className="mx-auto max-w-xl px-4 py-20 text-center text-white">
@@ -57,7 +56,6 @@ export default function PremiumPage() {
         Premium members also enjoy an uninterrupted, ad-free reading experience across the site.
       </p>
 
-      {/* Currency & Tier Controls */}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         <div className="inline-flex rounded-xl border border-charcoal bg-[#0F0F0F] p-1">
           <button
@@ -102,7 +100,6 @@ export default function PremiumPage() {
         </div>
       </div>
 
-      {/* Main Pricing & Payment Selector Card */}
       <div className="mt-6 rounded-2xl border border-charcoal bg-[#0F0F0F] p-8 text-left">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-charcoal pb-6">
           <div>
@@ -201,7 +198,11 @@ export default function PremiumPage() {
               <div className="rounded-lg border border-[#22c55e]/30 bg-[#22c55e]/5 p-3 text-left text-xs text-[#22c55e]">
                 ✓ Selected M-Pesa (KES {displayKes}): Instant STK push to your mobile number via Paystack.
               </div>
-              <PaystackCheckoutButton planSlug={planSlug} displayAmountKes={displayKes} />
+              <PaystackCheckoutButton
+                planSlug={planSlug}
+                displayAmountKes={displayKes}
+                method="mpesa"
+              />
             </div>
           )}
 
@@ -210,7 +211,11 @@ export default function PremiumPage() {
               <div className="rounded-lg border border-blue-500/35 bg-blue-500/5 p-3 text-left text-xs text-blue-400">
                 ✓ Selected Visa / Mastercard (KES {displayKes}): Secure card gateway via Paystack.
               </div>
-              <PaystackCheckoutButton planSlug={planSlug} displayAmountKes={displayKes} />
+              <PaystackCheckoutButton
+                planSlug={planSlug}
+                displayAmountKes={displayKes}
+                method="card"
+              />
             </div>
           )}
 
