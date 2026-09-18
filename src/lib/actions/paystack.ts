@@ -26,8 +26,6 @@ type PaystackInitResult =
   | { error: "provider_error"; message: string }
   | { authorizationUrl: string; reference: string; paymentId: string };
 
-const CONFIG_ERROR_MESSAGE = "Payments aren't fully set up yet. Please try again later.";
-
 const ALLOWED_METHODS = new Set<PaystackMethod>(["mpesa", "card"]);
 
 /**
@@ -71,7 +69,10 @@ export async function initializePaystackTransaction(params: {
       plan = await getPlanBySlug(planSlug);
     } catch (err) {
       console.error("[paystack] getPlanBySlug failed", err);
-      return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+      return {
+        error: "provider_error",
+        message: "Could not load plans from the database. Check Supabase public keys.",
+      };
     }
 
     if (!plan) return { error: "plan_not_found" };
@@ -79,13 +80,20 @@ export async function initializePaystackTransaction(params: {
     const amountKes = Number(plan.priceKes);
     if (!Number.isFinite(amountKes) || amountKes <= 0) {
       console.error("[paystack] invalid plan priceKes", plan.slug, plan.priceKes);
-      return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+      return {
+        error: "provider_error",
+        message: "Plan price is invalid in the database (price_kes).",
+      };
     }
 
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    const secretKey = process.env.PAYSTACK_SECRET_KEY?.trim();
     if (!secretKey) {
-      console.error("[paystack] PAYSTACK_SECRET_KEY is not set");
-      return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+      console.error("[paystack] PAYSTACK_SECRET_KEY is not set (or empty) for this environment");
+      return {
+        error: "provider_error",
+        message:
+          "Paystack secret key is missing on the server. Set PAYSTACK_SECRET_KEY for Production in Vercel, then redeploy.",
+      };
     }
 
     let supabase;
@@ -93,7 +101,11 @@ export async function initializePaystackTransaction(params: {
       supabase = createServiceClient();
     } catch (err) {
       console.error("[paystack] service client unavailable", err);
-      return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+      return {
+        error: "provider_error",
+        message:
+          "Supabase service role is missing on the server. Set SUPABASE_SERVICE_ROLE_KEY for Production in Vercel, then redeploy.",
+      };
     }
 
     const reference = `psk_${randomUUID().replace(/-/g, "")}`;
@@ -115,16 +127,16 @@ export async function initializePaystackTransaction(params: {
 
     if (insertError || !payment) {
       console.error("[paystack] payment insert failed", insertError?.message, insertError);
+      const detail = insertError?.message ? ` (${insertError.message})` : "";
       return {
         error: "provider_error",
-        message: "Could not start the payment. Please try again.",
+        message: `Could not create payment record${detail}. Check payments table / RLS / service role project match.`,
       };
     }
 
     const siteUrl = getSiteUrl();
     const amountMinor = Math.round(amountKes * 100);
 
-    // Prefer the selected method first, but keep both channels so Paystack UI can offer either.
     const channels =
       method === "card" ? ["card", "mobile_money"] : ["mobile_money", "card"];
 
@@ -162,7 +174,10 @@ export async function initializePaystackTransaction(params: {
     } catch (err) {
       console.error("[paystack] initialize network error", err);
       await supabase.from("payments").update({ status: "failed" }).eq("id", payment.id);
-      return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+      return {
+        error: "provider_error",
+        message: "Could not reach Paystack. Check network / Paystack status.",
+      };
     }
 
     if (!data.status || !data.data?.authorization_url) {
@@ -173,7 +188,7 @@ export async function initializePaystackTransaction(params: {
         .eq("id", payment.id);
       return {
         error: "provider_error",
-        message: data.message || "Failed to initialize Paystack transaction.",
+        message: data.message || "Paystack rejected the transaction. Check secret key and currency.",
       };
     }
 
@@ -189,6 +204,10 @@ export async function initializePaystackTransaction(params: {
     };
   } catch (err) {
     console.error("[paystack] unexpected initialize failure", err);
-    return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+    const hint = err instanceof Error ? err.message : "unknown error";
+    return {
+      error: "provider_error",
+      message: `Unexpected payment error: ${hint}`,
+    };
   }
 }
