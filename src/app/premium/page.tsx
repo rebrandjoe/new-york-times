@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 
-export const dynamic = "force-dynamic";
-
 type PaymentGateway = "mpesa" | "card" | "paypal" | null;
 type BillingTier = "monthly" | "annual";
 
@@ -27,13 +25,15 @@ export default function PremiumPage() {
     );
   }
 
+  // Display-only prices for UI. Server loads authoritative amounts from subscription_plans.
   const pricing = {
     monthly: { KES: 390, USD: 4, label: "Monthly Access", period: "/ month" },
     annual: { KES: 3900, USD: 39, label: "Annual Access", period: "/ year (Save ~16%)" },
   };
 
   const amount = pricing[tier][currency];
-  const effectiveKesAmount = currency === "KES" ? amount : Math.round(amount * 130);
+  const displayKes = pricing[tier].KES;
+  const planSlug = tier;
 
   return (
     <div className="mx-auto max-w-xl px-4 py-16 text-center">
@@ -46,12 +46,11 @@ export default function PremiumPage() {
         Unlock Premium Health Journalism
       </h1>
 
-      <p className="mt-4 font-serif text-lg font-semibold text-white">
-        Go beyond the headline.
-      </p>
+      <p className="mt-4 font-serif text-lg font-semibold text-white">Go beyond the headline.</p>
 
       <p className="mt-3 text-sm text-gray-secondary-light leading-relaxed">
-        Gain access to in-depth investigative health reports, original analysis of medical research, and selected reports from the JOSEPH MMWA archive.
+        Gain access to in-depth investigative health reports, original analysis of medical research, and
+        selected reports from the JOSEPH MMWA archive.
       </p>
 
       <p className="mt-3 text-sm text-gray-muted leading-relaxed">
@@ -62,6 +61,7 @@ export default function PremiumPage() {
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         <div className="inline-flex rounded-xl border border-charcoal bg-[#0F0F0F] p-1">
           <button
+            type="button"
             onClick={() => setCurrency("KES")}
             className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
               currency === "KES" ? "bg-accent text-black" : "text-gray-muted hover:text-white"
@@ -70,6 +70,7 @@ export default function PremiumPage() {
             KES
           </button>
           <button
+            type="button"
             onClick={() => setCurrency("USD")}
             className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
               currency === "USD" ? "bg-accent text-black" : "text-gray-muted hover:text-white"
@@ -81,6 +82,7 @@ export default function PremiumPage() {
 
         <div className="inline-flex rounded-xl border border-charcoal bg-[#0F0F0F] p-1">
           <button
+            type="button"
             onClick={() => setTier("monthly")}
             className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
               tier === "monthly" ? "bg-zinc-800 text-white" : "text-gray-muted hover:text-white"
@@ -89,6 +91,7 @@ export default function PremiumPage() {
             Monthly
           </button>
           <button
+            type="button"
             onClick={() => setTier("annual")}
             className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
               tier === "annual" ? "bg-zinc-800 text-white" : "text-gray-muted hover:text-white"
@@ -107,7 +110,9 @@ export default function PremiumPage() {
               {pricing[tier].label}
             </span>
             <div className="mt-3 text-left">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-gray-muted mb-2">Premium includes</div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-gray-muted mb-2">
+                Premium includes
+              </div>
               <ul className="space-y-1.5 text-xs text-gray-secondary-light">
                 <li className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Investigative health reporting
@@ -136,7 +141,7 @@ export default function PremiumPage() {
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-muted mb-3">
             Select Payment Method
           </label>
-          
+
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <button
               type="button"
@@ -182,7 +187,8 @@ export default function PremiumPage() {
               }`}
             >
               <div className="mb-2 flex h-8 items-center rounded bg-[#003087] px-2.5 font-serif text-xs font-extrabold italic text-[#0070ba]">
-                <span className="text-white">Pay</span><span className="text-[#0079C1]">PayPal</span>
+                <span className="text-white">Pay</span>
+                <span className="text-[#0079C1]">Pal</span>
               </div>
               <span className="text-[11px] font-medium">International (USD)</span>
             </button>
@@ -193,18 +199,18 @@ export default function PremiumPage() {
           {selectedGateway === "mpesa" && (
             <div className="space-y-3">
               <div className="rounded-lg border border-[#22c55e]/30 bg-[#22c55e]/5 p-3 text-left text-xs text-[#22c55e]">
-                ✓ Selected M-Pesa (KES {effectiveKesAmount}): Instant STK push to your mobile number via Paystack.
+                ✓ Selected M-Pesa (KES {displayKes}): Instant STK push to your mobile number via Paystack.
               </div>
-              <PaystackCheckoutButton amountInKes={effectiveKesAmount} />
+              <PaystackCheckoutButton planSlug={planSlug} displayAmountKes={displayKes} />
             </div>
           )}
 
           {selectedGateway === "card" && (
             <div className="space-y-3">
               <div className="rounded-lg border border-blue-500/35 bg-blue-500/5 p-3 text-left text-xs text-blue-400">
-                ✓ Selected Visa / Mastercard (USD {amount}): Secure card gateway via Paystack.
+                ✓ Selected Visa / Mastercard (KES {displayKes}): Secure card gateway via Paystack.
               </div>
-              <PaystackCheckoutButton amountInKes={effectiveKesAmount} />
+              <PaystackCheckoutButton planSlug={planSlug} displayAmountKes={displayKes} />
             </div>
           )}
 
