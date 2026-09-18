@@ -16,8 +16,11 @@ export function PremiumCheckoutClient({ userEmail }: { userEmail?: string | null
     setIsMounted(true);
   }, []);
 
+  // Prevent server/client hydration mismatch crash (React error #441)
   if (!isMounted) {
-    return <div className="py-12 text-center text-xs text-gray-muted">Loading secure checkout...</div>;
+    return (
+      <div className="py-12 text-center text-xs text-gray-muted">Loading secure checkout...</div>
+    );
   }
 
   const pricing = {
