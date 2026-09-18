@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 
+export const dynamic = "force-dynamic";
+
 type PaymentGateway = "mpesa" | "card" | "paypal" | null;
 type BillingTier = "monthly" | "annual";
 
@@ -16,6 +18,15 @@ export default function PremiumPage() {
     setIsMounted(true);
   }, []);
 
+  // CRITICAL: Guard against SSR mismatch before computing values
+  if (!isMounted) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-20 text-center text-white">
+        Loading membership options...
+      </div>
+    );
+  }
+
   const pricing = {
     monthly: { KES: 390, USD: 4, label: "Monthly Access", period: "/ month" },
     annual: { KES: 3900, USD: 39, label: "Annual Access", period: "/ year (Save ~16%)" },
@@ -23,13 +34,6 @@ export default function PremiumPage() {
 
   const amount = pricing[tier][currency];
   const effectiveKesAmount = currency === "KES" ? amount : Math.round(amount * 130);
-
-  // Prevent server/client hydration mismatch crash (React error #441)
-  if (!isMounted) {
-    return (
-      <div className="py-20 text-center text-white">Loading membership options...</div>
-    );
-  }
 
   return (
     <div className="mx-auto max-w-xl px-4 py-16 text-center">
@@ -178,7 +182,7 @@ export default function PremiumPage() {
               }`}
             >
               <div className="mb-2 flex h-8 items-center rounded bg-[#003087] px-2.5 font-serif text-xs font-extrabold italic text-[#0070ba]">
-                <span className="text-white">Pay</span><span className="text-[#0079C1]">Pal</span>
+                <span className="text-white">Pay</span><span className="text-[#0079C1]">PayPal</span>
               </div>
               <span className="text-[11px] font-medium">International (USD)</span>
             </button>
