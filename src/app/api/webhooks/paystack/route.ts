@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import crypto from "crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 import { recordPaymentEventOnce } from "@/lib/premium/activation";
 import { verifyAndActivatePaystack } from "@/lib/premium/verify";
@@ -9,7 +9,7 @@ function timingSafeEqualHex(a: string, b: string): boolean {
     const bufA = Buffer.from(a, "hex");
     const bufB = Buffer.from(b, "hex");
     if (bufA.length !== bufB.length) return false;
-    return crypto.timingSafeEqual(bufA, bufB);
+    return timingSafeEqual(bufA, bufB);
   } catch {
     return false;
   }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "missing signature" }, { status: 401 });
   }
 
-  const expectedSig = crypto.createHmac("sha512", secretKey).update(body).digest("hex");
+  const expectedSig = createHmac("sha512", secretKey).update(body).digest("hex");
   if (!timingSafeEqualHex(signature, expectedSig)) {
     return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   }
