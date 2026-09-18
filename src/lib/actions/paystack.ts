@@ -1,58 +1,141 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/premium/require-user";
+import { getPlanBySlug } from "@/lib/premium/plans";
+import { createServiceClient } from "@/lib/supabase/service";
+import type { Json } from "@/lib/supabase/database.types";
 
-export async function initializePaystackTransaction({
-  amountInKes,
-}: {
-  amountInKes: number;
-}) {
-  // 1. Enforce authentication server-side
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+function toJson(value: unknown): Json {
+  return value as Json;
+}
 
-  if (authError || !user || !user.email) {
-    throw new Error("Unauthorized: Please sign in to proceed with payment.");
+function getSiteUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
+  return "http://localhost:3000";
+}
 
-  // 2. Validate payment amount
-  if (typeof amountInKes !== "number" || amountInKes <= 0 || isNaN(amountInKes)) {
-    throw new Error("Invalid payment amount.");
-  }
+type PaystackInitResult =
+  | { error: "not_authenticated" }
+  | { error: "plan_not_found" }
+  | { error: "provider_error"; message: string }
+  | { authorizationUrl: string; reference: string; paymentId: string };
 
-  // 3. Verify server-side secret key exists
+const CONFIG_ERROR_MESSAGE = "Payments aren't fully set up yet. Please try again later.";
+
+/**
+ * Initialize a Paystack checkout for an existing subscription plan.
+ *
+ * Security model:
+ * - Client may only send a plan slug (never an amount).
+ * - Server loads the active plan from the database and uses its authoritative KES price.
+ * - A payments row is created first (pending) so webhook/callback can resolve user + plan.
+ * - Paystack is initialized with the DB amount only; client amount is never trusted.
+ */
+export async function initializePaystackTransaction(params: {
+  planSlug: string;
+}): Promise<PaystackInitResult> {
+  const { user } = await getCurrentUser();
+  if (!user || !user.email) return { error: "not_authenticated" };
+
+  const plan = await getPlanBySlug(params.planSlug);
+  if (!plan) return { error: "plan_not_found" };
+
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
   if (!secretKey) {
-    throw new Error("Server configuration error: Missing Paystack secret key.");
+    return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
   }
 
-  // 4. Initialize Paystack transaction securely server-to-server
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://josephmmwa.com";
-  const response = await fetch("https://api.paystack.co/transaction/initialize", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${secretKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: user.email,
-      amount: Math.round(amountInKes * 100), // Convert KES to smallest currency unit (cents)
-      currency: "KES", // CRITICAL: Specifies Kenyan Shillings for M-Pesa compatibility
-      channels: ["mobile_money", "card"], // Enables M-Pesa STK push and Card options explicitly
-      callback_url: `${siteUrl}/api/paystack/callback`,
-      metadata: {
-        user_id: user.id,
+  let supabase;
+  try {
+    supabase = createServiceClient();
+  } catch (err) {
+    console.error("[paystack] service client unavailable");
+    return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
+  }
+
+  // Cryptographically unique reference that maps back to our payment row.
+  const reference = `psk_${crypto.randomUUID().replace(/-/g, "")}`;
+
+  const { data: payment, error: insertError } = await supabase
+    .from("payments")
+    .insert({
+      user_id: user.id,
+      plan_id: plan.id,
+      provider: "paystack",
+      method: "mpesa", // Paystack channels include mobile_money + card; method is informational
+      provider_reference: reference,
+      amount: plan.priceKes,
+      currency: "KES",
+      status: "pending",
+    })
+    .select("id")
+    .single();
+
+  if (insertError || !payment) {
+    console.error("[paystack] payment insert failed", insertError?.message);
+    return { error: "provider_error", message: "Could not start the payment. Please try again." };
+  }
+
+  const siteUrl = getSiteUrl();
+
+  let data: {
+    status?: boolean;
+    message?: string;
+    data?: { authorization_url?: string; reference?: string; access_code?: string };
+  };
+
+  try {
+    const response = await fetch("https://api.paystack.co/transaction/initialize", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+        "Content-Type": "application/json",
       },
-    }),
-  });
+      body: JSON.stringify({
+        email: user.email,
+        amount: Math.round(Number(plan.priceKes) * 100), // KES minor units
+        currency: "KES",
+        reference,
+        channels: ["mobile_money", "card"],
+        callback_url: `${siteUrl}/api/paystack/callback`,
+        metadata: {
+          payment_id: payment.id,
+          user_id: user.id,
+          plan_id: plan.id,
+          plan_slug: plan.slug,
+        },
+      }),
+    });
 
-  const data = await response.json();
-  if (!data.status) {
-    throw new Error(data.message || "Failed to initialize Paystack transaction.");
+    data = await response.json();
+  } catch (err) {
+    console.error("[paystack] initialize network error");
+    await supabase.from("payments").update({ status: "failed" }).eq("id", payment.id);
+    return { error: "provider_error", message: CONFIG_ERROR_MESSAGE };
   }
 
-  return data.data; // Contains authorization_url, reference, access_code
+  if (!data.status || !data.data?.authorization_url) {
+    await supabase
+      .from("payments")
+      .update({ status: "failed", raw_response: toJson(data) })
+      .eq("id", payment.id);
+    return {
+      error: "provider_error",
+      message: data.message || "Failed to initialize Paystack transaction.",
+    };
+  }
+
+  await supabase
+    .from("payments")
+    .update({ status: "processing", raw_response: toJson(data) })
+    .eq("id", payment.id);
+
+  return {
+    authorizationUrl: data.data.authorization_url,
+    reference: data.data.reference ?? reference,
+    paymentId: payment.id,
+  };
 }
