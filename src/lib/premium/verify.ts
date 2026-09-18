@@ -11,6 +11,7 @@ interface PaymentRow {
   currency: string;
   status: string;
   subscription_id: string | null;
+  provider_reference: string;
 }
 
 async function loadPlanInterval(planId: string): Promise<"monthly" | "annual"> {
@@ -121,6 +122,113 @@ export async function verifyAndActivatePaypal(params: {
     planId: payment.plan_id,
     billingInterval,
     provider: "paypal",
+    paymentId: payment.id,
+  });
+
+  return { activated: true, status: "successful" };
+}
+
+/**
+ * Verifies a Paystack transaction server-to-server by reference and activates
+ * the subscription only when amount, currency, and success status match the
+ * existing payments row. Safe to call from both webhook and callback; idempotent
+ * via payment.subscription_id and activateSubscriptionForPayment.
+ */
+export async function verifyAndActivatePaystack(params: {
+  paymentId: string;
+  reference: string;
+}): Promise<{ activated: boolean; status: string }> {
+  const supabase = createServiceClient();
+  const { data: payment } = await supabase
+    .from("payments")
+    .select("id, user_id, plan_id, amount, currency, status, subscription_id, provider_reference")
+    .eq("id", params.paymentId)
+    .maybeSingle<PaymentRow>();
+
+  if (!payment) return { activated: false, status: "not_found" };
+  if (payment.subscription_id) return { activated: true, status: "successful" };
+
+  // Reference on the payment row is authoritative; reject mismatches.
+  if (payment.provider_reference !== params.reference) {
+    console.error("[paystack] reference mismatch for payment", payment.id);
+    return { activated: false, status: "reference_mismatch" };
+  }
+
+  const secretKey = process.env.PAYSTACK_SECRET_KEY;
+  if (!secretKey) {
+    console.error("[paystack] missing PAYSTACK_SECRET_KEY");
+    return { activated: false, status: "config_error" };
+  }
+
+  let verification: {
+    status?: boolean;
+    message?: string;
+    data?: {
+      status?: string;
+      reference?: string;
+      amount?: number;
+      currency?: string;
+      id?: number;
+    };
+  };
+
+  try {
+    const res = await fetch(
+      `https://api.paystack.co/transaction/verify/${encodeURIComponent(params.reference)}`,
+      {
+        headers: { Authorization: `Bearer ${secretKey}` },
+      }
+    );
+    verification = await res.json();
+  } catch {
+    console.error("[paystack] verify network error");
+    return { activated: false, status: "network_error" };
+  }
+
+  const tx = verification.data;
+
+  if (!verification.status || !tx || tx.status !== "success") {
+    await markPaymentStatus(payment.id, "failed", { rawResponse: verification });
+    await notifyPaymentFailed(payment.user_id, payment.plan_id);
+    return { activated: false, status: "failed" };
+  }
+
+  if (tx.reference !== params.reference) {
+    await markPaymentStatus(payment.id, "failed", { rawResponse: verification });
+    return { activated: false, status: "reference_mismatch" };
+  }
+
+  // Paystack returns amount in the smallest currency unit (kobo/cents).
+  const paidMajor = Number(tx.amount) / 100;
+  const amountMatches = Math.abs(paidMajor - Number(payment.amount)) < 0.01;
+  const currencyMatches =
+    typeof tx.currency === "string" &&
+    tx.currency.toUpperCase() === String(payment.currency).toUpperCase();
+
+  if (!amountMatches || !currencyMatches) {
+    console.error("[paystack] amount/currency mismatch", {
+      paymentId: payment.id,
+      expectedAmount: payment.amount,
+      paidMajor,
+      expectedCurrency: payment.currency,
+      paidCurrency: tx.currency,
+    });
+    await markPaymentStatus(payment.id, "failed", { rawResponse: verification });
+    await notifyPaymentFailed(payment.user_id, payment.plan_id);
+    return { activated: false, status: "failed" };
+  }
+
+  await markPaymentStatus(payment.id, "successful", {
+    providerTransactionId: tx.id != null ? String(tx.id) : undefined,
+    rawResponse: verification,
+  });
+
+  const billingInterval = await loadPlanInterval(payment.plan_id);
+  await activateSubscriptionForPayment({
+    userId: payment.user_id,
+    planId: payment.plan_id,
+    billingInterval,
+    provider: "paystack",
     paymentId: payment.id,
   });
 
