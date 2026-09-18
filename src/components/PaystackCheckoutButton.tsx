@@ -10,6 +10,18 @@ type Props = {
   displayAmountKes?: number;
 };
 
+function friendlyErrorMessage(err: unknown): string {
+  if (err instanceof Error) {
+    const msg = err.message || "";
+    // Next/React production digests are useless to end users
+    if (/minified React error/i.test(msg) || /digest/i.test(msg)) {
+      return "Could not start payment. Please sign in and try again.";
+    }
+    if (msg.length > 0 && msg.length < 200) return msg;
+  }
+  return "An unexpected error occurred. Please try again.";
+}
+
 export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,10 +32,20 @@ export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
   }, []);
 
   const handlePay = async () => {
+    if (!planSlug) {
+      setErrorMsg("That plan is not available.");
+      return;
+    }
+
     try {
       setLoading(true);
       setErrorMsg(null);
       const result = await initializePaystackTransaction({ planSlug });
+
+      if (!result || typeof result !== "object") {
+        setErrorMsg("Could not start payment. Please try again.");
+        return;
+      }
 
       if ("error" in result) {
         if (result.error === "not_authenticated") {
@@ -34,16 +56,21 @@ export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
           setErrorMsg("That plan is not available.");
           return;
         }
-        setErrorMsg(result.message || "Could not start payment.");
+        setErrorMsg(
+          ("message" in result && result.message) || "Could not start payment."
+        );
         return;
       }
 
       if (result.authorizationUrl) {
         window.location.href = result.authorizationUrl;
+        return;
       }
+
+      setErrorMsg("Could not start payment. Please try again.");
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
-      setErrorMsg(message);
+      console.error("[PaystackCheckoutButton]", err);
+      setErrorMsg(friendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -72,7 +99,7 @@ export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
       >
         {loading ? "Redirecting to Paystack..." : label}
       </button>
-      {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
+      {errorMsg && <p className="text-xs text-red-500 text-center">{errorMsg}</p>}
     </div>
   );
 }
