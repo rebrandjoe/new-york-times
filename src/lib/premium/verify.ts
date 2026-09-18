@@ -11,7 +11,7 @@ interface PaymentRow {
   currency: string;
   status: string;
   subscription_id: string | null;
-  provider_reference: string;
+  provider_reference?: string;
 }
 
 async function loadPlanInterval(planId: string): Promise<"monthly" | "annual"> {
