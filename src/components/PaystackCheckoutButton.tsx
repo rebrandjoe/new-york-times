@@ -8,12 +8,13 @@ type Props = {
   planSlug: string;
   /** Display-only KES amount for the button label. Never sent as the charge amount. */
   displayAmountKes?: number;
+  /** Payment method for the payments row (mpesa or card). */
+  method?: "mpesa" | "card";
 };
 
 function friendlyErrorMessage(err: unknown): string {
   if (err instanceof Error) {
     const msg = err.message || "";
-    // Next/React production digests are useless to end users
     if (/minified React error/i.test(msg) || /digest/i.test(msg)) {
       return "Could not start payment. Please sign in and try again.";
     }
@@ -22,7 +23,11 @@ function friendlyErrorMessage(err: unknown): string {
   return "An unexpected error occurred. Please try again.";
 }
 
-export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
+export function PaystackCheckoutButton({
+  planSlug,
+  displayAmountKes,
+  method = "mpesa",
+}: Props) {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -40,7 +45,10 @@ export function PaystackCheckoutButton({ planSlug, displayAmountKes }: Props) {
     try {
       setLoading(true);
       setErrorMsg(null);
-      const result = await initializePaystackTransaction({ planSlug });
+      const result = await initializePaystackTransaction({
+        planSlug,
+        method: method === "card" ? "card" : "mpesa",
+      });
 
       if (!result || typeof result !== "object") {
         setErrorMsg("Could not start payment. Please try again.");
