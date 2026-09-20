@@ -8,6 +8,8 @@ type Props = {
   planSlug: string;
   /** Display-only KES amount for the button label. Never sent as the charge amount. */
   displayAmountKes?: number;
+  /** Display-only USD amount for international clients. Never sent as the charge amount. */
+  displayAmountUsd?: number;
   /** Payment method for the payments row (mpesa or card). */
   method?: "mpesa" | "card";
 };
@@ -26,6 +28,7 @@ function friendlyErrorMessage(err: unknown): string {
 export function PaystackCheckoutButton({
   planSlug,
   displayAmountKes,
+  displayAmountUsd,
   method = "mpesa",
 }: Props) {
   const [isMounted, setIsMounted] = useState(false);
@@ -92,10 +95,17 @@ export function PaystackCheckoutButton({
     );
   }
 
-  const label =
-    displayAmountKes != null && displayAmountKes > 0
-      ? `Pay KES ${displayAmountKes.toLocaleString("en-KE")}`
-      : "Pay with Paystack";
+  const hasKes = displayAmountKes != null && displayAmountKes > 0;
+  const hasUsd = displayAmountUsd != null && displayAmountUsd > 0;
+
+  let label = "Pay with Paystack";
+  if (hasKes && hasUsd) {
+    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")} / KES ${displayAmountKes!.toLocaleString("en-KE")}`;
+  } else if (hasKes) {
+    label = `Pay KES ${displayAmountKes!.toLocaleString("en-KE")}`;
+  } else if (hasUsd) {
+    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")}`;
+  }
 
   return (
     <div className="flex flex-col items-center gap-2">
