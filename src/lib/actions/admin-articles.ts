@@ -16,19 +16,23 @@ function toJson(blocks: ContentBlock[]): Json {
   return blocks as unknown as Json;
 }
 
-/** Category is no longer an editor choice — it's derived automatically from
- * the article's country, the way the site's Kenya/Global sections are
- * actually meant to work: Kenya-specific stories vs. everything else.
- * Falls back to Global if, for any reason, neither category row exists
- * (shouldn't happen — both are seeded — but this keeps article creation
- * from hard-failing on a missing lookup). */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function resolveCategoryId(supabase: any, country: string | null): Promise<string> {
-  const slug = country?.trim().toLowerCase() === "kenya" ? "kenya" : "global";
+/** Category is only ever set in two cases now: automatically for Kenya
+ * (country = "Kenya"), or when the editor explicitly marks a story as a
+ * genuine worldwide story. Everything else gets no category at all — it's
+ * still fully findable via its Region and Country fields, just not
+ * force-listed under Global the way "not Kenya" used to be treated. */
+async function resolveCategoryId(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  country: string | null,
+  isGlobalStory: boolean
+): Promise<string | null> {
+  const isKenya = country?.trim().toLowerCase() === "kenya";
+  if (!isKenya && !isGlobalStory) return null;
+
+  const slug = isKenya ? "kenya" : "global";
   const { data } = await supabase.from("categories").select("id").eq("slug", slug).single();
-  if (data?.id) return data.id;
-  const fallback = await supabase.from("categories").select("id").eq("slug", "global").single();
-  return fallback.data.id;
+  return data?.id ?? null;
 }
 
 function slugify(input: string): string {
@@ -66,6 +70,7 @@ interface ArticleInput {
   topicIds: string[];
   region: string | null;
   country: string | null;
+  isGlobalStory: boolean;
   authorId: string;
   publicationDate: string;
   readTimeMinutes: number | null;
@@ -107,7 +112,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       excerpt: input.excerpt || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
-      category_id: await resolveCategoryId(supabase, input.country),
+      category_id: await resolveCategoryId(supabase, input.country, input.isGlobalStory),
       region: input.region,
       country: input.country,
       author_id: input.authorId,
@@ -172,7 +177,7 @@ export async function updateArticle(
       excerpt: input.excerpt || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
-      category_id: await resolveCategoryId(supabase, input.country),
+      category_id: await resolveCategoryId(supabase, input.country, input.isGlobalStory),
       region: input.region,
       country: input.country,
       author_id: input.authorId,
@@ -263,7 +268,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       excerpt: original.excerpt,
       body: toJson(original.body as ContentBlock[]),
       featured_image_id: original.featuredImage?.id ?? null,
-      category_id: await resolveCategoryId(supabase, original.country),
+      category_id: await resolveCategoryId(supabase, original.country, original.category?.slug === "global"),
       region: original.region,
       country: original.country,
       author_id: original.author.id,

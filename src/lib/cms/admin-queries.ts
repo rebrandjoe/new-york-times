@@ -61,7 +61,7 @@ export async function getAdminArticles(
     slug: row.slug,
     title: row.title,
     status: row.status as ArticleStatus,
-    category: row.category ?? { id: "", name: "—", slug: "" },
+    category: row.category,
     author: row.author ?? { id: "", name: "Joseph Mmwa", slug: "joseph-mmwa", title: "" },
     publicationDate: row.publication_date,
     updatedAt: row.updated_at,

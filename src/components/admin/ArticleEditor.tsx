@@ -63,6 +63,7 @@ export function ArticleEditor({
   const [topicIds, setTopicIds] = useState<string[]>(initialTopicIds);
   const [region, setRegion] = useState(initial?.region ?? "");
   const [country, setCountry] = useState(initial?.country ?? "");
+  const [isGlobalStory, setIsGlobalStory] = useState(initial?.category?.slug === "global");
   const [authorId, setAuthorId] = useState(initial?.author.id ?? authors[0]?.id ?? "");
   const [publicationDate, setPublicationDate] = useState(
     initial ? toDatetimeLocalValue(initial.publicationDate) : toDatetimeLocalValue(new Date().toISOString())
@@ -95,6 +96,7 @@ export function ArticleEditor({
       topicIds,
       region: region || null,
       country: country || null,
+      isGlobalStory,
       authorId,
       publicationDate: new Date(publicationDate).toISOString(),
       readTimeMinutes: autoReadTime ? null : readTimeMinutes,
@@ -132,7 +134,7 @@ export function ArticleEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     title, slug, excerpt, body, featuredImageId, topicIds, region, country,
-    authorId, publicationDate, autoReadTime, readTimeMinutes, premium,
+    authorId, publicationDate, autoReadTime, readTimeMinutes, premium, isGlobalStory,
     correctionNote, sourceName, sourceAuthor,
     sourceInstitution, sourceUrl, sourceAdditional,
   ]);
@@ -428,11 +430,30 @@ export function ArticleEditor({
             <div>
               <label className={labelClass()}>Country</label>
               <CountryField value={country} onChange={setCountry} className={fieldClass()} />
-              <p className="mt-1 text-xs text-gray-muted">
-                Section: {country.trim().toLowerCase() === "kenya" ? "Kenya" : "Global"} (set automatically from country)
-              </p>
             </div>
           </div>
+
+          <div className="flex items-center gap-2 border border-charcoal p-3">
+            <input
+              type="checkbox"
+              id="isGlobalStory"
+              checked={country.trim().toLowerCase() === "kenya" ? false : isGlobalStory}
+              disabled={country.trim().toLowerCase() === "kenya"}
+              onChange={(e) => setIsGlobalStory(e.target.checked)}
+              className="h-4 w-4 accent-[var(--brand-accent)] disabled:opacity-40"
+            />
+            <label htmlFor="isGlobalStory" className="text-sm text-gray-secondary-light">
+              Global story (genuinely worldwide — shows in the Global section)
+            </label>
+          </div>
+          <p className="-mt-2 text-xs text-gray-muted">
+            Section:{" "}
+            {country.trim().toLowerCase() === "kenya"
+              ? "Kenya (automatic)"
+              : isGlobalStory
+                ? "Global"
+                : "None — still findable via Region and Country above"}
+          </p>
 
           <div>
             <label className={labelClass()}>Author</label>

@@ -175,7 +175,8 @@ export async function getRelatedArticles(article: CmsArticle, limit = 4): Promis
 
   const scored = candidates.map((candidate) => {
     const sharedTopics = candidate.topics.filter((t) => topicSlugs.has(t.slug)).length;
-    const sameCategory = candidate.category.slug === article.category.slug ? 1 : 0;
+    const sameCategory =
+      candidate.category && article.category && candidate.category.slug === article.category.slug ? 1 : 0;
     const sameCountry = candidate.country && candidate.country === article.country ? 1 : 0;
     return { candidate, score: sharedTopics * 100 + sameCategory * 10 + sameCountry };
   });

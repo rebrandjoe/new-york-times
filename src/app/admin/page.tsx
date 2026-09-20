@@ -60,7 +60,7 @@ export default async function AdminDashboardPage() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-white">{article.title}</p>
                   <p className="mt-1 text-xs text-gray-muted">
-                    {article.category.name} · Updated {formatDate(article.updatedAt)}
+                    {article.category?.name ?? "No category"} · Updated {formatDate(article.updatedAt)}
                   </p>
                 </div>
                 <span

@@ -114,7 +114,7 @@ export type Database = {
           author_id: string
           body: Json
           canonical_url: string | null
-          category_id: string
+          category_id: string | null
           correction_note: string | null
           country: string | null
           created_at: string
@@ -146,7 +146,7 @@ export type Database = {
           author_id: string
           body?: Json
           canonical_url?: string | null
-          category_id: string
+          category_id?: string | null
           correction_note?: string | null
           country?: string | null
           created_at?: string
@@ -178,7 +178,7 @@ export type Database = {
           author_id?: string
           body?: Json
           canonical_url?: string | null
-          category_id?: string
+          category_id?: string | null
           correction_note?: string | null
           country?: string | null
           created_at?: string

@@ -80,7 +80,7 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
     excerpt: row.excerpt,
     body: Array.isArray(row.body) ? (row.body as ContentBlock[]) : [],
     featuredImage: mapMedia(row.featured_image),
-    category: row.category ?? { id: "", name: "Category", slug: "category" },
+    category: row.category,
     topics: (row.article_topics ?? [])
       .map((t) => t.topic)
       .filter((t): t is { id: string; name: string; slug: string } => t !== null),
@@ -132,7 +132,6 @@ export function toHomepageArticle(article: CmsArticle): HomepageArticle {
     description: article.excerpt ?? "",
     category: article.category,
     topics: article.topics,
-    region: article.category.slug as HomepageArticle["region"],
     author: { id: article.author.id, name: article.author.name, slug: article.author.slug },
     image: {
       src: article.featuredImage?.url ?? null,

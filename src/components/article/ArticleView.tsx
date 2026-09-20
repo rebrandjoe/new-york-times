@@ -91,12 +91,14 @@ export function ArticleView({
       {interactive && <ReadingProgress />}
 
       <div id="article-progress-start" className="mx-auto max-w-3xl px-4 pt-12 sm:px-6 lg:px-8">
-        <Link
-          href={`/${article.category.slug}`}
-          className="focus-ring text-xs font-bold uppercase tracking-wider text-accent"
-        >
-          {article.category.name}
-        </Link>
+        {article.category && (
+          <Link
+            href={`/${article.category.slug}`}
+            className="focus-ring text-xs font-bold uppercase tracking-wider text-accent"
+          >
+            {article.category.name}
+          </Link>
+        )}
         <h1 className="mt-3 font-serif text-3xl font-extrabold leading-[1.1] text-white sm:text-5xl">
           {article.title}
         </h1>

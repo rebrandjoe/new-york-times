@@ -129,7 +129,7 @@ export default async function AdminArticlesPage({
                       {article.status}
                     </span>
                   </td>
-                  <td className="py-3 pr-4 text-gray-secondary-light">{article.category.name}</td>
+                  <td className="py-3 pr-4 text-gray-secondary-light">{article.category?.name ?? "—"}</td>
                   <td className="py-3 pr-4 text-gray-secondary-light">{formatDate(article.publicationDate)}</td>
                   <td className="py-3 pr-4 text-gray-secondary-light">{formatDate(article.updatedAt)}</td>
                   <td className="py-3 pr-4">

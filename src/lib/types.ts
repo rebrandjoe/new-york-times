@@ -40,7 +40,7 @@ export interface Article {
   slug: string;
   headline: string;
   description: string;
-  category: Category;
+  category: Category | null;
   topics: Topic[];
   region?: RegionSlug;
   author?: Author;

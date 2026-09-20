@@ -68,6 +68,7 @@ export function LinkButton({ editor, articleId }: { editor: Editor; articleId?: 
     <div ref={containerRef} className="relative">
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           setOpen((v) => !v);
           setQuery("");

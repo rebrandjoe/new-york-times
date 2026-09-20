@@ -20,6 +20,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
     <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1.5 border border-charcoal bg-charcoal-deep p-2">
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={buttonClass(editor.isActive("bold"))}
         aria-label="Bold"
@@ -28,6 +29,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={`${buttonClass(editor.isActive("italic"))} italic`}
         aria-label="Italic"
@@ -40,6 +42,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={buttonClass(editor.isActive("heading", { level: 2 }))}
         aria-label="Heading 2"
@@ -48,6 +51,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         className={buttonClass(editor.isActive("heading", { level: 3 }))}
         aria-label="Heading 3"
@@ -59,6 +63,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={buttonClass(editor.isActive("bulletList"))}
         aria-label="Bulleted list"
@@ -67,6 +72,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={buttonClass(editor.isActive("orderedList"))}
         aria-label="Numbered list"
@@ -78,6 +84,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={buttonClass(editor.isActive("blockquote"))}
         aria-label="Blockquote"
@@ -86,6 +93,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().setPullQuote().run()}
         className={buttonClass(editor.isActive("pullQuote"))}
         aria-label="Pull quote"
@@ -97,6 +105,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().insertArticleImage().run()}
         className={buttonClass(false)}
         aria-label="Insert image"
@@ -105,6 +114,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().insertArticleVideo().run()}
         className={buttonClass(false)}
         aria-label="Insert video"
@@ -113,6 +123,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
       </button>
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().setHorizontalRule().run()}
         className={buttonClass(false)}
         aria-label="Divider"
@@ -124,6 +135,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
 
       <button
         type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
         className={buttonClass(false)}
         aria-label="Clear formatting"

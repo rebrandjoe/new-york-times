@@ -10,6 +10,7 @@ export const primaryNav: NavLink[] = [
   { label: "GLOBAL", href: "/global" },
   { label: "REGIONS", href: "/regions" },
   { label: "TOPICS", href: "/topics" },
+  { label: "ABOUT", href: "/about" },
 ];
 
 export const majorRegions = [

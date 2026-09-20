@@ -39,7 +39,7 @@ export interface CmsArticle {
   excerpt: string | null;
   body: ContentBlock[];
   featuredImage: CmsMedia | null;
-  category: CmsCategory;
+  category: CmsCategory | null;
   topics: CmsTopic[];
   region: string | null;
   country: string | null;
@@ -70,7 +70,7 @@ export interface ArticleListItem {
   slug: string;
   title: string;
   status: ArticleStatus;
-  category: CmsCategory;
+  category: CmsCategory | null;
   author: CmsAuthor;
   publicationDate: string;
   updatedAt: string;
