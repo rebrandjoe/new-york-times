@@ -1,7 +1,9 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { createPublicClient } from "@/lib/supabase/public";
 import { sendTransactionalEmail } from "@/lib/email/send";
+import { subscribeEmailToBeehiiv } from "@/lib/email/beehiiv";
 import type { NewsletterFormState } from "./form-state";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,7 +25,7 @@ export async function subscribeToNewsletter(
   // Generated here rather than read back after insert: the anonymous
   // signup role can insert a row but can't select it back (subscriber
   // lists are admin-only), so we supply the token ourselves.
-  const confirmToken = crypto.randomUUID();
+  const confirmToken = randomUUID();
 
   const supabase = createPublicClient();
   const { error } = await supabase
@@ -36,6 +38,13 @@ export async function subscribeToNewsletter(
     }
     console.error("[newsletter] subscribe failed:", error.message);
     return { status: "error", message: "Something went wrong. Please try again." };
+  }
+
+  // Dual-write to Beehiiv for campaign delivery. Do not fail the local signup
+  // if Beehiiv is misconfigured or temporarily unavailable.
+  const beehiiv = await subscribeEmailToBeehiiv(email);
+  if (!beehiiv.ok) {
+    console.warn("[newsletter] Beehiiv sync skipped/failed:", beehiiv.reason, "status" in beehiiv ? beehiiv.status : "");
   }
 
   const confirmUrl = `${getSiteUrl()}/newsletter/confirm?token=${confirmToken}`;
