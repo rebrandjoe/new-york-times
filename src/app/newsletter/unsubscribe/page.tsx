@@ -19,7 +19,8 @@ export default async function NewsletterUnsubscribePage({
 }: {
   searchParams: Promise<{ token?: string }>;
 }) {
-  const { token } = await searchParams;
+  const resolvedSearchParams = await searchParams;
+  const token = resolvedSearchParams?.token;
   const unsubscribed = await unsubscribe(token);
 
   return (
