@@ -10,10 +10,6 @@ export const metadata: Metadata = {
 async function confirmSubscription(token: string | undefined) {
   if (!token) return false;
   const supabase = createPublicClient();
-  // A narrow SECURITY DEFINER function, not a table update+select: the anon
-  // role has no SELECT policy on this table (subscriber lists are
-  // admin-only), so a normal update-then-read-back would always look like
-  // it failed even when it succeeded.
   const { data, error } = await supabase.rpc("confirm_newsletter_subscription", { p_token: token });
   return !error && data === true;
 }
@@ -23,7 +19,8 @@ export default async function NewsletterConfirmPage({
 }: {
   searchParams: Promise<{ token?: string }>;
 }) {
-  const { token } = await searchParams;
+  const resolvedSearchParams = await searchParams;
+  const token = resolvedSearchParams?.token;
   const confirmed = await confirmSubscription(token);
 
   return (
