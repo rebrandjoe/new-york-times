@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
+import { PaypalCheckoutButton } from "@/components/PaypalCheckoutButton";
 
 type PaymentGateway = "mpesa" | "card" | "paypal" | null;
 type BillingTier = "monthly" | "annual";
@@ -167,12 +168,11 @@ export function PremiumCheckoutClient({ userEmail }: { userEmail?: string | null
                 ✓ Selected PayPal: ${displayUsd} / KES {displayKes.toLocaleString("en-KE")} — international
                 checkout in USD.
               </div>
-              <a
-                href={`/api/checkout/paypal?tier=${tier}&currency=USD`}
-                className="block w-full rounded-xl bg-[#0070ba] px-6 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#003087]"
-              >
-                Pay ${displayUsd} / KES {displayKes.toLocaleString("en-KE")}
-              </a>
+              <PaypalCheckoutButton
+                planSlug={planSlug}
+                displayAmountUsd={displayUsd}
+                displayAmountKes={displayKes}
+              />
             </div>
           )}
         </div>
