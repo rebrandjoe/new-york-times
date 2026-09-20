@@ -1,12 +1,36 @@
-const PAYPAL_BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
+/**
+ * PayPal REST helpers (Orders v2 + webhook signature verify).
+ *
+ * Env (server-only):
+ *   PAYPAL_CLIENT_ID
+ *   PAYPAL_CLIENT_SECRET
+ *   PAYPAL_ENVIRONMENT=sandbox | live   (optional; defaults to sandbox)
+ *   PAYPAL_API_BASE                     (optional override)
+ *   PAYPAL_WEBHOOK_ID                   (optional; required for webhook verify)
+ *
+ * Never import this module from client components.
+ */
+
+function getPaypalBase(): string {
+  if (process.env.PAYPAL_API_BASE?.trim()) {
+    return process.env.PAYPAL_API_BASE.trim().replace(/\/$/, "");
+  }
+  const env = (process.env.PAYPAL_ENVIRONMENT ?? "sandbox").toLowerCase().trim();
+  if (env === "live" || env === "production") {
+    return "https://api-m.paypal.com";
+  }
+  return "https://api-m.sandbox.paypal.com";
+}
 
 async function getAccessToken(): Promise<string> {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_CLIENT_SECRET;
-  if (!clientId || !secret) throw new Error("PayPal credentials are not configured.");
+  const clientId = process.env.PAYPAL_CLIENT_ID?.trim();
+  const secret = process.env.PAYPAL_CLIENT_SECRET?.trim();
+  if (!clientId || !secret) {
+    throw new Error("PayPal credentials are not configured.");
+  }
 
   const basic = Buffer.from(`${clientId}:${secret}`).toString("base64");
-  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
+  const res = await fetch(`${getPaypalBase()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${basic}`,
@@ -15,7 +39,10 @@ async function getAccessToken(): Promise<string> {
     body: "grant_type=client_credentials",
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(`PayPal auth failed: ${JSON.stringify(json)}`);
+  if (!res.ok) {
+    console.error("[paypal] auth failed", res.status);
+    throw new Error("PayPal authentication failed.");
+  }
   return json.access_token as string;
 }
 
@@ -32,7 +59,7 @@ export async function createOrder(params: {
   cancelUrl: string;
 }): Promise<PaypalOrder> {
   const token = await getAccessToken();
-  const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
+  const res = await fetch(`${getPaypalBase()}/v2/checkout/orders`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -40,7 +67,7 @@ export async function createOrder(params: {
       purchase_units: [
         {
           reference_id: params.referenceId,
-          amount: { currency_code: "USD", value: params.amountUsd.toFixed(2) },
+          amount: { currency_code: "USD", value: Number(params.amountUsd).toFixed(2) },
         },
       ],
       application_context: {
@@ -51,14 +78,19 @@ export async function createOrder(params: {
       },
     }),
   });
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) {
+    console.error("[paypal] create order failed", res.status, json?.message ?? json?.name);
+    throw new Error(json?.message || "PayPal could not create the order.");
+  }
+  return json as PaypalOrder;
 }
 
 interface PaypalCapture {
   id: string;
   status: string;
   purchase_units?: {
-    reference_id: string;
+    reference_id?: string;
     payments?: {
       captures?: { id: string; status: string; amount: { value: string; currency_code: string } }[];
     };
@@ -68,16 +100,20 @@ interface PaypalCapture {
 /** Authoritative capture — the source of truth for whether money actually moved. */
 export async function captureOrder(orderId: string): Promise<PaypalCapture> {
   const token = await getAccessToken();
-  const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}/capture`, {
+  const res = await fetch(`${getPaypalBase()}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
   });
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) {
+    console.error("[paypal] capture failed", res.status, json?.message ?? json?.name);
+  }
+  return json as PaypalCapture;
 }
 
 export async function getOrder(orderId: string): Promise<PaypalCapture> {
   const token = await getAccessToken();
-  const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}`, {
+  const res = await fetch(`${getPaypalBase()}/v2/checkout/orders/${encodeURIComponent(orderId)}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.json();
@@ -98,7 +134,7 @@ export async function verifyWebhookSignature(params: {
   if (!webhookId) return false;
 
   const token = await getAccessToken();
-  const res = await fetch(`${PAYPAL_BASE}/v1/notifications/verify-webhook-signature`, {
+  const res = await fetch(`${getPaypalBase()}/v1/notifications/verify-webhook-signature`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
