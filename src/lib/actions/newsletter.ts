@@ -3,6 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { createPublicClient } from "@/lib/supabase/public";
 import { sendTransactionalEmail } from "@/lib/email/send";
+import { newsletterConfirmEmail } from "@/lib/email/templates";
 import { subscribeEmailToBeehiiv } from "@/lib/email/beehiiv";
 import type { NewsletterFormState } from "./form-state";
 
@@ -64,13 +65,11 @@ export async function subscribeToNewsletter(
     );
   }
 
-  // Confirmation email is sent by us (Resend), not by Beehiiv.
   const confirmUrl = `${getSiteUrl()}/newsletter/confirm?token=${confirmToken}`;
+  const emailContent = newsletterConfirmEmail({ confirmUrl });
   await sendTransactionalEmail({
     to: email,
-    subject: "Confirm your subscription to The MMWA Briefing",
-    text: `Confirm your subscription: ${confirmUrl}`,
-    html: `<p>Confirm your subscription to The MMWA Briefing:</p><p><a href="${confirmUrl}">${confirmUrl}</a></p>`,
+    ...emailContent,
   });
 
   return { status: "success", message: "You're subscribed. Check your email to confirm." };
