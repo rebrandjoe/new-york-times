@@ -10,6 +10,27 @@ const SITE_URL = "https://josephmmwa.com";
 /** Public asset that exists in production (logo.png / og-default.jpg currently 404). */
 const DEFAULT_SHARE_IMAGE = `${SITE_URL}/images/joseph-mmwa.jpg`;
 
+/**
+ * Social crawlers often refuse Supabase Storage URLs because responses include
+ * `x-robots-tag: none`. Proxy via our domain for Open Graph / Twitter cards only.
+ * On-page article images still load directly from Supabase.
+ */
+function toShareImageUrl(sourceUrl: string | undefined | null): string {
+  if (!sourceUrl) return DEFAULT_SHARE_IMAGE;
+  try {
+    const u = new URL(sourceUrl);
+    if (u.hostname.endsWith(".supabase.co") && u.pathname.includes("/storage/v1/object/public/")) {
+      return `${SITE_URL}/share-image?u=${encodeURIComponent(sourceUrl)}`;
+    }
+  } catch {
+    // fall through
+  }
+  if (sourceUrl.startsWith("http://") || sourceUrl.startsWith("https://")) {
+    return sourceUrl;
+  }
+  return sourceUrl.startsWith("/") ? `${SITE_URL}${sourceUrl}` : DEFAULT_SHARE_IMAGE;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -22,7 +43,8 @@ export async function generateMetadata({
   const title = article.title;
   const description = article.excerpt || undefined;
   const canonical = `/article/${article.slug}`;
-  const image = article.featuredImage?.url || DEFAULT_SHARE_IMAGE;
+  const image = toShareImageUrl(article.featuredImage?.url);
+  const alt = article.featuredImage?.altText || article.title;
 
   return {
     title,
@@ -33,7 +55,16 @@ export async function generateMetadata({
       title,
       description,
       url: canonical,
-      images: [{ url: image }],
+      siteName: "JOSEPH MMWA",
+      images: [
+        {
+          url: image,
+          alt,
+          // Typical share crop; actual dimensions may differ
+          width: 1200,
+          height: 630,
+        },
+      ],
       publishedTime: article.publicationDate,
       modifiedTime: article.updatedAt,
       authors: [article.author.name],
@@ -65,7 +96,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   ]);
 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
-  const imageUrl = article.featuredImage?.url || DEFAULT_SHARE_IMAGE;
+  const imageUrl = toShareImageUrl(article.featuredImage?.url);
 
   const jsonLd = {
     "@context": "https://schema.org",
