@@ -6,7 +6,7 @@ const SITE_URL = "https://josephmmwa.com";
 const STATIC_ROUTES = [
   "",
   "/latest",
-  "/africa",
+  "/regions/africa",
   "/kenya",
   "/global",
   "/topics",
