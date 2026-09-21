@@ -8,17 +8,21 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=(self)",
   },
-  // HSTS: browsers only honor over HTTPS. One year, include subdomains.
   {
     key: "Strict-Transport-Security",
     value: "max-age=31536000; includeSubDomains; preload",
   },
-  // Conservative baseline; not a full CSP (would require exhaustive allowlists
-  // for Supabase, Paystack, PayPal, Google OAuth, Resend, analytics).
   { key: "X-DNS-Prefetch-Control", value: "on" },
 ];
 
 const nextConfig: NextConfig = {
+  // Admin media uploads send the file through a Server Action; the default
+  // body limit is ~1MB and causes a generic "page couldn't load" error.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
   images: {
     remotePatterns: [
       {
