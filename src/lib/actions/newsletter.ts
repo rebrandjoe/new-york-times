@@ -34,6 +34,17 @@ export async function subscribeToNewsletter(
 
   if (error) {
     if (error.code === "23505") {
+      // Already in Supabase — still push to Beehiiv so campaigns stay in sync.
+      const beehiiv = await subscribeEmailToBeehiiv(email);
+      if (beehiiv.ok) {
+        console.info("[newsletter] Beehiiv sync ok (existing subscriber)", email);
+      } else {
+        console.warn(
+          "[newsletter] Beehiiv sync failed (existing subscriber):",
+          beehiiv.reason,
+          "status" in beehiiv ? beehiiv.status : ""
+        );
+      }
       return { status: "error", message: "This email is already subscribed." };
     }
     console.error("[newsletter] subscribe failed:", error.message);
@@ -43,10 +54,17 @@ export async function subscribeToNewsletter(
   // Dual-write to Beehiiv for campaign delivery. Do not fail the local signup
   // if Beehiiv is misconfigured or temporarily unavailable.
   const beehiiv = await subscribeEmailToBeehiiv(email);
-  if (!beehiiv.ok) {
-    console.warn("[newsletter] Beehiiv sync skipped/failed:", beehiiv.reason, "status" in beehiiv ? beehiiv.status : "");
+  if (beehiiv.ok) {
+    console.info("[newsletter] Beehiiv sync ok", email, beehiiv.subscriptionId ?? "");
+  } else {
+    console.warn(
+      "[newsletter] Beehiiv sync skipped/failed:",
+      beehiiv.reason,
+      "status" in beehiiv ? beehiiv.status : ""
+    );
   }
 
+  // Confirmation email is sent by us (Resend), not by Beehiiv.
   const confirmUrl = `${getSiteUrl()}/newsletter/confirm?token=${confirmToken}`;
   await sendTransactionalEmail({
     to: email,
