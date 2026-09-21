@@ -25,9 +25,10 @@ export default function PremiumPage() {
   }
 
   // Display-only prices for UI. Server loads authoritative amounts from subscription_plans.
+  // Keep these in sync with price_usd / price_kes in Supabase subscription_plans.
   const pricing = {
-    monthly: { KES: 390, USD: 4, label: "Monthly Access", period: "/ month" },
-    annual: { KES: 3900, USD: 39, label: "Annual Access", period: "/ year (Save ~16%)" },
+    monthly: { KES: 260, USD: 2, label: "Monthly Access", period: "/ month" },
+    annual: { KES: 1950, USD: 15, label: "Annual Access", period: "/ year (Save ~37%)" },
   };
 
   const displayKes = pricing[tier].KES;
