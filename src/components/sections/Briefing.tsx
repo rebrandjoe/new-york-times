@@ -24,8 +24,9 @@ export function Briefing() {
           The MMWA Briefing
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-base text-gray-secondary-light">
-          The week&apos;s most important health stories, explained — delivered to your
-          inbox.
+          Stay ahead of the health news shaping Kenya, Africa and the world. Get the
+          week's most important developments, research and public-health stories —
+          explained clearly and delivered to your inbox.
         </p>
 
         {state.status === "success" ? (
