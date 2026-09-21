@@ -1,6 +1,19 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Only allow same-origin relative paths. Rejects protocol-relative URLs
+ * (//evil.com), absolute URLs, and paths with backslashes / control chars.
+ */
+function safeInternalPath(raw: string | null | undefined): string {
+  if (!raw) return "/";
+  const path = raw.trim();
+  if (!path.startsWith("/") || path.startsWith("//")) return "/";
+  if (path.includes("://") || path.includes("\\") || path.includes("\0")) return "/";
+  if (/[\r\n\t]/.test(path)) return "/";
+  return path;
+}
+
 /** Lands here after Google/Apple OAuth consent and after clicking a
  * password-reset or signup-confirmation email link — Supabase redirects
  * here with a `code` to exchange for a real session before continuing to
@@ -16,8 +29,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const oauthError = searchParams.get("error_description") ?? searchParams.get("error");
-  const redirectTo = searchParams.get("redirectTo") ?? "/";
-  const destination = redirectTo.startsWith("/") ? redirectTo : "/";
+  const destination = safeInternalPath(searchParams.get("redirectTo"));
 
   if (code) {
     const supabase = await createClient();
