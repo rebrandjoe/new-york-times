@@ -10,6 +10,7 @@ import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { MemberAccessCard } from "@/components/MemberAccessCard";
+import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
@@ -53,7 +54,7 @@ export function ArticleView({
   premiumLocked?: boolean;
 }) {
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
-  
+
   // Split blocks roughly in half for mid-article sign-up insertion
   const midpoint = Math.ceil(bodyBlocks.length / 2);
   const firstHalfBlocks = bodyBlocks.slice(0, midpoint);
@@ -150,6 +151,13 @@ export function ArticleView({
         </div>
       )}
 
+      {/* End-of-article stack (all existing + future articles):
+          1. Author
+          2. Share
+          3. Comments
+          4. Related stories
+          5. Newsletter signup
+          (site footer remains below via layout) */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <AuthorBlock name={article.author.name} title={article.author.title} />
         {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
@@ -157,11 +165,13 @@ export function ArticleView({
 
       <div id="article-progress-end" />
 
-      {!premiumLocked && <RelatedArticles articles={related} />}
-
       {interactive && !premiumLocked && (
         <Comments articleId={article.id} articlePath={articlePath} initialComments={comments} />
       )}
+
+      {!premiumLocked && <RelatedArticles articles={related} />}
+
+      {interactive && !premiumLocked && <Briefing />}
     </article>
   );
 }
