@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 import { hasActivePremiumAccess } from "@/lib/premium/access";
 
 const SITE_URL = "https://josephmmwa.com";
+/** Public asset that exists in production (logo.png / og-default.jpg currently 404). */
+const DEFAULT_SHARE_IMAGE = `${SITE_URL}/images/joseph-mmwa.jpg`;
 
 export async function generateMetadata({
   params,
@@ -20,7 +22,7 @@ export async function generateMetadata({
   const title = article.title;
   const description = article.excerpt || undefined;
   const canonical = `/article/${article.slug}`;
-  const image = article.featuredImage?.url;
+  const image = article.featuredImage?.url || DEFAULT_SHARE_IMAGE;
 
   return {
     title,
@@ -31,10 +33,16 @@ export async function generateMetadata({
       title,
       description,
       url: canonical,
-      images: image ? [{ url: image }] : undefined,
+      images: [{ url: image }],
       publishedTime: article.publicationDate,
       modifiedTime: article.updatedAt,
       authors: [article.author.name],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
     },
   };
 }
@@ -57,9 +65,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   ]);
 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
-  const imageUrl = article.featuredImage?.url || `${SITE_URL}/og-default.jpg`;
+  const imageUrl = article.featuredImage?.url || DEFAULT_SHARE_IMAGE;
 
-  // Structured NewsArticle Schema for Google News & Microsoft aggregators
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -78,7 +85,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       name: "JOSEPH MMWA",
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/logo.png`,
+        url: DEFAULT_SHARE_IMAGE,
       },
     },
     mainEntityOfPage: {
@@ -89,12 +96,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      {/* Inject NewsArticle Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
+
       <ArticleView
         article={article}
         related={related}
