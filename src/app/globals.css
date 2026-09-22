@@ -52,8 +52,8 @@ body {
   font-family: var(--brand-font-sans);
 }
 
-/* TARGETED HEADLINE UPDATE: 
-   Applies the clean sans-serif font to article headlines, post titles, 
+/* TARGETED HEADLINE UPDATE:
+   Applies the clean sans-serif font to article headlines, post titles,
    and homepage article cards, leaving your brand logo and header taglines untouched. */
 article h1,
 article h2,
@@ -104,26 +104,30 @@ article h3,
   color: var(--brand-offwhite);
 }
 
-.tiptap-editor .ProseMirror p {
+/* Body copy is always off-white — never inherit heading gold. */
+.tiptap-editor .ProseMirror > p {
   margin: 0 0 1.5rem;
   font-size: 1.125rem;
   line-height: 1.75;
+  font-weight: 400;
+  color: var(--brand-offwhite);
 }
 
-.tiptap-editor .ProseMirror h2,
-.tiptap-editor .ProseMirror h3 {
+/* Only real heading nodes use accent gold. */
+.tiptap-editor .ProseMirror > h2,
+.tiptap-editor .ProseMirror > h3 {
   font-family: var(--brand-font-sans);
   font-weight: 700;
   color: var(--brand-accent);
   letter-spacing: -0.02em;
 }
 
-.tiptap-editor .ProseMirror h2 {
+.tiptap-editor .ProseMirror > h2 {
   margin: 2rem 0 1rem;
   font-size: 1.5rem;
 }
 
-.tiptap-editor .ProseMirror h3 {
+.tiptap-editor .ProseMirror > h3 {
   margin: 1.75rem 0 0.75rem;
   font-size: 1.25rem;
 }
@@ -133,6 +137,7 @@ article h3,
   margin: 0 0 1.5rem 1.5rem;
   font-size: 1.125rem;
   line-height: 1.75;
+  color: var(--brand-offwhite);
 }
 
 .tiptap-editor .ProseMirror ul {
@@ -145,6 +150,7 @@ article h3,
 
 .tiptap-editor .ProseMirror li {
   margin-bottom: 0.5rem;
+  color: var(--brand-offwhite);
 }
 
 .tiptap-editor .ProseMirror blockquote {
