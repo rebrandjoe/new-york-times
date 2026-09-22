@@ -28,6 +28,11 @@ export const primaryTopics = [
   { name: "Treatments & Medicines", slug: "treatments-medicines", searchPlaceholder: "Search by treatment or medicine..." },
   { name: "Medical Research", slug: "medical-research", searchPlaceholder: "Search research..." },
   { name: "Medical Innovation & Technology", slug: "medical-innovation-technology", searchPlaceholder: "Search by technology or innovation..." },
+  {
+    name: "AI in Healthcare and Telemedicine",
+    slug: "ai-in-healthcare-and-telemedicine",
+    searchPlaceholder: "Search AI, digital health, telemedicine...",
+  },
   { name: "Vaccines & Immunization", slug: "vaccines-immunization", searchPlaceholder: "Search by vaccine..." },
   { name: "HIV & AIDS", slug: "hiv-aids", searchPlaceholder: "Search HIV & AIDS stories..." },
   { name: "Cancer", slug: "cancer", searchPlaceholder: "Search by disease..." },
@@ -56,6 +61,7 @@ export const footerTopics: NavLink[] = [
   { label: "HIV & AIDS", href: "/topics/hiv-aids" },
   { label: "Vaccines & Immunization", href: "/topics/vaccines-immunization" },
   { label: "Medical Research", href: "/topics/medical-research" },
+  { label: "AI in Healthcare", href: "/topics/ai-in-healthcare-and-telemedicine" },
   { label: "All topics", href: "/topics" },
 ];
 
