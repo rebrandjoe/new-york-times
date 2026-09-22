@@ -1,7 +1,6 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
-import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { LinkButton } from "./LinkButton";
 
 function buttonClass(active: boolean) {
@@ -28,76 +27,83 @@ function toggleMarkSafely(editor: Editor, mark: "bold" | "italic") {
 }
 
 /**
- * Change *only* the top-level block that contains the cursor.
- * Uses setNodeMarkup so multi-paragraph selections cannot turn the whole
- * article into gold H2/H3 headings.
+ * Convert only the top-level block under the cursor between paragraph ↔ heading.
+ * Never touches other blocks — this is what stops the whole article going gold.
  */
 function setCurrentBlockType(
   editor: Editor,
   type: "paragraph" | "heading",
   headingLevel?: 2 | 3
 ) {
+  const { state } = editor;
+  const { $from } = state.selection;
+  if ($from.depth < 1) return;
+
+  const pos = $from.before(1);
+  const node = $from.node(1);
+  if (!node?.isTextblock) return;
+
+  const paragraph = state.schema.nodes.paragraph;
+  const heading = state.schema.nodes.heading;
+  if (!paragraph || !heading) return;
+
+  // Collapse selection to a caret inside this block so TipTap cannot
+  // expand a multi-block selection into a multi-node transform.
+  const caret = Math.min(Math.max($from.pos, pos + 1), pos + node.nodeSize - 2);
+
+  if (type === "paragraph") {
+    if (node.type.name === "paragraph") return;
+    editor.chain().focus().setTextSelection(caret).setNode("paragraph").run();
+    return;
+  }
+
+  if (headingLevel == null) return;
+
+  // Toggle off if already this heading level
+  if (node.type.name === "heading" && node.attrs.level === headingLevel) {
+    editor.chain().focus().setTextSelection(caret).setNode("paragraph").run();
+    return;
+  }
+
   editor
     .chain()
     .focus()
-    .command(({ tr, state, dispatch }) => {
-      const { $from } = state.selection;
-      // Walk up to the top-level block inside the doc (depth 1).
-      if ($from.depth < 1) return false;
-
-      const pos = $from.before(1);
-      const node: ProseMirrorNode = $from.node(1);
-      if (!node) return false;
-
-      // Only convert textblocks (paragraph / heading), not images/videos/hr.
-      if (!node.isTextblock) return false;
-
-      const schema = state.schema;
-      if (type === "paragraph") {
-        if (node.type === schema.nodes.paragraph) return true;
-        if (!schema.nodes.paragraph) return false;
-        if (dispatch) tr.setNodeMarkup(pos, schema.nodes.paragraph);
-        return true;
-      }
-
-      // heading
-      if (!schema.nodes.heading || headingLevel == null) return false;
-      const already =
-        node.type === schema.nodes.heading && node.attrs.level === headingLevel;
-      if (already) {
-        // Toggle off → back to normal paragraph
-        if (dispatch) tr.setNodeMarkup(pos, schema.nodes.paragraph);
-        return true;
-      }
-      if (dispatch) {
-        tr.setNodeMarkup(pos, schema.nodes.heading, { level: headingLevel });
-      }
-      return true;
-    })
+    .setTextSelection(caret)
+    .setNode("heading", { level: headingLevel })
     .run();
 }
 
-/** Emergency: turn every heading in the doc back into a normal paragraph. */
+/**
+ * Convert every heading in the document back to a normal paragraph.
+ * Use when the article accidentally turned all gold.
+ */
 function convertAllHeadingsToParagraphs(editor: Editor) {
-  editor
-    .chain()
-    .focus()
-    .command(({ tr, state, dispatch }) => {
-      const heading = state.schema.nodes.heading;
-      const paragraph = state.schema.nodes.paragraph;
-      if (!heading || !paragraph || !dispatch) return false;
+  const { state } = editor;
+  const paragraph = state.schema.nodes.paragraph;
+  if (!paragraph) return;
 
-      const positions: number[] = [];
-      state.doc.forEach((node, offset) => {
-        if (node.type === heading) positions.push(offset);
-      });
-      // Apply from the end so positions stay valid
-      for (let i = positions.length - 1; i >= 0; i--) {
-        tr.setNodeMarkup(positions[i], paragraph);
-      }
-      return positions.length > 0;
-    })
-    .run();
+  // Collect positions from the end so earlier positions stay valid as we edit.
+  const headingPositions: number[] = [];
+  state.doc.descendants((node, pos) => {
+    if (node.type.name === "heading") {
+      headingPositions.push(pos);
+    }
+    // Only top-level blocks matter for our schema; skip descending into them.
+    return false;
+  });
+
+  if (headingPositions.length === 0) return;
+
+  let chain = editor.chain().focus();
+  for (let i = headingPositions.length - 1; i >= 0; i--) {
+    const pos = headingPositions[i];
+    const node = state.doc.nodeAt(pos);
+    if (!node) continue;
+    // Place caret inside the heading, then setParagraph (TipTap built-in).
+    const caret = pos + 1;
+    chain = chain.setTextSelection(caret).setParagraph();
+  }
+  chain.run();
 }
 
 export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId?: string }) {
@@ -133,7 +139,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
         onClick={() => setCurrentBlockType(editor, "heading", 2)}
         className={buttonClass(editor.isActive("heading", { level: 2 }))}
         aria-label="Subheading"
-        title="Subheading — current line only (not the whole article)"
+        title="Subheading — ONLY the line your cursor is on"
       >
         H2
       </button>
@@ -143,7 +149,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
         onClick={() => setCurrentBlockType(editor, "heading", 3)}
         className={buttonClass(editor.isActive("heading", { level: 3 }))}
         aria-label="Smaller subheading"
-        title="Smaller subheading — current line only"
+        title="Smaller subheading — ONLY the line your cursor is on"
       >
         H3
       </button>
@@ -153,7 +159,7 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
         onClick={() => setCurrentBlockType(editor, "paragraph")}
         className={buttonClass(editor.isActive("paragraph"))}
         aria-label="Body text"
-        title="Body text — turn this line back into normal paragraph"
+        title="Body text — turn THIS line back to normal (off-white)"
       >
         Body
       </button>
@@ -258,9 +264,9 @@ export function EditorToolbar({ editor, articleId }: { editor: Editor; articleId
         type="button"
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => convertAllHeadingsToParagraphs(editor)}
-        className={buttonClass(false)}
+        className="focus-ring border border-accent/60 bg-accent/10 px-2.5 py-1.5 text-sm font-semibold text-accent hover:bg-accent/20"
         aria-label="Reset all headings to body text"
-        title="If everything turned gold by mistake, click this to restore normal body text"
+        title="Click this if body text turned gold — restores all lines to normal body text"
       >
         Fix gold text
       </button>
