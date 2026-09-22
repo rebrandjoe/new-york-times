@@ -90,7 +90,7 @@ article h3,
   }
 }
 
-/* ── Admin article editor ─────────────────────────────────────────── */
+/* Article body rich-text editor */
 .tiptap-editor .ProseMirror {
   min-height: 50vh;
   outline: none;
@@ -99,7 +99,6 @@ article h3,
   color: var(--brand-offwhite);
 }
 
-/* Normal body — always off-white, never gold */
 .tiptap-editor .ProseMirror > p {
   margin: 0 0 1.5rem;
   font-size: 1.125rem;
@@ -108,15 +107,13 @@ article h3,
   color: var(--brand-offwhite);
 }
 
-/* Subheadings: gold + left bar so they cannot be confused with body */
+/* Subheadings — same gold look as before */
 .tiptap-editor .ProseMirror > h2,
 .tiptap-editor .ProseMirror > h3 {
   font-family: var(--brand-font-sans);
   font-weight: 700;
   color: var(--brand-accent);
   letter-spacing: -0.02em;
-  border-left: 3px solid var(--brand-accent);
-  padding-left: 0.75rem;
 }
 
 .tiptap-editor .ProseMirror > h2 {
