@@ -16,8 +16,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Admin media uploads send the file through a Server Action; the default
-  // body limit is ~1MB and causes a generic "page couldn't load" error.
+  // Admin media uploads send the file through a Server Action.
+  // Next.js 16 reads this at the top level (experimental is ignored for this).
+  serverActions: {
+    bodySizeLimit: "10mb",
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
