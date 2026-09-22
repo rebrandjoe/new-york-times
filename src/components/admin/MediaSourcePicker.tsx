@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { uploadMedia } from "@/lib/actions/admin-media";
 import { initialMediaFormState } from "@/lib/actions/form-state";
 import type { CmsMedia } from "@/lib/cms/types";
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"];
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 function fieldClass() {
@@ -18,10 +18,6 @@ function tabClass(active: boolean) {
   }`;
 }
 
-/** Shared "pick from the media library, or upload a new file" control —
- * used by the Featured Image field and every inline image node in the
- * article body editor, so device upload isn't limited to the standalone
- * /admin/media page. */
 export function MediaSourcePicker({
   media,
   value,
@@ -36,38 +32,73 @@ export function MediaSourcePicker({
   const [tab, setTab] = useState<"library" | "upload">("library");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   function validateFile(file: File): string | null {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      return "Unsupported file type — please use JPEG, PNG, WebP, or GIF.";
+    const typeOk =
+      ACCEPTED_TYPES.includes(file.type) ||
+      file.type.startsWith("image/") ||
+      /\.(jpe?g|png|webp|gif)$/i.test(file.name);
+    if (!typeOk) {
+      return "Unsupported file type — use JPEG, PNG, WebP, or GIF.";
     }
     if (file.size > MAX_FILE_BYTES) {
-      return "File is too large — the limit is 10MB.";
+      return "File is too large — the limit is 10MB. Compress the image and try again.";
+    }
+    if (file.size === 0) {
+      return "That file appears empty. Choose another image.";
     }
     return null;
   }
 
-  async function handleUpload(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const file = formData.get("file") as File | null;
-    const validationError = file ? validateFile(file) : "Please choose a file to upload.";
+
+    if (!file || file.size === 0) {
+      setError("Please choose a file to upload.");
+      return;
+    }
+
+    const validationError = validateFile(file);
     if (validationError) {
       setError(validationError);
       return;
     }
 
+    // Auto-fill alt text from filename if left blank
+    const alt = String(formData.get("altText") ?? "").trim();
+    if (!alt) {
+      const guess = file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
+      formData.set("altText", guess || "Article image");
+    }
+
     setError(null);
     setIsPending(true);
-    const result = await uploadMedia(initialMediaFormState, formData);
-    setIsPending(false);
 
-    if (result.status === "error") {
-      setError(result.message ?? "Upload failed. Please try again.");
-      return;
-    }
-    if (result.media) {
-      onUploaded?.(result.media);
-      onChange(result.media);
-      setTab("library");
+    try {
+      const result = await uploadMedia(initialMediaFormState, formData);
+      if (result.status === "error") {
+        setError(result.message ?? "Upload failed. Please try again.");
+        return;
+      }
+      if (result.media) {
+        onUploaded?.(result.media);
+        onChange(result.media);
+        setTab("library");
+        setFileName(null);
+        formRef.current?.reset();
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      setError(
+        `Upload failed (${msg}). Try a smaller JPEG under 5MB, or refresh and sign in again.`
+      );
+    } finally {
+      setIsPending(false);
     }
   }
 
@@ -96,19 +127,34 @@ export function MediaSourcePicker({
           ))}
         </select>
       ) : (
-        <form action={handleUpload} className="mt-3 space-y-2">
+        <form ref={formRef} onSubmit={handleSubmit} className="mt-3 space-y-2">
           <input
             type="file"
             name="file"
-            accept={ACCEPTED_TYPES.join(",")}
+            accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
             required
             className={fieldClass()}
+            onChange={(e) => {
+              const f = e.target.files?.[0] ?? null;
+              setFileName(f ? `${f.name} (${(f.size / 1024).toFixed(0)} KB)` : null);
+              setError(null);
+            }}
           />
-          <input type="text" name="altText" placeholder="Alt text (required)" required className={fieldClass()} />
+          {fileName && <p className="text-xs text-gray-muted">Selected: {fileName}</p>}
+          <input
+            type="text"
+            name="altText"
+            placeholder="Alt text (optional — defaults from filename)"
+            className={fieldClass()}
+          />
           <input type="text" name="caption" placeholder="Caption (optional)" className={fieldClass()} />
           <input type="text" name="credit" placeholder="Credit (optional)" className={fieldClass()} />
 
-          {error && <p className="text-sm text-live-red">{error}</p>}
+          {error && (
+            <p role="alert" className="border border-live-red/40 bg-live-red/10 px-3 py-2 text-sm text-live-red">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -117,6 +163,7 @@ export function MediaSourcePicker({
           >
             {isPending ? "Uploading…" : "Upload"}
           </button>
+          <p className="text-[11px] text-gray-muted">JPEG, PNG, WebP or GIF · max 10MB</p>
         </form>
       )}
     </div>
