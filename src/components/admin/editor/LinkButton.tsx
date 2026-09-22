@@ -4,19 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Editor } from "@tiptap/react";
 import { searchArticlesForLinking } from "@/lib/actions/admin-articles";
 
-function buttonClass(active: boolean) {
-  return `focus-ring border px-2.5 py-1.5 text-sm font-semibold ${
-    active
-      ? "border-accent text-accent"
-      : "border-charcoal text-gray-secondary-light hover:border-accent hover:text-accent"
-  }`;
-}
-
-/** "Link" toolbar button. Opens a small popover to either search this
- * writer's own published articles by title (the common case — linking a
- * related story) or paste any external URL. Applies the link to the
- * current text selection, or inserts the article's title as new linked
- * text if nothing is selected. */
 export function LinkButton({ editor, articleId }: { editor: Editor; articleId?: string }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -24,6 +11,7 @@ export function LinkButton({ editor, articleId }: { editor: Editor; articleId?: 
   const [results, setResults] = useState<{ id: string; title: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const active = editor.isActive("link") || open;
 
   useEffect(() => {
     if (!open) return;
@@ -74,14 +62,19 @@ export function LinkButton({ editor, articleId }: { editor: Editor; articleId?: 
           setQuery("");
           setResults([]);
         }}
-        className={buttonClass(editor.isActive("link") || open)}
+        className={`focus-ring inline-flex h-9 min-w-9 items-center justify-center rounded-md px-2.5 text-sm font-semibold transition ${
+          active
+            ? "bg-accent text-black"
+            : "bg-black/40 text-gray-secondary-light hover:bg-charcoal hover:text-white"
+        }`}
         aria-label="Link"
+        title="Link selected words"
       >
         Link
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-30 mt-1 w-80 border border-white/10 bg-charcoal-deep p-3 text-sm shadow-lg">
+        <div className="absolute left-0 top-full z-30 mt-1 w-80 rounded-md border border-white/10 bg-charcoal-deep p-3 text-sm shadow-lg">
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-muted">
             Link to one of your articles
           </p>
