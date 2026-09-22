@@ -12,6 +12,7 @@ import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { MemberAccessCard } from "@/components/MemberAccessCard";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
+import { majorRegions } from "@/lib/nav";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
 
@@ -28,9 +29,11 @@ function formatDate(iso: string) {
   );
 }
 
-/** The real production article layout — shared by the public /article/[slug]
- * route and the admin draft-preview route, so "Preview" is never a
- * different-looking approximation. */
+function regionHref(regionName: string): string | null {
+  const match = majorRegions.find((r) => r.name.toLowerCase() === regionName.toLowerCase());
+  return match ? `/regions/${match.slug}` : null;
+}
+
 export function ArticleView({
   article,
   related,
@@ -45,20 +48,16 @@ export function ArticleView({
   comments: CommentRow[];
   articlePath: string;
   canonicalUrl: string;
-  /** Admin preview disables comment posting and related-article/author links
-   * navigating away, since drafts aren't real pages yet for readers. */
   interactive?: boolean;
-  /** True when this is a premium article and the current reader has no
-   * active subscription — shows a preview of the body plus a paywall
-   * instead of the full text. */
   premiumLocked?: boolean;
 }) {
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
 
-  // Split blocks roughly in half for mid-article sign-up insertion
   const midpoint = Math.ceil(bodyBlocks.length / 2);
   const firstHalfBlocks = bodyBlocks.slice(0, midpoint);
   const secondHalfBlocks = bodyBlocks.slice(midpoint);
+
+  const regionLink = article.region ? regionHref(article.region) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -106,11 +105,42 @@ export function ArticleView({
         {article.excerpt && (
           <p className="mt-4 text-lg text-gray-secondary-light sm:text-xl">{article.excerpt}</p>
         )}
-        <div className="mt-4 flex items-center gap-2 text-sm text-gray-muted">
+        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-muted">
           <time dateTime={article.publicationDate}>{formatDate(article.publicationDate)}</time>
           <span aria-hidden="true">·</span>
           <span>{article.readTimeMinutes} min read</span>
+          {article.region && (
+            <>
+              <span aria-hidden="true">·</span>
+              {regionLink ? (
+                <Link href={regionLink} className="focus-ring hover:text-accent">
+                  {article.region}
+                </Link>
+              ) : (
+                <span>{article.region}</span>
+              )}
+            </>
+          )}
+          {article.country && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{article.country}</span>
+            </>
+          )}
         </div>
+        {article.topics.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {article.topics.map((topic) => (
+              <Link
+                key={topic.id}
+                href={`/topics/${topic.slug}`}
+                className="focus-ring border border-charcoal px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-secondary-light transition-colors hover:border-accent hover:text-accent"
+              >
+                {topic.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {article.featuredImage && (
@@ -151,13 +181,6 @@ export function ArticleView({
         </div>
       )}
 
-      {/* End-of-article stack (all existing + future articles):
-          1. Author
-          2. Share
-          3. Comments
-          4. Related stories
-          5. Newsletter signup
-          (site footer remains below via layout) */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <AuthorBlock name={article.author.name} title={article.author.title} />
         {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
