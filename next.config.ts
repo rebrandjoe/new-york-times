@@ -16,11 +16,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Admin media uploads send the file through a Server Action.
-  // Next.js 16 reads this at the top level (experimental is ignored for this).
-  serverActions: {
-    bodySizeLimit: "10mb",
-  },
+  // Admin media uploads (Server Actions) — 10MB body limit.
+  // On Next.js 16 this lives under experimental.
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",
@@ -28,8 +25,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     // Serve images directly (Supabase / static) — do not use Vercel Image
-    // Optimization. The free tier allows only 5,000 transformations/month;
-    // homepage + article grids burn through that quickly with responsive sizes.
+    // Optimization. Free tier allows only 5,000 transformations/month.
     unoptimized: true,
     remotePatterns: [
       {
