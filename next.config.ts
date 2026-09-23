@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    // Serve images directly (Supabase / static) — do not use Vercel Image
+    // Optimization. The free tier allows only 5,000 transformations/month;
+    // homepage + article grids burn through that quickly with responsive sizes.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
