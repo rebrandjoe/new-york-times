@@ -12,20 +12,40 @@ export function BlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
   );
 }
 
+function ParagraphBody({ text }: { text: string }) {
+  // Soft line breaks (Shift+Enter in the editor) are stored as \n
+  if (!text.includes("\n")) {
+    return <>{renderInlineMarkup(text)}</>;
+  }
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, i) => (
+        <span key={i}>
+          {i > 0 && <br />}
+          {renderInlineMarkup(line)}
+        </span>
+      ))}
+    </>
+  );
+}
+
 function Block({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
+      // Empty paragraph = intentional blank line between sections
+      if (!block.text.trim()) {
+        return <p className="h-3 sm:h-4" aria-hidden="true" />;
+      }
       return (
-        <p className="text-lg leading-relaxed text-offwhite">{renderInlineMarkup(block.text)}</p>
+        <p className="text-lg leading-relaxed text-offwhite">
+          <ParagraphBody text={block.text} />
+        </p>
       );
 
     case "heading": {
       const sizes = { 1: "text-3xl", 2: "text-2xl", 3: "text-xl" } as const;
       const Tag = (`h${block.level}`) as "h1" | "h2" | "h3";
-      // In-body H2/H3 subheadings render in the accent colour by default,
-      // giving long articles structure without manual styling each time —
-      // the main article Title (a separate element, not a body block) is
-      // unaffected and keeps the standard white headline treatment.
       const color = block.level === 1 ? "text-white" : "text-accent";
       return (
         <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]}`}>
