@@ -4,7 +4,7 @@ import { renderInlineMarkup } from "@/lib/cms/inline-markup";
 
 export function BlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
   return (
-    <div className="space-y-6">
+    <div className="article-body space-y-0">
       {blocks.map((block, i) => (
         <Block key={i} block={block} />
       ))}
@@ -13,7 +13,7 @@ export function BlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
 }
 
 function ParagraphBody({ text }: { text: string }) {
-  // Soft line breaks (Shift+Enter in the editor) are stored as \n
+  // Soft line breaks (Shift+Enter) stored as \n → <br />
   if (!text.includes("\n")) {
     return <>{renderInlineMarkup(text)}</>;
   }
@@ -33,12 +33,13 @@ function ParagraphBody({ text }: { text: string }) {
 function Block({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
-      // Empty paragraph = intentional blank line between sections
+      // Empty paragraph = intentional blank line (Enter on a blank line in the editor).
+      // Use a real spacer height so it cannot collapse away in the layout.
       if (!block.text.trim()) {
-        return <p className="h-3 sm:h-4" aria-hidden="true" />;
+        return <div className="h-6 sm:h-8" aria-hidden="true" />;
       }
       return (
-        <p className="text-lg leading-relaxed text-offwhite">
+        <p className="mb-6 whitespace-pre-wrap text-lg leading-relaxed text-offwhite last:mb-0">
           <ParagraphBody text={block.text} />
         </p>
       );
@@ -47,8 +48,9 @@ function Block({ block }: { block: ContentBlock }) {
       const sizes = { 1: "text-3xl", 2: "text-2xl", 3: "text-xl" } as const;
       const Tag = (`h${block.level}`) as "h1" | "h2" | "h3";
       const color = block.level === 1 ? "text-white" : "text-accent";
+      const top = block.level === 1 ? "mt-10 mb-4" : block.level === 2 ? "mt-10 mb-4" : "mt-8 mb-3";
       return (
-        <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]}`}>
+        <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]} ${top}`}>
           {renderInlineMarkup(block.text)}
         </Tag>
       );
@@ -58,7 +60,7 @@ function Block({ block }: { block: ContentBlock }) {
       const ListTag = block.style === "numbered" ? "ol" : "ul";
       return (
         <ListTag
-          className={`ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
+          className={`mb-6 ml-6 space-y-2 text-lg leading-relaxed text-offwhite ${
             block.style === "numbered" ? "list-decimal" : "list-disc"
           }`}
         >
@@ -71,14 +73,14 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "blockquote":
       return (
-        <blockquote className="border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
+        <blockquote className="mb-6 border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
           {renderInlineMarkup(block.text)}
         </blockquote>
       );
 
     case "pullquote":
       return (
-        <figure className="border-y border-charcoal py-6 text-center">
+        <figure className="my-8 border-y border-charcoal py-6 text-center">
           <blockquote className="font-serif text-2xl font-bold leading-snug text-white sm:text-3xl">
             {renderInlineMarkup(block.text)}
           </blockquote>
@@ -90,7 +92,7 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "image":
       return (
-        <figure>
+        <figure className="my-8">
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-charcoal">
             <Image src={block.url} alt={block.alt} fill sizes="720px" className="object-cover" />
           </div>
@@ -106,7 +108,7 @@ function Block({ block }: { block: ContentBlock }) {
 
     case "video":
       return (
-        <figure>
+        <figure className="my-8">
           <div className="aspect-video w-full overflow-hidden bg-charcoal">
             <iframe
               src={block.url}
@@ -126,6 +128,6 @@ function Block({ block }: { block: ContentBlock }) {
       );
 
     case "divider":
-      return <hr className="border-charcoal" />;
+      return <hr className="my-8 border-charcoal" />;
   }
 }
