@@ -11,45 +11,55 @@ import type { ContentBlock } from "./blocks";
 const INLINE_PATTERN = /\*\*(.+?)\*\*|\*(.+?)\*|\[(.+?)\]\(((?:https?:\/\/|\/)[^\s)]+)\)/g;
 
 /** "**bold** *italic* [text](url)" -> Tiptap inline text nodes with marks.
- * Exported for the paste handler below, which reuses this exact parser so
- * pasted draft text and stored article text are interpreted identically. */
+ * Newlines become hardBreak nodes so Shift+Enter spacing survives round-trip. */
 export function inlineFromText(text: string): JSONContent[] {
   if (!text) return [];
+
+  const parts = text.split("\n");
   const nodes: JSONContent[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-  INLINE_PATTERN.lastIndex = 0;
 
-  while ((match = INLINE_PATTERN.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      nodes.push({ type: "text", text: text.slice(lastIndex, match.index) });
+  for (let i = 0; i < parts.length; i++) {
+    if (i > 0) nodes.push({ type: "hardBreak" });
+
+    const segment = parts[i];
+    if (!segment) continue;
+
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    INLINE_PATTERN.lastIndex = 0;
+
+    while ((match = INLINE_PATTERN.exec(segment)) !== null) {
+      if (match.index > lastIndex) {
+        nodes.push({ type: "text", text: segment.slice(lastIndex, match.index) });
+      }
+      if (match[1] !== undefined) {
+        nodes.push({ type: "text", text: match[1], marks: [{ type: "bold" }] });
+      } else if (match[2] !== undefined) {
+        nodes.push({ type: "text", text: match[2], marks: [{ type: "italic" }] });
+      } else if (match[3] !== undefined && match[4] !== undefined) {
+        nodes.push({
+          type: "text",
+          text: match[3],
+          marks: [{ type: "link", attrs: { href: match[4] } }],
+        });
+      }
+      lastIndex = INLINE_PATTERN.lastIndex;
     }
-    if (match[1] !== undefined) {
-      nodes.push({ type: "text", text: match[1], marks: [{ type: "bold" }] });
-    } else if (match[2] !== undefined) {
-      nodes.push({ type: "text", text: match[2], marks: [{ type: "italic" }] });
-    } else if (match[3] !== undefined && match[4] !== undefined) {
-      nodes.push({
-        type: "text",
-        text: match[3],
-        marks: [{ type: "link", attrs: { href: match[4] } }],
-      });
+
+    if (lastIndex < segment.length) {
+      nodes.push({ type: "text", text: segment.slice(lastIndex) });
     }
-    lastIndex = INLINE_PATTERN.lastIndex;
   }
 
-  if (lastIndex < text.length) {
-    nodes.push({ type: "text", text: text.slice(lastIndex) });
-  }
-
-  return nodes.length > 0 ? nodes : [];
+  return nodes;
 }
 
-/** Tiptap inline text nodes -> "**bold** *italic* [text](url)" string. */
+/** Tiptap inline nodes -> storage string. hardBreak becomes newline. */
 function textFromInline(content: JSONContent[] | undefined): string {
   if (!content) return "";
   return content
     .map((node) => {
+      if (node.type === "hardBreak") return "\n";
       if (node.type !== "text") return "";
       const text = node.text ?? "";
       const link = node.marks?.find((m) => m.type === "link");
@@ -62,7 +72,10 @@ function textFromInline(content: JSONContent[] | undefined): string {
 }
 
 function paragraphNode(text: string): JSONContent {
-  return { type: "paragraph", content: inlineFromText(text) };
+  const inline = inlineFromText(text);
+  return inline.length > 0
+    ? { type: "paragraph", content: inline }
+    : { type: "paragraph" };
 }
 
 export function blocksToTiptapDoc(blocks: ContentBlock[]): JSONContent {
@@ -75,11 +88,18 @@ export function blocksToTiptapDoc(blocks: ContentBlock[]): JSONContent {
       case "paragraph":
         return paragraphNode(block.text);
       case "heading":
-        return { type: "heading", attrs: { level: block.level }, content: inlineFromText(block.text) };
+        return {
+          type: "heading",
+          attrs: { level: block.level },
+          content: inlineFromText(block.text),
+        };
       case "list":
         return {
           type: block.style === "numbered" ? "orderedList" : "bulletList",
-          content: block.items.map((item) => ({ type: "listItem", content: [paragraphNode(item)] })),
+          content: block.items.map((item) => ({
+            type: "listItem",
+            content: [paragraphNode(item)],
+          })),
         };
       case "blockquote":
         return { type: "blockquote", content: [paragraphNode(block.text)] };
@@ -130,8 +150,10 @@ export function tiptapDocToBlocks(doc: JSONContent): ContentBlock[] {
   for (const node of nodes) {
     switch (node.type) {
       case "paragraph": {
+        // Keep blank paragraphs — they are intentional spacing (Enter / blank line).
+        // Previously `if (text.trim())` dropped them so published articles lost gaps.
         const text = textFromInline(node.content);
-        if (text.trim()) blocks.push({ type: "paragraph", text });
+        blocks.push({ type: "paragraph", text });
         break;
       }
       case "heading": {
