@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
-import { Fragment, Slice, type Node as PMNode } from "@tiptap/pm/model";
+import { Fragment, Slice, type Node as PMNode, type Schema } from "@tiptap/pm/model";
 import type { ContentBlock } from "@/lib/cms/blocks";
 import type { CmsMedia } from "@/lib/cms/types";
 import { blocksToTiptapDoc, tiptapDocToBlocks, inlineFromText } from "@/lib/cms/tiptap-blocks";
@@ -15,34 +15,20 @@ import { PullQuote } from "./PullQuoteExtension";
 import { EditorToolbar } from "./EditorToolbar";
 
 /** Build ProseMirror inline nodes from a single paragraph string. */
-function buildInline(
-  schema: ReturnType<typeof useEditor> extends infer E
-    ? E extends { state: { schema: infer S } }
-      ? S
-      : never
-    : never,
-  text: string
-): PMNode[] {
-  // schema is ProseMirror Schema — keep typing practical for the editor
-  const s = schema as {
-    text: (t: string, marks?: unknown[]) => PMNode;
-    nodes: Record<string, { create: (attrs?: unknown, content?: unknown) => PMNode }>;
-    marks: Record<string, { create: (attrs?: unknown) => unknown }>;
-  };
-
+function buildInline(schema: Schema, text: string): PMNode[] {
   const json = inlineFromText(text);
   const out: PMNode[] = [];
 
   for (const n of json) {
     if (n.type === "hardBreak") {
-      if (s.nodes.hardBreak) out.push(s.nodes.hardBreak.create());
+      if (schema.nodes.hardBreak) out.push(schema.nodes.hardBreak.create());
       continue;
     }
     if (n.type !== "text" || !n.text) continue;
 
     const marks = (n.marks ?? [])
       .map((m) => {
-        const markType = s.marks[m.type];
+        const markType = schema.marks[m.type];
         if (!markType) return null;
         try {
           return markType.create(m.attrs);
@@ -50,9 +36,9 @@ function buildInline(
           return null;
         }
       })
-      .filter(Boolean);
+      .filter((m): m is NonNullable<typeof m> => m != null);
 
-    out.push(s.text(n.text, marks as never[]));
+    out.push(schema.text(n.text, marks));
   }
 
   return out;
@@ -92,12 +78,8 @@ export function TiptapEditor({
         class: "px-5 py-6 sm:px-8 sm:py-8",
       },
       /**
-       * Paste handling:
-       * - Prefer text/plain so Word / Docs / Notes / chat drafts always insert.
-       * - Split into paragraphs on blank lines (or single newlines if no blank lines).
-       * - Support **bold**, *italic*, [links](url) when present.
-       * - Never call preventDefault until nodes are built successfully (avoids silent paste loss).
-       * - If anything fails, return false so TipTap’s default paste can try.
+       * Prefer text/plain so Word / Docs / Notes / chat drafts always insert.
+       * Never call preventDefault until nodes are built (avoids silent paste loss).
        */
       handlePaste: (view, event) => {
         const raw = event.clipboardData?.getData("text/plain") ?? "";
@@ -118,7 +100,7 @@ export function TiptapEditor({
           if (!schema.nodes.paragraph) return false;
 
           const nodes: PMNode[] = parts.map((p) => {
-            const inline = buildInline(schema as never, p);
+            const inline = buildInline(schema, p);
             return schema.nodes.paragraph.create(
               null,
               inline.length > 0 ? inline : undefined
