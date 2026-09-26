@@ -1,8 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { uploadMedia } from "@/lib/actions/admin-media";
-import { initialMediaFormState } from "@/lib/actions/form-state";
 import type { CmsMedia } from "@/lib/cms/types";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"];
@@ -69,7 +67,6 @@ export function MediaSourcePicker({
       return;
     }
 
-    // Auto-fill alt text from filename if left blank
     const alt = String(formData.get("altText") ?? "").trim();
     if (!alt) {
       const guess = file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
@@ -80,11 +77,29 @@ export function MediaSourcePicker({
     setIsPending(true);
 
     try {
-      const result = await uploadMedia(initialMediaFormState, formData);
-      if (result.status === "error") {
-        setError(result.message ?? "Upload failed. Please try again.");
+      const res = await fetch("/api/admin/media/upload", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+      });
+
+      let result: {
+        status?: string;
+        message?: string;
+        media?: CmsMedia;
+      } = {};
+      try {
+        result = await res.json();
+      } catch {
+        setError(`Upload failed (HTTP ${res.status}). Refresh the page and try again.`);
         return;
       }
+
+      if (!res.ok || result.status === "error") {
+        setError(result.message ?? `Upload failed (HTTP ${res.status}).`);
+        return;
+      }
+
       if (result.media) {
         onUploaded?.(result.media);
         onChange(result.media);
@@ -94,9 +109,7 @@ export function MediaSourcePicker({
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
-      setError(
-        `Upload failed (${msg}). Try a smaller JPEG under 5MB, or refresh and sign in again.`
-      );
+      setError(`Upload failed (${msg}). Refresh the page, sign in again, and retry.`);
     } finally {
       setIsPending(false);
     }
