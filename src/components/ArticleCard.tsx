@@ -12,7 +12,15 @@ function Meta({ article, className = "" }: { article: Article; className?: strin
   );
 }
 
-export function FeaturedCard({ article, className = "" }: { article: Article; className?: string }) {
+export function FeaturedCard({
+  article,
+  className = "",
+  priority = false,
+}: {
+  article: Article;
+  className?: string;
+  priority?: boolean;
+}) {
   return (
     <Link
       href={`/article/${article.slug}`}
@@ -22,6 +30,7 @@ export function FeaturedCard({ article, className = "" }: { article: Article; cl
         image={article.image}
         sizes="(min-width: 1024px) 60vw, 100vw"
         className="aspect-[16/10] w-full"
+        priority={priority}
       />
       <div className="mt-4">
         <span className="text-xs font-bold uppercase tracking-wider text-accent">
