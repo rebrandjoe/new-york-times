@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import type { CommentFormState } from "./form-state";
 
@@ -11,6 +12,25 @@ export interface CommentRow {
   body: string;
   createdAt: string;
   isOwn: boolean;
+}
+
+/** Visible comments only — no cookies/session. Safe for cached article pages. */
+export async function getPublicComments(articleId: string): Promise<CommentRow[]> {
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("comments")
+    .select("id, author_name, body, created_at")
+    .eq("article_id", articleId)
+    .eq("status", "visible")
+    .order("created_at", { ascending: false });
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    authorName: row.author_name,
+    body: row.body,
+    createdAt: row.created_at,
+    isOwn: false,
+  }));
 }
 
 export async function getComments(articleId: string): Promise<CommentRow[]> {
