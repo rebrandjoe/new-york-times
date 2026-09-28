@@ -11,10 +11,13 @@ export function ArticleImage({
   image,
   sizes,
   className = "",
+  priority = false,
 }: {
   image: ImageAsset;
   sizes: string;
   className?: string;
+  /** Only the above-the-fold lead image should set this. */
+  priority?: boolean;
 }) {
   if (!image.src) {
     return (
@@ -35,6 +38,7 @@ export function ArticleImage({
         alt={image.alt}
         fill
         sizes={sizes}
+        priority={priority}
         className={`object-cover ${focalPositionMap[image.focalPoint ?? "center"]}`}
       />
     </div>
