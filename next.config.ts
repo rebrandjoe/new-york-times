@@ -55,6 +55,16 @@ const nextConfig: NextConfig = {
           { key: "Content-Type", value: "application/javascript; charset=utf-8" },
         ],
       },
+      // Fingerprinted/static public images — safe to cache long in browsers.
+      {
+        source: "/images/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
       {
         source: "/(.*)",
         headers: securityHeaders,
