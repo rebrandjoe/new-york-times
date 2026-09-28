@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+const MIN_QUERY_LENGTH = 2;
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -15,7 +17,8 @@ export default async function SearchPage({
 }) {
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
-  const rows = query ? await searchPublishedArticles(query) : [];
+  const canSearch = query.length >= MIN_QUERY_LENGTH;
+  const rows = canSearch ? await searchPublishedArticles(query) : [];
   const articles = rows.map(toHomepageArticle);
 
   return (
@@ -32,6 +35,7 @@ export default async function SearchPage({
           type="search"
           name="q"
           defaultValue={query}
+          minLength={MIN_QUERY_LENGTH}
           placeholder="Search health news, topics, authors…"
           className="focus-ring w-full border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted focus:border-accent"
         />
@@ -48,14 +52,18 @@ export default async function SearchPage({
           <p className="text-base text-gray-secondary-light">
             Enter a search term to find articles, topics, and authors.
           </p>
+        ) : !canSearch ? (
+          <p className="text-base text-gray-secondary-light">
+            Type at least {MIN_QUERY_LENGTH} characters to search.
+          </p>
         ) : articles.length === 0 ? (
           <p className="text-base text-gray-secondary-light">
-            No results for &quot;{query}&quot;. Try a different search term.
+            No results for "{query}". Try a different search term.
           </p>
         ) : (
           <>
             <p className="mb-4 text-sm text-gray-muted">
-              {articles.length} result{articles.length === 1 ? "" : "s"} for &quot;{query}&quot;
+              {articles.length} result{articles.length === 1 ? "" : "s"} for "{query}"
             </p>
             {articles.map((article) => (
               <ListItemCard key={article.id} article={article} />
