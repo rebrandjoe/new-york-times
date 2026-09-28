@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleView } from "@/components/article/ArticleView";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms/queries";
-import { getComments } from "@/lib/actions/comments";
+import { getPublicComments } from "@/lib/actions/comments";
 import { createClient } from "@/lib/supabase/server";
 import { hasActivePremiumAccess } from "@/lib/premium/access";
 
 const SITE_URL = "https://josephmmwa.com";
 /** Public asset that exists in production (logo.png / og-default.jpg currently 404). */
 const DEFAULT_SHARE_IMAGE = `${SITE_URL}/images/joseph-mmwa.jpg`;
+
+// Cache public article HTML for 6 hours — publish still revalidates paths.
+export const revalidate = 21600;
 
 /**
  * Social crawlers often refuse Supabase Storage URLs because responses include
@@ -60,7 +63,6 @@ export async function generateMetadata({
         {
           url: image,
           alt,
-          // Typical share crop; actual dimensions may differ
           width: 1200,
           height: 630,
         },
@@ -84,15 +86,21 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!article) notFound();
 
   const articlePath = `/article/${article.slug}`;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
+  // Avoid session/cookies on free public articles so the page can be cached.
+  // Premium stories still check access when needed.
   const [related, comments, premiumAccess] = await Promise.all([
     getRelatedArticles(article, 4),
-    getComments(article.id),
-    article.premium ? hasActivePremiumAccess(user?.id ?? null) : Promise.resolve(true),
+    getPublicComments(article.id),
+    article.premium
+      ? (async () => {
+          const supabase = await createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          return hasActivePremiumAccess(user?.id ?? null);
+        })()
+      : Promise.resolve(true),
   ]);
 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
