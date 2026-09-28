@@ -70,10 +70,9 @@ const jsonLd = {
   ],
 };
 
-// Was 30s — that regenerated every page constantly and exhausted the free-tier
-// ISR Write quota (200k/month). 1 hour is plenty for a news site; publishing
-// still uses revalidatePath for immediate updates where configured.
-export const revalidate = 3600;
+// 6 hours — public pages stay cached longer; publishing still calls revalidatePath.
+// Longer interval = less Fluid Active CPU and fewer ISR writes on free tier.
+export const revalidate = 21600;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const tickerHeadline = await getActiveTickerHeadline();
