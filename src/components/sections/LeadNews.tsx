@@ -16,7 +16,11 @@ export function LeadNews({
       </h2>
       <SectionHeading title="Top Stories" />
       <div className="grid grid-cols-4 gap-x-6 gap-y-10 sm:grid-cols-6 lg:grid-cols-12">
-        <FeaturedCard article={primary} className="col-span-4 sm:col-span-6 lg:col-span-7" />
+        <FeaturedCard
+          article={primary}
+          priority
+          className="col-span-4 sm:col-span-6 lg:col-span-7"
+        />
         <div className="col-span-4 flex flex-col gap-8 sm:col-span-6 lg:col-span-5">
           {secondary.map((article) => (
             <SecondaryCard key={article.id} article={article} />
