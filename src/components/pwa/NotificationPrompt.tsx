@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CloseIcon } from "@/components/icons";
 import { subscribeToPush } from "@/lib/actions/push-notifications";
 
@@ -13,27 +13,54 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-/** Custom pre-prompt, shown once per visitor: asks plainly before the
- * browser's own native permission dialog appears, the same pattern as the
- * install banner. Never shown again once the visitor has answered either
- * way (dismissed here, or already granted/denied at the browser level). */
+function canOfferPush(): boolean {
+  if (typeof window === "undefined") return false;
+  if (!("Notification" in window)) return false;
+  if (!("serviceWorker" in navigator)) return false;
+  if (!("PushManager" in window)) return false;
+  if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return false;
+  if (Notification.permission !== "default") return false;
+  if (window.localStorage.getItem(DISMISS_KEY) === "1") return false;
+  return true;
+}
+
+/**
+ * One-time professional opt-in for push alerts on new health stories.
+ * Shown after the visitor's first click/tap (or a short delay), then never
+ * again if they allow, deny, or dismiss. Does not interrupt every link.
+ */
 export function NotificationPrompt() {
   const [visible, setVisible] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const show = useCallback(() => {
+    if (!canOfferPush()) return;
+    setVisible(true);
+  }, []);
 
   useEffect(() => {
-    const supported =
-      typeof window !== "undefined" &&
-      "Notification" in window &&
-      "serviceWorker" in navigator &&
-      "PushManager" in window;
-    if (!supported) return;
-    if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return;
-    if (Notification.permission !== "default") return;
-    if (window.localStorage.getItem(DISMISS_KEY) === "1") return;
+    if (!canOfferPush()) return;
 
-    const timer = setTimeout(() => setVisible(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Prefer first real engagement (click/tap) so the later browser permission
+    // dialog is more likely to be accepted; fall back to a short delay.
+    const onEngage = () => {
+      show();
+      cleanup();
+    };
+
+    const timer = window.setTimeout(() => {
+      show();
+      cleanup();
+    }, 4500);
+
+    function cleanup() {
+      window.clearTimeout(timer);
+      document.removeEventListener("pointerdown", onEngage);
+    }
+
+    document.addEventListener("pointerdown", onEngage, { once: true, passive: true });
+    return cleanup;
+  }, [show]);
 
   function dismiss() {
     setVisible(false);
@@ -41,6 +68,8 @@ export function NotificationPrompt() {
   }
 
   async function allow() {
+    if (busy) return;
+    setBusy(true);
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
@@ -56,11 +85,17 @@ export function NotificationPrompt() {
         ) as BufferSource,
       });
 
-      await subscribeToPush(subscription.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } });
+      await subscribeToPush(
+        subscription.toJSON() as {
+          endpoint: string;
+          keys: { p256dh: string; auth: string };
+        }
+      );
     } catch (err) {
       console.error("[push] subscribe failed:", err);
     } finally {
       dismiss();
+      setBusy(false);
     }
   }
 
@@ -68,36 +103,88 @@ export function NotificationPrompt() {
 
   return (
     <div
-      role="status"
-      className="border-t border-accent/30 bg-charcoal-deep"
+      className="fixed inset-0 z-[60] flex items-end justify-center p-4 sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="push-prompt-title"
+      aria-describedby="push-prompt-desc"
     >
-      <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-3 sm:px-6">
-        <p className="flex-1 text-sm text-offwhite">
-          Get notified when JOSEPH MMWA publishes the latest health and medical news?
-        </p>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={allow}
-            className="focus-ring bg-accent px-4 py-2 text-sm font-bold text-black transition-opacity hover:opacity-90"
+      {/* Backdrop */}
+      <button
+        type="button"
+        aria-label="Dismiss notification prompt"
+        className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
+        onClick={dismiss}
+      />
+
+      {/* Card */}
+      <div className="relative w-full max-w-md overflow-hidden rounded-sm border border-white/10 bg-charcoal-deep shadow-2xl">
+        <div className="h-1 w-full bg-accent" />
+
+        <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+                JOSEPH MMWA
+              </p>
+              <h2
+                id="push-prompt-title"
+                className="mt-2 font-serif text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-[1.65rem]"
+              >
+                Stay ahead of health news
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={dismiss}
+              aria-label="Close"
+              className="focus-ring -mr-1 -mt-1 shrink-0 p-2 text-gray-muted transition-colors hover:text-white"
+            >
+              <CloseIcon className="h-4 w-4" />
+            </button>
+          </div>
+
+          <p
+            id="push-prompt-desc"
+            className="mt-3 text-sm leading-relaxed text-gray-secondary-light"
           >
-            Allow
-          </button>
-          <button
-            type="button"
-            onClick={dismiss}
-            className="focus-ring px-3 py-2 text-sm text-gray-secondary-light hover:text-white"
-          >
-            No thanks
-          </button>
-          <button
-            type="button"
-            onClick={dismiss}
-            aria-label="Dismiss"
-            className="focus-ring p-2 text-gray-secondary-light hover:text-white"
-          >
-            <CloseIcon className="h-4 w-4" />
-          </button>
+            Allow notifications to get an alert the moment we publish important
+            health and medical stories from Kenya, Africa and around the world.
+          </p>
+
+          <ul className="mt-4 space-y-2 text-sm text-offwhite/90">
+            <li className="flex gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+              Breaking and explained coverage, as it happens
+            </li>
+            <li className="flex gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+              No spam — only when a new story goes live
+            </li>
+            <li className="flex gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+              You can turn this off anytime in browser settings
+            </li>
+          </ul>
+
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={dismiss}
+              disabled={busy}
+              className="focus-ring px-4 py-2.5 text-sm font-medium text-gray-secondary-light transition-colors hover:text-white disabled:opacity-50"
+            >
+              Not now
+            </button>
+            <button
+              type="button"
+              onClick={allow}
+              disabled={busy}
+              className="focus-ring bg-accent px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {busy ? "Enabling…" : "Allow notifications"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
