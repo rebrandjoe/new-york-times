@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
+import type { ActiveTicker } from "@/lib/cms/ticker";
 
 /**
  * Admin routes get their own work-focused shell (see /admin/layout.tsx) —
@@ -10,10 +11,10 @@ import { Footer } from "@/components/footer/Footer";
  * gets the standard public header/footer.
  */
 export function SiteChrome({
-  tickerHeadline,
+  ticker,
   children,
 }: {
-  tickerHeadline: string | null;
+  ticker: ActiveTicker | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -25,7 +26,7 @@ export function SiteChrome({
 
   return (
     <>
-      <Header tickerHeadline={tickerHeadline} />
+      <Header ticker={ticker} />
       <main id="main-content" className="flex-1">
         {children}
       </main>
