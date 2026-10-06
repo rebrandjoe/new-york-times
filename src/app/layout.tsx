@@ -7,7 +7,7 @@ import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
-import { getActiveTickerHeadline } from "@/lib/cms/ticker";
+import { getActiveTicker } from "@/lib/cms/ticker";
 
 const displaySerif = Playfair_Display({
   variable: "--brand-font-serif-display",
@@ -75,7 +75,7 @@ const jsonLd = {
 export const revalidate = 21600;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const tickerHeadline = await getActiveTickerHeadline();
+  const ticker = await getActiveTicker();
 
   return (
     <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
@@ -130,7 +130,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           disable={process.env.NODE_ENV !== "production"}
           reloadOnOnline={false}
         >
-          <SiteChrome tickerHeadline={tickerHeadline}>{children}</SiteChrome>
+          <SiteChrome ticker={ticker}>{children}</SiteChrome>
           <div className="fixed inset-x-0 bottom-0 z-40 flex flex-col-reverse">
             <InstallPrompt />
             <NotificationPrompt />
