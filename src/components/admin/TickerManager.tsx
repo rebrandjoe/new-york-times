@@ -82,15 +82,21 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
             ) : (
               items.map((item) => (
                 <tr key={item.id}>
-                  <td className="max-w-sm truncate py-3 pr-4 text-white">{item.headline}</td>
+                  <td className="max-w-sm truncate py-3 pr-4 font-semibold text-white">{item.headline}</td>
                   <td className="py-3 pr-4">
-                    <span
-                      className={`border px-2 py-1 text-[11px] font-bold uppercase tracking-wide ${
-                        item.status === "published" ? "border-accent text-accent" : "border-charcoal text-gray-muted"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+                    {item.status === "published" ? (
+                      <span className="inline-flex items-center gap-1.5 border border-[#c41212]/60 bg-[#c41212]/15 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#ff4d4d]">
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rounded-full bg-[#ff2d2d] motion-safe:animate-pulse"
+                        />
+                        Live
+                      </span>
+                    ) : (
+                      <span className="border border-charcoal px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-gray-muted">
+                        {item.status}
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 pr-4 text-gray-secondary-light">{formatDate(item.createdAt)}</td>
                   <td className="py-3 pr-4">
@@ -100,9 +106,9 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
                           type="button"
                           disabled={isTransitioning}
                           onClick={() => onPublish(item.id)}
-                          className="focus-ring text-accent hover:underline disabled:opacity-50"
+                          className="focus-ring inline-flex items-center gap-1.5 border border-[#c41212]/50 bg-[#c41212]/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-[#ff4d4d] transition-colors hover:bg-[#c41212]/20 disabled:opacity-50"
                         >
-                          Publish
+                          Go live
                         </button>
                       )}
                       {item.status === "published" && (
@@ -110,16 +116,16 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
                           type="button"
                           disabled={isTransitioning}
                           onClick={() => onArchive(item.id)}
-                          className="focus-ring text-gray-secondary-light hover:text-accent disabled:opacity-50"
+                          className="focus-ring border border-charcoal px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-gray-secondary-light transition-colors hover:border-white/20 hover:text-white disabled:opacity-50"
                         >
-                          Archive
+                          Take offline
                         </button>
                       )}
                       <button
                         type="button"
                         disabled={isTransitioning}
                         onClick={() => onDelete(item.id)}
-                        className="focus-ring text-live-red hover:underline disabled:opacity-50"
+                        className="focus-ring text-gray-muted hover:text-live-red disabled:opacity-50"
                       >
                         Delete
                       </button>
