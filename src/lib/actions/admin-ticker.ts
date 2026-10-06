@@ -2,11 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/cms/admin-guard";
+import { normalizeTickerHref } from "@/lib/cms/ticker";
 import type { TickerFormState } from "./form-state";
 
 export interface TickerItemRow {
   id: string;
   headline: string;
+  href: string | null;
   status: "draft" | "published" | "archived";
   createdAt: string;
   publishedAt: string | null;
@@ -16,12 +18,13 @@ export async function listTickerItems(): Promise<TickerItemRow[]> {
   const { supabase } = await requireAdmin();
   const { data } = await supabase
     .from("ticker_items")
-    .select("id, headline, status, created_at, published_at")
+    .select("id, headline, href, status, created_at, published_at")
     .order("created_at", { ascending: false });
 
   return (data ?? []).map((row) => ({
     id: row.id,
     headline: row.headline,
+    href: (row as { href?: string | null }).href ?? null,
     status: row.status as TickerItemRow["status"],
     createdAt: row.created_at,
     publishedAt: row.published_at,
@@ -34,13 +37,27 @@ export async function createTickerItem(
 ): Promise<TickerFormState> {
   const { supabase } = await requireAdmin();
   const headline = String(formData.get("headline") ?? "").trim();
+  const href = normalizeTickerHref(String(formData.get("href") ?? ""));
 
   if (!headline) {
     return { status: "error", message: "Please enter the ticker text." };
   }
 
-  const { error } = await supabase.from("ticker_items").insert({ headline, status: "draft" });
-  if (error) return { status: "error", message: "Could not create the ticker item." };
+  const { error } = await supabase.from("ticker_items").insert({
+    headline,
+    href,
+    status: "draft",
+  });
+  if (error) {
+    console.error("[ticker] create failed:", error.message);
+    return {
+      status: "error",
+      message:
+        error.message.includes("href")
+          ? "Could not save the link. Run the SQL to add the href column, then try again."
+          : "Could not create the ticker item.",
+    };
+  }
 
   revalidatePath("/admin/ticker");
   return { status: "success", message: "Ticker item created as a draft." };
