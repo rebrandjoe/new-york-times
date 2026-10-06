@@ -7,67 +7,37 @@ export type Json =
   | Json[]
 
 /**
- * Generated Supabase types. `ticker_items.href` is included for clickable
- * live-ticker story links. Full table definitions are structural; unknown
- * columns remain usable via selective casts where needed.
+ * Supabase Database typing.
+ * Kept permissive so client queries stay flexible after schema changes
+ * (e.g. ticker_items.href). Prefer regenerating full types from Supabase CLI
+ * when convenient: `supabase gen types typescript`.
  */
 export type Database = {
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
-    Tables: {
-      ticker_items: {
-        Row: {
-          created_at: string
-          headline: string
-          href: string | null
-          id: string
-          published_at: string | null
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          headline: string
-          href?: string | null
-          id?: string
-          published_at?: string | null
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          headline?: string
-          href?: string | null
-          id?: string
-          published_at?: string | null
-          status?: string
-        }
-        Relationships: []
+    Tables: Record<
+      string,
+      {
+        Row: Record<string, any>
+        Insert: Record<string, any>
+        Update: Record<string, any>
+        Relationships: any[]
       }
-      [key: string]: {
-        Row: Record<string, unknown>
-        Insert: Record<string, unknown>
-        Update: Record<string, unknown>
-        Relationships: unknown[]
+    >
+    Views: Record<
+      string,
+      {
+        Row: Record<string, any>
+        Relationships: any[]
       }
-    }
-    Views: {
-      [key: string]: {
-        Row: Record<string, unknown>
-        Relationships: unknown[]
+    >
+    Functions: Record<
+      string,
+      {
+        Args: Record<string, any> | never
+        Returns: any
       }
-    }
-    Functions: {
-      [key: string]: {
-        Args: Record<string, unknown> | never
-        Returns: unknown
-      }
-    }
-    Enums: {
-      [key: string]: string
-    }
-    CompositeTypes: {
-      [key: string]: Record<string, unknown>
-    }
+    >
+    Enums: Record<string, string>
+    CompositeTypes: Record<string, Record<string, any>>
   }
 }
