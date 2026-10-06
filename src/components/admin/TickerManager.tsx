@@ -44,22 +44,34 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
 
   return (
     <div>
-      <form action={formAction} className="flex flex-wrap gap-3 border border-charcoal bg-charcoal-deep p-6">
+      <form action={formAction} className="flex flex-col gap-3 border border-charcoal bg-charcoal-deep p-6">
+        <div className="flex flex-wrap gap-3">
+          <input
+            type="text"
+            name="headline"
+            placeholder="Ticker headline text"
+            required
+            className="focus-ring min-w-[280px] flex-1 border border-white/10 bg-black px-3 py-2 text-sm text-offwhite placeholder:text-gray-muted focus:border-accent"
+          />
+          <button
+            type="submit"
+            disabled={isPending}
+            className="focus-ring bg-accent px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {isPending ? "Adding…" : "Add"}
+          </button>
+        </div>
         <input
           type="text"
-          name="headline"
-          placeholder="Ticker headline text"
-          required
-          className="focus-ring min-w-[280px] flex-1 border border-white/10 bg-black px-3 py-2 text-sm text-offwhite placeholder:text-gray-muted focus:border-accent"
+          name="href"
+          placeholder="Story link (optional) — e.g. /article/your-story-slug or full URL"
+          className="focus-ring w-full border border-white/10 bg-black px-3 py-2 text-sm text-offwhite placeholder:text-gray-muted focus:border-accent"
         />
-        <button
-          type="submit"
-          disabled={isPending}
-          className="focus-ring bg-accent px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
-          {isPending ? "Adding…" : "Add"}
-        </button>
-        {state.status === "error" && <p className="w-full text-sm text-live-red">{state.message}</p>}
+        <p className="text-xs text-gray-muted">
+          When set, clicking the live ticker on the site opens this story. Leave blank for text-only.
+        </p>
+        {state.status === "error" && <p className="text-sm text-live-red">{state.message}</p>}
+        {state.status === "success" && <p className="text-sm text-accent">{state.message}</p>}
       </form>
 
       <div className="mt-8 overflow-x-auto">
@@ -67,6 +79,7 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
           <thead>
             <tr className="border-b border-charcoal text-xs uppercase tracking-wide text-gray-muted">
               <th className="py-3 pr-4 font-semibold">Headline</th>
+              <th className="py-3 pr-4 font-semibold">Link</th>
               <th className="py-3 pr-4 font-semibold">Status</th>
               <th className="py-3 pr-4 font-semibold">Created</th>
               <th className="py-3 pr-4 font-semibold">Actions</th>
@@ -75,7 +88,7 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
           <tbody className="divide-y divide-charcoal">
             {items.length === 0 ? (
               <tr>
-                <td colSpan={4} className="py-8 text-center text-gray-muted">
+                <td colSpan={5} className="py-8 text-center text-gray-muted">
                   No ticker items yet.
                 </td>
               </tr>
@@ -83,6 +96,9 @@ export function TickerManager({ items }: { items: TickerItemRow[] }) {
               items.map((item) => (
                 <tr key={item.id}>
                   <td className="max-w-sm truncate py-3 pr-4 font-semibold text-white">{item.headline}</td>
+                  <td className="max-w-[12rem] truncate py-3 pr-4 text-xs text-gray-secondary-light">
+                    {item.href || "—"}
+                  </td>
                   <td className="py-3 pr-4">
                     {item.status === "published" ? (
                       <span className="inline-flex items-center gap-1.5 border border-[#c41212]/60 bg-[#c41212]/15 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#ff4d4d]">
