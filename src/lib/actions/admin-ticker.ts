@@ -23,11 +23,11 @@ export async function listTickerItems(): Promise<TickerItemRow[]> {
 
   return (data ?? []).map((row) => ({
     id: row.id,
-    headline: row.headline,
-    href: (row as { href?: string | null }).href ?? null,
+    headline: row.headline as string,
+    href: (row.href as string | null) ?? null,
     status: row.status as TickerItemRow["status"],
-    createdAt: row.created_at,
-    publishedAt: row.published_at,
+    createdAt: row.created_at as string,
+    publishedAt: (row.published_at as string | null) ?? null,
   }));
 }
 
@@ -63,6 +63,41 @@ export async function createTickerItem(
   return { status: "success", message: "Ticker item created as a draft." };
 }
 
+/** Edit headline and/or story link for any item (draft, published, or archived). */
+export async function updateTickerItem(
+  id: string,
+  input: { headline: string; href?: string | null }
+): Promise<{ ok: true } | { error: string }> {
+  const { supabase } = await requireAdmin();
+  const headline = input.headline.trim();
+  if (!headline) {
+    return { error: "Please enter the ticker text." };
+  }
+
+  const href =
+    input.href === undefined || input.href === null || String(input.href).trim() === ""
+      ? null
+      : normalizeTickerHref(String(input.href));
+
+  const { error } = await supabase
+    .from("ticker_items")
+    .update({ headline, href })
+    .eq("id", id);
+
+  if (error) {
+    console.error("[ticker] update failed:", error.message);
+    return {
+      error: error.message.includes("href")
+        ? "Could not save the link. Run the SQL to add the href column, then try again."
+        : "Could not update the ticker item.",
+    };
+  }
+
+  revalidatePath("/admin/ticker");
+  revalidatePath("/");
+  return { ok: true };
+}
+
 async function setTickerStatus(id: string, status: "draft" | "published" | "archived") {
   const { supabase } = await requireAdmin();
 
@@ -76,7 +111,10 @@ async function setTickerStatus(id: string, status: "draft" | "published" | "arch
 
   await supabase
     .from("ticker_items")
-    .update({ status, published_at: status === "published" ? new Date().toISOString() : null })
+    .update({
+      status,
+      published_at: status === "published" ? new Date().toISOString() : null,
+    })
     .eq("id", id);
 
   revalidatePath("/admin/ticker");
