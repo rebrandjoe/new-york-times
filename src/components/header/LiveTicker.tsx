@@ -1,5 +1,34 @@
-export function LiveTicker({ headline }: { headline: string | null }) {
+import Link from "next/link";
+
+export function LiveTicker({
+  headline,
+  href = null,
+}: {
+  headline: string | null;
+  href?: string | null;
+}) {
   if (!headline) return null;
+
+  const textClass =
+    "min-w-[100cqw] px-4 text-sm font-extrabold tracking-wide text-white sm:text-[15px]";
+
+  const scrollingText = href ? (
+    <>
+      <Link href={href} className={`${textClass} hover:underline`}>
+        {headline}
+      </Link>
+      <Link href={href} className={`${textClass} hover:underline`} aria-hidden="true" tabIndex={-1}>
+        {headline}
+      </Link>
+    </>
+  ) : (
+    <>
+      <span className={textClass}>{headline}</span>
+      <span className={textClass} aria-hidden="true">
+        {headline}
+      </span>
+    </>
+  );
 
   return (
     <div
@@ -22,15 +51,7 @@ export function LiveTicker({ headline }: { headline: string | null }) {
         {/* Scrolling headline */}
         <div className="relative @container min-w-0 flex-1 overflow-hidden self-center py-2">
           <div className="flex w-max animate-ticker whitespace-nowrap motion-reduce:animate-none">
-            <span className="min-w-[100cqw] px-4 text-sm font-extrabold tracking-wide text-white sm:text-[15px]">
-              {headline}
-            </span>
-            <span
-              className="min-w-[100cqw] px-4 text-sm font-extrabold tracking-wide text-white sm:text-[15px]"
-              aria-hidden="true"
-            >
-              {headline}
-            </span>
+            {scrollingText}
           </div>
         </div>
       </div>
