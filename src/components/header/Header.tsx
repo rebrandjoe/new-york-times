@@ -7,11 +7,12 @@ import { Tagline, WordmarkLink } from "@/components/Wordmark";
 import { signOutAction } from "@/lib/actions/auth";
 import { ADMIN_EMAIL } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
+import type { ActiveTicker } from "@/lib/cms/ticker";
 import { primaryNav } from "@/lib/nav";
 import { LiveTicker } from "./LiveTicker";
 import { TopicsMenu } from "./TopicsMenu";
 
-export function Header({ tickerHeadline = null }: { tickerHeadline?: string | null }) {
+export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topicsExpanded, setTopicsExpanded] = useState(false);
   const user = useAuthUser();
@@ -26,7 +27,7 @@ export function Header({ tickerHeadline = null }: { tickerHeadline?: string | nu
 
   return (
     <header className="sticky top-0 z-50 bg-black">
-      <LiveTicker headline={tickerHeadline} />
+      <LiveTicker headline={ticker?.headline ?? null} href={ticker?.href ?? null} />
 
       <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-start justify-between gap-4">
