@@ -39,6 +39,7 @@ export function ArticleImage({
         fill
         sizes={sizes}
         priority={priority}
+        unoptimized
         className={`object-cover ${focalPositionMap[image.focalPoint ?? "center"]}`}
       />
     </div>
