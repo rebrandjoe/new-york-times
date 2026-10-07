@@ -24,9 +24,11 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // Serve images directly (Supabase / static) — do not use Vercel Image
-    // Optimization. Free tier allows only 5,000 transformations/month.
+    // Free tier: 5,000 Image Optimization transformations/month.
+    // Serve originals from Supabase / public — never hit Vercel's optimizer.
     unoptimized: true,
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
