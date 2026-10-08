@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import { getArticleForEdit, getAdminArticles } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
-import { ARTICLE_SELECT, mapRowToCmsArticle, type RawArticleRow } from "@/lib/cms/mappers";
+import { ARTICLE_SELECT, mapRowToCmsArticle, serializeArticleSources, type RawArticleRow } from "@/lib/cms/mappers";
+import type { ArticleSource } from "@/lib/cms/types";
 import { sendNewArticlePush } from "@/lib/push/send";
 import type { Json } from "@/lib/supabase/database.types";
 
@@ -76,12 +77,8 @@ interface ArticleInput {
   readTimeMinutes: number | null;
   premium: boolean;
   correctionNote: string | null;
-  sourceName: string | null;
-  sourceAuthor: string | null;
-  sourceInstitution: string | null;
-  sourceUrl: string | null;
-  sourcePublishedAt: string | null;
-  sourceAdditional: string | null;
+  /** Multi-source attribution list from the admin form (not free-text JSON for editors). */
+  sources: ArticleSource[];
 }
 
 async function saveTopics(
@@ -121,12 +118,8 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       status: "draft",
       premium: input.premium,
       correction_note: input.correctionNote,
-      source_name: input.sourceName,
-      source_author: input.sourceAuthor,
-      source_institution: input.sourceInstitution,
-      source_url: input.sourceUrl,
-      source_published_at: input.sourcePublishedAt,
-      source_additional: input.sourceAdditional,
+      ...serializeArticleSources(input.sources ?? []),
+      source_published_at: null,
       created_by: user.id,
     })
     .select("id")
@@ -185,12 +178,8 @@ export async function updateArticle(
       read_time_minutes: readTime,
       premium: input.premium,
       correction_note: input.correctionNote,
-      source_name: input.sourceName,
-      source_author: input.sourceAuthor,
-      source_institution: input.sourceInstitution,
-      source_url: input.sourceUrl,
-      source_published_at: input.sourcePublishedAt,
-      source_additional: input.sourceAdditional,
+      ...serializeArticleSources(input.sources ?? []),
+      source_published_at: null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", articleId);
@@ -276,12 +265,8 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       read_time_minutes: original.readTimeMinutes,
       status: "draft",
       premium: original.premium,
-      source_name: original.source.name,
-      source_author: original.source.author,
-      source_institution: original.source.institution,
-      source_url: original.source.url,
-      source_published_at: original.source.publishedAt,
-      source_additional: original.source.additional,
+      ...serializeArticleSources(original.sources ?? []),
+      source_published_at: null,
       created_by: user.id,
     })
     .select("id")
