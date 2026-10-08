@@ -34,8 +34,11 @@ export type ArticleStatus = "draft" | "scheduled" | "published" | "unpublished";
 
 /** One attribution source on an article (admin multi-source form). */
 export interface ArticleSource {
-  name: string;
-  title: string | null;
+  /** Optional journalist, reporter, author, or named spokesperson. */
+  author: string | null;
+  /** Publication, media outlet, or organisation. */
+  publication: string;
+  /** Direct URL to the original material. */
   url: string | null;
 }
 
