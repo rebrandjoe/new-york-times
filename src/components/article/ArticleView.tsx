@@ -177,7 +177,7 @@ export function ArticleView({
 
       {!premiumLocked && (
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <SourceAttribution source={article.source} />
+          <SourceAttribution sources={article.sources} />
         </div>
       )}
 
