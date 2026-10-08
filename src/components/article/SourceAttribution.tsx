@@ -9,10 +9,18 @@ export function SourceAttribution({ sources }: { sources: ArticleSource[] }) {
 
   return (
     <details className="group border-t border-charcoal py-3">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-1 text-sm font-semibold tracking-wide text-gray-secondary-light transition-colors hover:text-offwhite [&::-webkit-details-marker]:hidden">
-        <span>Sources & attribution</span>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-2 text-sm font-semibold tracking-wide text-accent transition-colors hover:opacity-90 [&::-webkit-details-marker]:hidden">
+        <span className="inline-flex items-center gap-1.5">
+          View sources
+          <span className="text-xs font-normal text-accent/70 group-open:hidden" aria-hidden>
+            ▾
+          </span>
+          <span className="hidden text-xs font-normal text-accent/70 group-open:inline" aria-hidden>
+            ▴
+          </span>
+        </span>
         <ChevronDownIcon
-          className="h-4 w-4 shrink-0 text-gray-muted transition-transform duration-200 group-open:rotate-180"
+          className="h-4 w-4 shrink-0 text-accent transition-transform duration-200 group-open:rotate-180"
           aria-hidden
         />
       </summary>
