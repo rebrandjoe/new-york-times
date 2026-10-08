@@ -1,6 +1,6 @@
 import type { Article as HomepageArticle } from "@/lib/types";
 import type { ContentBlock } from "./blocks";
-import type { ArticleStatus, CmsArticle, CmsMedia } from "./types";
+import type { ArticleSource, ArticleStatus, CmsArticle, CmsMedia } from "./types";
 
 export const ARTICLE_SELECT = `
   id, slug, title, excerpt, body, region, country,
@@ -58,6 +58,97 @@ interface RawMediaRow {
   link_url: string | null;
 }
 
+/** Parse multi-source list from storage (JSON in source_additional) or legacy single fields. */
+export function parseArticleSources(row: {
+  source_name: string | null;
+  source_author: string | null;
+  source_institution: string | null;
+  source_url: string | null;
+  source_additional: string | null;
+}): ArticleSource[] {
+  const additional = row.source_additional?.trim() || null;
+  if (additional?.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(additional) as unknown;
+      if (Array.isArray(parsed)) {
+        const items = parsed
+          .filter((item): item is Record<string, unknown> => item !== null && typeof item === "object")
+          .map((item) => ({
+            name: typeof item.name === "string" ? item.name.trim() : "",
+            title: typeof item.title === "string" && item.title.trim() ? item.title.trim() : null,
+            url: typeof item.url === "string" && item.url.trim() ? item.url.trim() : null,
+          }))
+          .filter((item) => item.name || item.title || item.url);
+        if (items.length > 0) return items;
+      }
+    } catch {
+      // fall through to legacy fields
+    }
+  }
+
+  const hasLegacy =
+    row.source_name || row.source_author || row.source_institution || row.source_url || additional;
+  if (!hasLegacy) return [];
+
+  const name =
+    (row.source_name && row.source_name.trim()) ||
+    (row.source_institution && row.source_institution.trim()) ||
+    (row.source_author && row.source_author.trim()) ||
+    "Source";
+
+  const titleParts: string[] = [];
+  if (row.source_author?.trim() && row.source_author.trim() !== name) titleParts.push(row.source_author.trim());
+  if (row.source_institution?.trim() && row.source_institution.trim() !== name) {
+    titleParts.push(row.source_institution.trim());
+  }
+  // Only use plain-text additional as title when it is not JSON
+  if (additional && !additional.startsWith("[")) titleParts.push(additional);
+
+  return [
+    {
+      name,
+      title: titleParts.length > 0 ? titleParts.join(" · ") : null,
+      url: row.source_url?.trim() || null,
+    },
+  ];
+}
+
+/** Serialize sources for DB: JSON in source_additional + first source mirrored to legacy columns. */
+export function serializeArticleSources(sources: ArticleSource[]): {
+  source_name: string | null;
+  source_author: string | null;
+  source_institution: string | null;
+  source_url: string | null;
+  source_additional: string | null;
+} {
+  const cleaned = sources
+    .map((s) => ({
+      name: s.name.trim(),
+      title: s.title?.trim() || null,
+      url: s.url?.trim() || null,
+    }))
+    .filter((s) => s.name || s.title || s.url);
+
+  if (cleaned.length === 0) {
+    return {
+      source_name: null,
+      source_author: null,
+      source_institution: null,
+      source_url: null,
+      source_additional: null,
+    };
+  }
+
+  const first = cleaned[0];
+  return {
+    source_name: first.name || null,
+    source_author: first.title,
+    source_institution: null,
+    source_url: first.url,
+    source_additional: JSON.stringify(cleaned),
+  };
+}
+
 function mapMedia(row: RawMediaRow | null): CmsMedia | null {
   if (!row) return null;
   return {
@@ -98,6 +189,7 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
     canonicalUrl: row.canonical_url,
     correctionNote: row.correction_note,
     socialImage: mapMedia(row.social_image),
+    sources: parseArticleSources(row),
     source: {
       name: row.source_name,
       author: row.source_author,
