@@ -32,6 +32,13 @@ export interface CmsMedia {
 
 export type ArticleStatus = "draft" | "scheduled" | "published" | "unpublished";
 
+/** One attribution source on an article (admin multi-source form). */
+export interface ArticleSource {
+  name: string;
+  title: string | null;
+  url: string | null;
+}
+
 export interface CmsArticle {
   id: string;
   slug: string;
@@ -55,6 +62,8 @@ export interface CmsArticle {
   canonicalUrl: string | null;
   correctionNote: string | null;
   socialImage: CmsMedia | null;
+  /** Structured sources for the article accordion (independent per article). */
+  sources: ArticleSource[];
   source: {
     name: string | null;
     author: string | null;
