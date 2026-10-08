@@ -58,7 +58,7 @@ interface RawMediaRow {
   link_url: string | null;
 }
 
-/** Parse multi-source list from storage (JSON in source_additional) or legacy single fields. */
+/** Parse multi-source list from storage (JSON in source_additional) or legacy fields. */
 export function parseArticleSources(row: {
   source_name: string | null;
   source_author: string | null;
@@ -73,41 +73,54 @@ export function parseArticleSources(row: {
       if (Array.isArray(parsed)) {
         const items = parsed
           .filter((item): item is Record<string, unknown> => item !== null && typeof item === "object")
-          .map((item) => ({
-            name: typeof item.name === "string" ? item.name.trim() : "",
-            title: typeof item.title === "string" && item.title.trim() ? item.title.trim() : null,
-            url: typeof item.url === "string" && item.url.trim() ? item.url.trim() : null,
-          }))
-          .filter((item) => item.name || item.title || item.url);
+          .map((item) => {
+            if ("publication" in item || "author" in item) {
+              return {
+                author:
+                  typeof item.author === "string" && item.author.trim()
+                    ? item.author.trim()
+                    : null,
+                publication:
+                  typeof item.publication === "string" ? item.publication.trim() : "",
+                url:
+                  typeof item.url === "string" && item.url.trim() ? item.url.trim() : null,
+              };
+            }
+            // Previous shape: name + url → publication = name (title dropped)
+            return {
+              author: null,
+              publication: typeof item.name === "string" ? item.name.trim() : "",
+              url: typeof item.url === "string" && item.url.trim() ? item.url.trim() : null,
+            };
+          })
+          .filter((item) => item.publication || item.author || item.url);
         if (items.length > 0) return items;
       }
     } catch {
-      // fall through to legacy fields
+      // fall through
     }
   }
 
   const hasLegacy =
-    row.source_name || row.source_author || row.source_institution || row.source_url || additional;
+    row.source_name ||
+    row.source_author ||
+    row.source_institution ||
+    row.source_url ||
+    (additional && !additional.startsWith("["));
   if (!hasLegacy) return [];
 
-  const name =
+  const publication =
     (row.source_name && row.source_name.trim()) ||
     (row.source_institution && row.source_institution.trim()) ||
-    (row.source_author && row.source_author.trim()) ||
-    "Source";
+    "";
+  const author = (row.source_author && row.source_author.trim()) || null;
 
-  const titleParts: string[] = [];
-  if (row.source_author?.trim() && row.source_author.trim() !== name) titleParts.push(row.source_author.trim());
-  if (row.source_institution?.trim() && row.source_institution.trim() !== name) {
-    titleParts.push(row.source_institution.trim());
-  }
-  // Only use plain-text additional as title when it is not JSON
-  if (additional && !additional.startsWith("[")) titleParts.push(additional);
+  if (!publication && !author && !row.source_url) return [];
 
   return [
     {
-      name,
-      title: titleParts.length > 0 ? titleParts.join(" · ") : null,
+      author: author && author !== publication ? author : null,
+      publication: publication || author || "Source",
       url: row.source_url?.trim() || null,
     },
   ];
@@ -123,11 +136,11 @@ export function serializeArticleSources(sources: ArticleSource[]): {
 } {
   const cleaned = sources
     .map((s) => ({
-      name: s.name.trim(),
-      title: s.title?.trim() || null,
+      author: s.author?.trim() || null,
+      publication: s.publication.trim(),
       url: s.url?.trim() || null,
     }))
-    .filter((s) => s.name || s.title || s.url);
+    .filter((s) => s.publication || s.author || s.url);
 
   if (cleaned.length === 0) {
     return {
@@ -141,8 +154,8 @@ export function serializeArticleSources(sources: ArticleSource[]): {
 
   const first = cleaned[0];
   return {
-    source_name: first.name || null,
-    source_author: first.title,
+    source_name: first.publication || null,
+    source_author: first.author,
     source_institution: null,
     source_url: first.url,
     source_additional: JSON.stringify(cleaned),
@@ -177,7 +190,12 @@ export function mapRowToCmsArticle(row: RawArticleRow): CmsArticle {
       .filter((t): t is { id: string; name: string; slug: string } => t !== null),
     region: row.region,
     country: row.country,
-    author: row.author ?? { id: "", name: "Joseph Mmwa", slug: "joseph-mmwa", title: "Health & Medical Journalist" },
+    author: row.author ?? {
+      id: "",
+      name: "Joseph Mmwa",
+      slug: "joseph-mmwa",
+      title: "Health & Medical Journalist",
+    },
     publicationDate: row.publication_date,
     updatedAt: row.updated_at,
     readTimeMinutes: row.read_time_minutes ?? 1,
