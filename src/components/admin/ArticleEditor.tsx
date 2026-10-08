@@ -101,11 +101,11 @@ export function ArticleEditor({
       correctionNote: correctionNote || null,
       sources: sources
         .map((s) => ({
-          name: s.name.trim(),
-          title: s.title?.trim() || null,
+          author: s.author?.trim() || null,
+          publication: s.publication.trim(),
           url: s.url?.trim() || null,
         }))
-        .filter((s) => s.name || s.title || s.url),
+        .filter((s) => s.publication || s.author || s.url),
     };
   }
 
