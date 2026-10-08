@@ -23,8 +23,8 @@ export function SourcesEditor({
         Sources & attribution
       </h2>
       <p className="mt-2 text-xs text-gray-muted">
-        Optional. Add one or more original sources for this article. They appear in a collapsed
-        section on the published page.
+        Optional. Add one or more original sources. Journalist / source author is optional for
+        institutional releases.
       </p>
       <div className="mt-4 space-y-4">
         {sources.map((source, index) => (
@@ -71,44 +71,50 @@ export function SourcesEditor({
             </div>
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <label className={labelClass()}>Source name</label>
+                <label className={labelClass()}>Journalist / source author</label>
                 <input
                   type="text"
-                  value={source.name}
+                  value={source.author ?? ""}
                   onChange={(e) => {
                     const value = e.target.value;
                     onChange(
-                      sources.map((s, i) => (i === index ? { ...s, name: value } : s))
+                      sources.map((s, i) =>
+                        i === index ? { ...s, author: value || null } : s
+                      )
                     );
                   }}
-                  placeholder="e.g. World Health Organization"
+                  placeholder="Optional — e.g. Jane Smith, or leave blank for institutional sources"
                   className={fieldClass()}
                 />
               </div>
               <div>
-                <label className={labelClass()}>Source title</label>
+                <label className={labelClass()}>Publication / media / organisation</label>
                 <input
                   type="text"
-                  value={source.title ?? ""}
+                  value={source.publication}
                   onChange={(e) => {
                     const value = e.target.value;
                     onChange(
-                      sources.map((s, i) => (i === index ? { ...s, title: value } : s))
+                      sources.map((s, i) =>
+                        i === index ? { ...s, publication: value } : s
+                      )
                     );
                   }}
-                  placeholder="Optional title of the original material"
+                  placeholder="e.g. Reuters, WHO, Kenya Ministry of Health"
                   className={fieldClass()}
                 />
               </div>
               <div>
-                <label className={labelClass()}>Source URL</label>
+                <label className={labelClass()}>Source link</label>
                 <input
                   type="url"
                   value={source.url ?? ""}
                   onChange={(e) => {
                     const value = e.target.value;
                     onChange(
-                      sources.map((s, i) => (i === index ? { ...s, url: value } : s))
+                      sources.map((s, i) =>
+                        i === index ? { ...s, url: value || null } : s
+                      )
                     );
                   }}
                   placeholder="https://"
@@ -120,7 +126,9 @@ export function SourcesEditor({
         ))}
         <button
           type="button"
-          onClick={() => onChange([...sources, { name: "", title: null, url: null }])}
+          onClick={() =>
+            onChange([...sources, { author: null, publication: "", url: null }])
+          }
           className="focus-ring border border-dashed border-white/20 px-4 py-2.5 text-sm font-semibold text-offwhite transition-colors hover:border-accent hover:text-accent"
         >
           + Add source
