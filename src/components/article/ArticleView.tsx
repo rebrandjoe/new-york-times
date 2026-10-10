@@ -9,7 +9,6 @@ import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
-import { AdCashDisplayBanner } from "@/components/ads/AdCashDisplayBanner";
 import { MemberAccessCard } from "@/components/MemberAccessCard";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
@@ -125,6 +124,7 @@ export function ArticleView({
           {article.country && (
             <>
               <span aria-hidden="true">·</span>
+              {regionLink ? null : null}
               <span>{article.country}</span>
             </>
           )}
@@ -163,9 +163,6 @@ export function ArticleView({
           {article.featuredImage.credit}
         </p>
       ) : null}
-
-      {/* Adcash Display 728×90 — after intro / lead image, before article body. Flag-gated. */}
-      {interactive && !premiumLocked && <AdCashDisplayBanner />}
 
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <BlockRenderer blocks={firstHalfBlocks} />
