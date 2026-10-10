@@ -124,7 +124,6 @@ export function ArticleView({
           {article.country && (
             <>
               <span aria-hidden="true">·</span>
-              {regionLink ? null : null}
               <span>{article.country}</span>
             </>
           )}
