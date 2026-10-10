@@ -76,6 +76,9 @@ export const revalidate = 21600;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const ticker = await getActiveTicker();
+  // Read on the server so the key is available even when the client bundle
+  // does not inline process.env.NEXT_PUBLIC_* (which was blocking the prompt).
+  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 
   return (
     <html lang="en" className={`h-full antialiased ${displaySerif.variable}`}>
@@ -133,7 +136,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <SiteChrome ticker={ticker}>{children}</SiteChrome>
           <div className="fixed inset-x-0 bottom-0 z-40 flex flex-col-reverse">
             <InstallPrompt />
-            <NotificationPrompt />
+            <NotificationPrompt vapidPublicKey={vapidPublicKey} />
           </div>
         </SerwistProvider>
         <Analytics />
