@@ -9,6 +9,7 @@ import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
+import { ArticleAudioPlayer } from "@/components/article/ArticleAudioPlayer";
 import { MemberAccessCard } from "@/components/MemberAccessCard";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
@@ -142,6 +143,12 @@ export function ArticleView({
           </div>
         )}
       </div>
+
+      {!premiumLocked && interactive && (
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <ArticleAudioPlayer slug={article.slug} estimatedMinutes={article.readTimeMinutes} />
+        </div>
+      )}
 
       {article.featuredImage && (
         <div className="relative left-1/2 mt-8 aspect-[16/9] max-h-[70vh] w-screen -translate-x-1/2 overflow-hidden bg-charcoal">
