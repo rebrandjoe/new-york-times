@@ -105,6 +105,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
 
+        {/* AdCash library + AutoTag (zone d4c4ca3gz0) */}
+        <Script
+          src="https://acscdn.com/script/aclib.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="adcash-autotag"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function runAdcashAutoTag() {
+                if (window.aclib && typeof window.aclib.runAutoTag === "function") {
+                  window.aclib.runAutoTag({ zoneId: "d4c4ca3gz0" });
+                  return;
+                }
+                setTimeout(runAdcashAutoTag, 50);
+              })();
+            `,
+          }}
+        />
+
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
