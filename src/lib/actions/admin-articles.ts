@@ -8,6 +8,7 @@ import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
 import { ARTICLE_SELECT, mapRowToCmsArticle, serializeArticleSources, type RawArticleRow } from "@/lib/cms/mappers";
 import type { ArticleSource } from "@/lib/cms/types";
 import { sendNewArticlePush } from "@/lib/push/send";
+import { ensureArticleAudio } from "@/lib/audio/generate";
 import type { Json } from "@/lib/supabase/database.types";
 
 // Content blocks are a closed set of interfaces, not an index-signature type,
@@ -225,6 +226,24 @@ export async function setArticleStatus(
       if (article) await sendNewArticlePush(article);
     } catch (err) {
       console.error("[push] failed to send new-article notification:", err);
+    }
+
+    // Fire-and-forget TTS: regenerate audio for the published body.
+    try {
+      const { data: full } = await supabase
+        .from("articles")
+        .select("id, title, body")
+        .eq("id", articleId)
+        .single();
+      if (full) {
+        void ensureArticleAudio({
+          articleId: full.id,
+          title: full.title,
+          body: (Array.isArray(full.body) ? full.body : []) as ContentBlock[],
+        }).catch((err) => console.error("[audio] publish generation failed:", err));
+      }
+    } catch (err) {
+      console.error("[audio] failed to queue article audio:", err);
     }
   }
 
