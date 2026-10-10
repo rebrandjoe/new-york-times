@@ -1,20 +1,21 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Script from "next/script";
 
 /**
  * Adcash Display 728×90 — article pages only (wired from ArticleView).
  *
- * Official snippets (library + banner):
+ * Official:
  *   <script id="aclib" src="//acscdn.com/script/aclib.js"></script>
  *   <div><script>aclib.runBanner({ zoneId: '12296266' });</script></div>
  *
- * Disabled unless NEXT_PUBLIC_ADCASH_DISPLAY_ENABLED=true.
+ * Enabled by default. Set NEXT_PUBLIC_ADCASH_DISPLAY_ENABLED=false to disable.
  * Hidden below md — 728px does not fit safely on narrow viewports.
  */
 const ZONE_ID = "12296266";
-const ENABLED = process.env.NEXT_PUBLIC_ADCASH_DISPLAY_ENABLED === "true";
+// Default ON so ads work without a Vercel env var. Opt out with "false".
+const ENABLED = process.env.NEXT_PUBLIC_ADCASH_DISPLAY_ENABLED !== "false";
 
 declare global {
   interface Window {
@@ -27,16 +28,31 @@ declare global {
 export function AdCashDisplayBanner() {
   const ranRef = useRef(false);
 
-  function runOfficialBanner() {
-    if (ranRef.current) return;
-    if (typeof window === "undefined") return;
-    if (window.aclib && typeof window.aclib.runBanner === "function") {
-      // Exact official call:
-      // aclib.runBanner({ zoneId: '12296266' });
-      window.aclib.runBanner({ zoneId: ZONE_ID });
-      ranRef.current = true;
+  useEffect(() => {
+    if (!ENABLED || ranRef.current) return;
+
+    function tryRun() {
+      if (ranRef.current) return;
+      if (typeof window === "undefined") return;
+      if (window.aclib && typeof window.aclib.runBanner === "function") {
+        window.aclib.runBanner({ zoneId: ZONE_ID });
+        ranRef.current = true;
+      }
     }
-  }
+
+    tryRun();
+    const id = window.setInterval(() => {
+      tryRun();
+      if (ranRef.current) window.clearInterval(id);
+    }, 100);
+    // Stop polling after ~10s if library never loads
+    const timeout = window.setTimeout(() => window.clearInterval(id), 10_000);
+
+    return () => {
+      window.clearInterval(id);
+      window.clearTimeout(timeout);
+    };
+  }, []);
 
   if (!ENABLED) return null;
 
@@ -52,9 +68,8 @@ export function AdCashDisplayBanner() {
         id="aclib"
         src="https://acscdn.com/script/aclib.js"
         strategy="afterInteractive"
-        onLoad={runOfficialBanner}
       />
-      {/* Reserved 728×90 slot — matches official <div> wrapper around runBanner */}
+      {/* Official wrapper: runBanner injects the creative relative to this area */}
       <div className="mx-auto flex min-h-[90px] w-full max-w-[728px] items-center justify-center overflow-hidden" />
     </div>
   );
