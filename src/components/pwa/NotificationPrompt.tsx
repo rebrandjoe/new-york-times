@@ -13,12 +13,12 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-function canOfferPush(): boolean {
+function canOfferPush(vapidPublicKey: string): boolean {
   if (typeof window === "undefined") return false;
+  if (!vapidPublicKey) return false;
   if (!("Notification" in window)) return false;
   if (!("serviceWorker" in navigator)) return false;
   if (!("PushManager" in window)) return false;
-  if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return false;
   if (Notification.permission !== "default") return false;
   if (window.localStorage.getItem(DISMISS_KEY) === "1") return false;
   return true;
@@ -26,23 +26,27 @@ function canOfferPush(): boolean {
 
 /**
  * One-time professional opt-in for push alerts on new health stories.
- * Shown after the visitor's first click/tap (or a short delay), then never
- * again if they allow, deny, or dismiss. Does not interrupt every link.
+ *
+ * VAPID public key must be passed from a Server Component (layout).
+ * Reading process.env.NEXT_PUBLIC_* only inside this client module does not
+ * reliably embed the key in the production browser bundle.
  */
-export function NotificationPrompt() {
+export function NotificationPrompt({
+  vapidPublicKey = "",
+}: {
+  vapidPublicKey?: string;
+}) {
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const show = useCallback(() => {
-    if (!canOfferPush()) return;
+    if (!canOfferPush(vapidPublicKey)) return;
     setVisible(true);
-  }, []);
+  }, [vapidPublicKey]);
 
   useEffect(() => {
-    if (!canOfferPush()) return;
+    if (!canOfferPush(vapidPublicKey)) return;
 
-    // Prefer first real engagement (click/tap) so the later browser permission
-    // dialog is more likely to be accepted; fall back to a short delay.
     const onEngage = () => {
       show();
       cleanup();
@@ -60,7 +64,7 @@ export function NotificationPrompt() {
 
     document.addEventListener("pointerdown", onEngage, { once: true, passive: true });
     return cleanup;
-  }, [show]);
+  }, [show, vapidPublicKey]);
 
   function dismiss() {
     setVisible(false);
@@ -68,7 +72,7 @@ export function NotificationPrompt() {
   }
 
   async function allow() {
-    if (busy) return;
+    if (busy || !vapidPublicKey) return;
     setBusy(true);
     try {
       const permission = await Notification.requestPermission();
@@ -80,9 +84,7 @@ export function NotificationPrompt() {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-        ) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
       });
 
       await subscribeToPush(
@@ -109,7 +111,6 @@ export function NotificationPrompt() {
       aria-labelledby="push-prompt-title"
       aria-describedby="push-prompt-desc"
     >
-      {/* Backdrop */}
       <button
         type="button"
         aria-label="Dismiss notification prompt"
@@ -117,7 +118,6 @@ export function NotificationPrompt() {
         onClick={dismiss}
       />
 
-      {/* Card */}
       <div className="relative w-full max-w-md overflow-hidden rounded-sm border border-white/10 bg-charcoal-deep shadow-2xl">
         <div className="h-1 w-full bg-accent" />
 
