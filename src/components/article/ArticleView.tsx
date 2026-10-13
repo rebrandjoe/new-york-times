@@ -69,52 +69,6 @@ function regionHref(regionName: string): string | null {
   return match ? `/regions/${match.slug}` : null;
 }
 
-/** Compact horizontal next-read — image + label, not a second Related grid. */
-function NextStoryCard({ story }: { story: CmsArticle }) {
-  const imageUrl = story.featuredImage?.url;
-  const imageAlt = story.featuredImage?.altText ?? story.title;
-
-  return (
-    <Link
-      href={`/article/${story.slug}`}
-      className="focus-ring group mt-10 flex overflow-hidden rounded-sm border border-charcoal bg-[#111] transition-colors hover:border-accent/40"
-    >
-      <div className="relative h-24 w-28 shrink-0 bg-charcoal sm:h-28 sm:w-36">
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={imageAlt}
-            fill
-            sizes="144px"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center font-serif text-sm font-bold text-gray-muted">
-            JM
-          </div>
-        )}
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-2.5 sm:px-4">
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-          Read next
-        </span>
-        <span className="font-serif text-sm font-bold leading-snug text-white transition-colors group-hover:text-accent sm:text-base">
-          {story.title}
-        </span>
-        {story.category?.name && (
-          <span className="text-[11px] text-gray-muted">{story.category.name}</span>
-        )}
-      </div>
-      <span
-        className="hidden shrink-0 items-center pr-3 text-gray-muted transition-colors group-hover:text-accent sm:flex"
-        aria-hidden
-      >
-        →
-      </span>
-    </Link>
-  );
-}
-
 export function ArticleView({
   article,
   related,
@@ -139,7 +93,6 @@ export function ArticleView({
   const secondHalfBlocks = bodyBlocks.slice(midpoint);
 
   const regionLink = article.region ? regionHref(article.region) : null;
-  const nextStory = !premiumLocked && related.length > 0 ? related[0] : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -270,9 +223,6 @@ export function ArticleView({
             <CorrectionNotice note={article.correctionNote} />
           </div>
         )}
-
-        {/* After body only — compact card, not another full related section */}
-        {nextStory && <NextStoryCard story={nextStory} />}
       </div>
 
       {!premiumLocked && (
