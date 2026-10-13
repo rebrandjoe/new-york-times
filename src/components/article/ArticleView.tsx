@@ -141,6 +141,18 @@ export function ArticleView({
             ))}
           </div>
         )}
+
+        {/* Compact Google Preferred Source control — under intro meta */}
+        {interactive && (
+          <div className="mt-4 max-w-full overflow-hidden">
+            <div
+              className="origin-left scale-[0.85] sm:scale-90"
+              style={{ width: "fit-content", maxWidth: "100%" }}
+            >
+              <div google-add-preferred-source-btn="" data-theme="dark" data-lang="en" />
+            </div>
+          </div>
+        )}
       </div>
 
       {article.featuredImage && (
