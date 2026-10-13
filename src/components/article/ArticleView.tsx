@@ -93,6 +93,7 @@ export function ArticleView({
   const secondHalfBlocks = bodyBlocks.slice(midpoint);
 
   const regionLink = article.region ? regionHref(article.region) : null;
+  const nextStory = !premiumLocked && related.length > 0 ? related[0] : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -222,6 +223,19 @@ export function ArticleView({
           <div className="mt-6">
             <CorrectionNotice note={article.correctionNote} />
           </div>
+        )}
+
+        {/* One-line next read — after body, not mid-article next to Support */}
+        {nextStory && (
+          <p className="mt-10 border-t border-charcoal pt-6 text-sm leading-relaxed text-gray-secondary-light sm:text-base">
+            <span className="font-semibold text-gray-muted">Next:</span>{" "}
+            <Link
+              href={`/article/${nextStory.slug}`}
+              className="focus-ring font-semibold text-white underline-offset-2 hover:text-accent hover:underline"
+            >
+              {nextStory.title}
+            </Link>
+          </p>
         )}
       </div>
 
