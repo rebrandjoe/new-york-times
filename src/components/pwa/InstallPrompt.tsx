@@ -15,13 +15,14 @@ interface BeforeInstallPromptEvent extends Event {
  * PWA install bar.
  * - Fixed to the bottom of the *viewport* (not the end of the article).
  * - Compact on mobile so it does not interrupt reading.
- * - On mobile, prefers showing while the reader is on an article page.
+ * - On mobile, shows while the reader is on an article page.
  * - Dismissible with X; remembered in localStorage.
  */
 export function InstallPrompt() {
   const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [dismissed, setDismissed] = useState(true);
   const [ready, setReady] = useState(false);
 
@@ -36,6 +37,11 @@ export function InstallPrompt() {
     setDismissed(window.localStorage.getItem(DISMISS_KEY) === "1");
     setIsIOS(/iPad|iPhone|iPod/.test(nav.userAgent) && !("MSStream" in window));
 
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const onMq = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onMq);
+
     function handleBeforeInstallPrompt(event: Event) {
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
@@ -48,6 +54,7 @@ export function InstallPrompt() {
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      mq.removeEventListener("change", onMq);
       window.clearTimeout(timer);
     };
   }, []);
@@ -69,11 +76,9 @@ export function InstallPrompt() {
   const canOffer = Boolean(deferredPrompt) || isIOS;
   if (dismissed || !ready || !canOffer) return null;
 
-  // On narrow screens, only surface while reading an article (less clutter on home).
+  // On mobile, only while reading an article (less clutter on home).
   // Desktop keeps the bar available site-wide when the browser offers install.
-  const isMobileViewport =
-    typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
-  if (isMobileViewport && !onArticle) return null;
+  if (isMobile && !onArticle) return null;
 
   return (
     <div
