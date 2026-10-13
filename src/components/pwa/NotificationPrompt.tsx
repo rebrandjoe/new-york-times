@@ -131,7 +131,7 @@ export function NotificationPrompt({
                 id="push-prompt-title"
                 className="mt-2 font-serif text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-[1.65rem]"
               >
-                Stay ahead of health news
+                Stay ahead of health news that matters.
               </h2>
             </div>
             <button
@@ -148,24 +148,8 @@ export function NotificationPrompt({
             id="push-prompt-desc"
             className="mt-3 text-sm leading-relaxed text-gray-secondary-light"
           >
-            Allow notifications to get an alert the moment we publish important
-            health and medical stories from Kenya, Africa and around the world.
+            Get notified as soon as we publish. Turn on notifications.
           </p>
-
-          <ul className="mt-4 space-y-2 text-sm text-offwhite/90">
-            <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-              Breaking and explained coverage, as it happens
-            </li>
-            <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-              No spam — only when a new story goes live
-            </li>
-            <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-              You can turn this off anytime in browser settings
-            </li>
-          </ul>
 
           <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <button
