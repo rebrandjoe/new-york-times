@@ -48,6 +48,12 @@ const nextConfig: NextConfig = {
       { source: "/africa", destination: "/regions/africa", permanent: true },
     ];
   },
+  async rewrites() {
+    return [
+      // Friendly URL for Google Search Console / Publisher Center
+      { source: "/news-sitemap.xml", destination: "/news-sitemap" },
+    ];
+  },
   async headers() {
     return [
       {
