@@ -19,7 +19,7 @@ export function TrendingNow({ articles }: { articles: Article[] }) {
         {articles.map((article, index) => (
           <li key={article.id}>
             <Link
-              href={article.href}
+              href={`/article/${article.slug}`}
               className="focus-ring group flex gap-3 rounded-sm border border-transparent p-1 transition-colors hover:border-charcoal"
             >
               <span
@@ -29,12 +29,12 @@ export function TrendingNow({ articles }: { articles: Article[] }) {
                 {index + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-serif text-base font-bold leading-snug text-white group-hover:text-accent sm:text-lg">
-                  {article.title}
+                <span className="block font-serif text-base font-bold leading-snug text-white transition-colors group-hover:text-accent sm:text-lg">
+                  {article.headline}
                 </span>
-                {article.category && (
+                {article.category?.name && (
                   <span className="mt-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-muted">
-                    {article.category}
+                    {article.category.name}
                   </span>
                 )}
               </span>
