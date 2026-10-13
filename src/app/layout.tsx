@@ -89,6 +89,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Google AdSense Meta Tag Verification */}
         <meta name="google-adsense-account" content="ca-pub-7003579645111885" />
 
+        {/* Google Preferred Sources button library */}
+        <Script
+          async
+          src="https://news.google.com/swg/js/v1/publisher.js"
+          strategy="afterInteractive"
+        />
+
         {/* Google tag (gtag.js) */}
         <Script
           async
