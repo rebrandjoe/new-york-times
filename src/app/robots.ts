@@ -22,7 +22,8 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    // General crawl map + Google News–specific recent articles map
-    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/news-sitemap.xml`],
+    // Primary crawl map. News map is also listed so crawlers can discover it.
+    // (Some Next MetadataRoute typings are stricter about string[] for sitemap.)
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }
