@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { CloseIcon } from "@/components/icons";
 
 const DISMISS_KEY = "pwa-install-dismissed";
@@ -10,22 +11,28 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-/** Custom install banner: a real `beforeinstallprompt` trigger on Android/desktop
- * Chrome/Edge, or an honest manual-install note on iOS Safari (which has no such
- * event and no way to trigger an install dialog programmatically). */
+/**
+ * PWA install bar.
+ * - Fixed to the bottom of the *viewport* (not the end of the article).
+ * - Compact on mobile so it does not interrupt reading.
+ * - On mobile, prefers showing while the reader is on an article page.
+ * - Dismissible with X; remembered in localStorage.
+ */
 export function InstallPrompt() {
+  const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [dismissed, setDismissed] = useState(true);
+  const [ready, setReady] = useState(false);
+
+  const onArticle = pathname?.startsWith("/article/") ?? false;
 
   useEffect(() => {
     const nav = window.navigator as Navigator & { standalone?: boolean };
-    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
     if (isStandalone) return;
 
-    // One-time read of browser-only state (localStorage, user agent) that can't
-    // be known during SSR, so it can't be computed as initial render state.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDismissed(window.localStorage.getItem(DISMISS_KEY) === "1");
     setIsIOS(/iPad|iPhone|iPod/.test(nav.userAgent) && !("MSStream" in window));
 
@@ -35,7 +42,14 @@ export function InstallPrompt() {
     }
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // Short delay so the bar does not flash over the first paint while reading.
+    const timer = window.setTimeout(() => setReady(true), 2500);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.clearTimeout(timer);
+    };
   }, []);
 
   function dismiss() {
@@ -51,25 +65,36 @@ export function InstallPrompt() {
     dismiss();
   }
 
-  if (dismissed || (!deferredPrompt && !isIOS)) return null;
+  // Need an install path: Chrome/Edge event, or iOS manual instructions.
+  const canOffer = Boolean(deferredPrompt) || isIOS;
+  if (dismissed || !ready || !canOffer) return null;
+
+  // On narrow screens, only surface while reading an article (less clutter on home).
+  // Desktop keeps the bar available site-wide when the browser offers install.
+  const isMobileViewport =
+    typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+  if (isMobileViewport && !onArticle) return null;
 
   return (
     <div
       role="status"
-      className="border-t border-accent/30 bg-charcoal-deep"
+      className="pointer-events-auto fixed inset-x-0 bottom-0 z-[45] border-t border-accent/25 bg-charcoal-deep/95 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-md"
+      style={{
+        paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
+      }}
     >
-      <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-3 sm:px-6">
-        <p className="flex-1 text-sm text-offwhite">
+      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
+        <p className="min-w-0 flex-1 text-[12px] leading-snug text-offwhite sm:text-sm">
           {deferredPrompt
-            ? "Install JOSEPH MMWA for a faster, full-screen, offline-ready experience."
-            : 'Add JOSEPH MMWA to your home screen: tap Share, then "Add to Home Screen".'}
+            ? "Install JOSEPH MMWA for offline reading."
+            : "Add to Home Screen: Share → Add to Home Screen."}
         </p>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {deferredPrompt && (
             <button
               type="button"
               onClick={install}
-              className="focus-ring bg-accent px-4 py-2 text-sm font-bold text-black transition-opacity hover:opacity-90"
+              className="focus-ring bg-accent px-3 py-1.5 text-xs font-bold text-black transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-sm"
             >
               Install
             </button>
