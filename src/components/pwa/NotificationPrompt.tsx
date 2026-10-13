@@ -30,6 +30,8 @@ function canOfferPush(vapidPublicKey: string): boolean {
  * VAPID public key must be passed from a Server Component (layout).
  * Reading process.env.NEXT_PUBLIC_* only inside this client module does not
  * reliably embed the key in the production browser bundle.
+ *
+ * Renders site-wide (homepage and articles) from the root layout.
  */
 export function NotificationPrompt({
   vapidPublicKey = "",
@@ -131,7 +133,7 @@ export function NotificationPrompt({
                 id="push-prompt-title"
                 className="mt-2 font-serif text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-[1.65rem]"
               >
-                Stay ahead of health news that matters.
+                Stay ahead of health news that matters
               </h2>
             </div>
             <button
