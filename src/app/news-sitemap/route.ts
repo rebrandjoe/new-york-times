@@ -9,11 +9,11 @@ const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
 
 function escapeXml(value: string): string {
   return value
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """)
-    .replace(/'/g, "'");
+    .replace(/&/g, "&" + "amp;")
+    .replace(/</g, "&" + "lt;")
+    .replace(/>/g, "&" + "gt;")
+    .replace(/"/g, "&" + "quot;")
+    .replace(/'/g, "&" + "apos;");
 }
 
 /**
@@ -35,26 +35,30 @@ export async function GET() {
       const title = escapeXml(article.title);
       const publicationDate = new Date(article.publicationDate).toISOString();
 
-      return `  <url>
-    <loc>${escapeXml(loc)}</loc>
-    <news:news>
-      <news:publication>
-        <news:name>${escapeXml(PUBLICATION_NAME)}</news:name>
-        <news:language>${LANGUAGE}</news:language>
-      </news:publication>
-      <news:publication_date>${publicationDate}</news:publication_date>
-      <news:title>${title}</news:title>
-    </news:news>
-  </url>`;
+      return [
+        "  <url>",
+        `    <loc>${escapeXml(loc)}</loc>`,
+        "    <news:news>",
+        "      <news:publication>",
+        `        <news:name>${escapeXml(PUBLICATION_NAME)}</news:name>`,
+        `        <news:language>${LANGUAGE}</news:language>`,
+        "      </news:publication>",
+        `      <news:publication_date>${publicationDate}</news:publication_date>`,
+        `      <news:title>${title}</news:title>`,
+        "    </news:news>",
+        "  </url>",
+      ].join("\n");
     })
     .join("\n");
 
-  const body = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-${urls}
-</urlset>
-`;
+  const body = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">',
+    urls,
+    "</urlset>",
+    "",
+  ].join("\n");
 
   return new Response(body, {
     status: 200,
