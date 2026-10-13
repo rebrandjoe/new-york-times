@@ -1,6 +1,7 @@
 import { Hero } from "@/components/hero/Hero";
 import { LeadNews } from "@/components/sections/LeadNews";
 import { LatestNews } from "@/components/sections/LatestNews";
+import { TrendingNow } from "@/components/sections/TrendingNow";
 import { RegionalSection } from "@/components/sections/RegionalSection";
 import { HealthTopics } from "@/components/sections/HealthTopics";
 import { Briefing } from "@/components/sections/Briefing";
@@ -16,7 +17,7 @@ const REGIONS: { slug: RegionSlug; label: string; href: string }[] = [
 
 export default async function Home() {
   const [latestRows, kenyaRows, globalRows, topics] = await Promise.all([
-    getPublishedArticles({ limit: 10 }),
+    getPublishedArticles({ limit: 16 }),
     getPublishedArticles({ categorySlug: "kenya", limit: 4 }),
     getPublishedArticles({ categorySlug: "global", limit: 4 }),
     getTopics(),
@@ -26,6 +27,8 @@ export default async function Home() {
   const leadPrimary = latest[0];
   const leadSecondary = latest.slice(1, 4);
   const latestNewsArticles = latest.slice(4, 10);
+  // Stories not already in the lead block — numbered “Trending” browsing path
+  const trendingArticles = latest.slice(1, 7);
 
   const regionRows: Record<RegionSlug, ReturnType<typeof toHomepageArticle>[]> = {
     kenya: kenyaRows.map(toHomepageArticle),
@@ -47,6 +50,7 @@ export default async function Home() {
         imageAlt="A diverse group of people smiling together"
       />
       {leadPrimary && <LeadNews primary={leadPrimary} secondary={leadSecondary} />}
+      {trendingArticles.length > 0 && <TrendingNow articles={trendingArticles} />}
       {latestNewsArticles.length > 0 && <LatestNews articles={latestNewsArticles} />}
       {regionTabs.length > 0 && <RegionalSection regions={regionTabs} />}
       <HealthTopics topics={topics} />
