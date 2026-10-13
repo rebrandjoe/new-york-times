@@ -16,6 +16,10 @@ import { majorRegions } from "@/lib/nav";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
 
+/** Same instant deeplink pattern as major publishers (e.g. citizen.digital). */
+const GOOGLE_PREFERRED_SOURCE_URL =
+  "https://www.google.com/preferences/source?q=josephmmwa.com";
+
 function formatDate(iso: string) {
   return (
     new Date(iso).toLocaleDateString("en-US", {
@@ -142,15 +146,23 @@ export function ArticleView({
           </div>
         )}
 
-        {/* Compact Google Preferred Source control — under intro meta */}
+        {/* Instant deeplink — same as Citizen Digital; no slow Google JS widget */}
         {interactive && (
-          <div className="mt-4 max-w-full overflow-hidden">
-            <div
-              className="origin-left scale-[0.85] sm:scale-90"
-              style={{ width: "fit-content", maxWidth: "100%" }}
+          <div className="mt-4">
+            <a
+              href={GOOGLE_PREFERRED_SOURCE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#1a1a1a] px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:border-white/30 hover:bg-[#222] sm:text-xs"
             >
-              <div google-add-preferred-source-btn="" data-theme="dark" data-lang="en" />
-            </div>
+              <span
+                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold leading-none text-black"
+                aria-hidden
+              >
+                G
+              </span>
+              Add as a Preferred Source on Google
+            </a>
           </div>
         )}
       </div>
