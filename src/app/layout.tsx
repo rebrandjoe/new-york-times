@@ -28,12 +28,10 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  alternates: {
-    canonical: "/",
-  },
+  // Do not set root canonical or openGraph.url to "/" — that forces every
+  // child page to inherit homepage URLs. Homepage sets its own in page.tsx.
   openGraph: {
     type: "website",
-    url: "/",
     siteName: SITE_NAME,
     title: `${SITE_NAME} — If it's health, it's here`,
     description: SITE_DESCRIPTION,
