@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Latest",
   description: "The latest health and medical news from JOSEPH MMWA.",
   alternates: { canonical: "/latest" },
+  openGraph: {
+    url: "/latest",
+  },
 };
 
 export default async function LatestPage() {

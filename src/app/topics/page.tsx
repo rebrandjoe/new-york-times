@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Topics",
   description: "Browse all health topics covered by JOSEPH MMWA.",
   alternates: { canonical: "/topics" },
+  openGraph: {
+    url: "/topics",
+  },
 };
 
 export default async function TopicsIndexPage() {

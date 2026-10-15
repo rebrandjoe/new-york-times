@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ListItemCard } from "@/components/ArticleCard";
 import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
 import { toHomepageArticle } from "@/lib/cms/mappers";
 import { TopicArticlesClient } from "@/components/TopicArticlesClient";
@@ -24,6 +23,9 @@ export async function generateMetadata({
     title: topic.name,
     description: `Health and medical news on ${topic.name}, reported by JOSEPH MMWA.`,
     alternates: { canonical: `/topics/${topic.slug}` },
+    openGraph: {
+      url: `/topics/${topic.slug}`,
+    },
   };
 }
 

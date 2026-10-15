@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description:
     "Get in touch with Joseph Mmwa directly for story tips, corrections, research collaborations, or professional inquiries.",
   alternates: { canonical: "/contact" },
+  openGraph: {
+    url: "/contact",
+  },
 };
 
 export default function ContactPage() {
