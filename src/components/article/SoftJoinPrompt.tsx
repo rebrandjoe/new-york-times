@@ -7,8 +7,8 @@ import Link from "next/link";
 export function SoftJoinPrompt() {
   return (
     <div className="my-10 rounded-lg border border-charcoal bg-[#0F0F0F] px-5 py-6 sm:px-6">
-      <h3 className="font-serif text-lg font-bold text-white sm:text-xl">
-        Never miss health news that matters.
+      <h3 className="font-serif text-lg font-extrabold text-white sm:text-xl">
+        Never miss health news that matters
       </h3>
       <p className="mt-2 max-w-lg text-sm leading-relaxed text-gray-secondary-light">
         Create a free account to follow stories shaping health in Kenya, Africa and around the world.
