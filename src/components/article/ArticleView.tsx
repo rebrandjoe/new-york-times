@@ -65,6 +65,15 @@ function formatDate(iso: string) {
   );
 }
 
+/** True when updatedAt is meaningfully later than publication (ignores tiny publish-time skew). */
+function wasUpdatedAfterPublish(publishedIso: string, updatedIso: string): boolean {
+  const published = new Date(publishedIso).getTime();
+  const updated = new Date(updatedIso).getTime();
+  if (Number.isNaN(published) || Number.isNaN(updated)) return false;
+  // 2+ minutes after publish counts as a real update
+  return updated - published >= 2 * 60 * 1000;
+}
+
 function regionHref(regionName: string): string | null {
   const match = majorRegions.find((r) => r.name.toLowerCase() === regionName.toLowerCase());
   return match ? `/regions/${match.slug}` : null;
@@ -90,6 +99,7 @@ export function ArticleView({
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
 
   const regionLink = article.region ? regionHref(article.region) : null;
+  const showUpdated = wasUpdatedAfterPublish(article.publicationDate, article.updatedAt);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -139,6 +149,15 @@ export function ArticleView({
         )}
         <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-muted">
           <time dateTime={article.publicationDate}>{formatDate(article.publicationDate)}</time>
+          {showUpdated && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-gray-muted/80">
+                Updated on{" "}
+                <time dateTime={article.updatedAt}>{formatDate(article.updatedAt)}</time>
+              </span>
+            </>
+          )}
           <span aria-hidden="true">·</span>
           <span>{article.readTimeMinutes} min read</span>
           {article.region && (
