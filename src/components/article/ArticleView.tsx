@@ -10,7 +10,7 @@ import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { ArticleListen } from "@/components/article/ArticleListen";
-import { MemberAccessCard } from "@/components/MemberAccessCard";
+import { SoftJoinPrompt } from "@/components/article/SoftJoinPrompt";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import { majorRegions } from "@/lib/nav";
@@ -88,10 +88,6 @@ export function ArticleView({
   premiumLocked?: boolean;
 }) {
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
-
-  const midpoint = Math.ceil(bodyBlocks.length / 2);
-  const firstHalfBlocks = bodyBlocks.slice(0, midpoint);
-  const secondHalfBlocks = bodyBlocks.slice(midpoint);
 
   const regionLink = article.region ? regionHref(article.region) : null;
 
@@ -220,10 +216,9 @@ export function ArticleView({
         </p>
       ) : null}
 
+      {/* Full body unbroken — better for readers and Google crawl */}
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={firstHalfBlocks} />
-        {!premiumLocked && <MemberAccessCard />}
-        <BlockRenderer blocks={secondHalfBlocks} />
+        <BlockRenderer blocks={bodyBlocks} />
         {premiumLocked && <PaywallNotice />}
         {!premiumLocked && article.correctionNote && (
           <div className="mt-6">
@@ -241,6 +236,9 @@ export function ArticleView({
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <AuthorBlock name={article.author.name} title={article.author.title} />
         {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
+
+        {/* Soft prompt after full article — optional join, no registration wall */}
+        {interactive && !premiumLocked && <SoftJoinPrompt />}
       </div>
 
       <div id="article-progress-end" />
