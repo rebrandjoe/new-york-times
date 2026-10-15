@@ -29,7 +29,7 @@ export function TrendingNow({ articles }: { articles: Article[] }) {
                 {index + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-serif text-base font-bold leading-snug text-white transition-colors group-hover:text-accent sm:text-lg">
+                <span className="block font-sans text-base font-bold leading-snug tracking-tight text-white transition-colors group-hover:text-accent sm:text-lg">
                   {article.headline}
                 </span>
                 {article.category?.name && (
