@@ -153,8 +153,7 @@ export async function getArticleBySlug(slug: string): Promise<CmsArticle | null>
 }
 
 // ---------------------------------------------------------------------------
-// Related Stories — editorial ranking (region + topic family + significance + recency)
-// Only this function’s ranking logic is intentional product behaviour change.
+// Related / You may also like — topic first, then region, then significance + recency
 // ---------------------------------------------------------------------------
 
 /** Sub-regional country groups derived from standard African geography. */
@@ -255,6 +254,29 @@ const SIGNIFICANCE_PATTERNS: readonly RegExp[] = [
   /\bpublic.?health\b/i,
 ];
 
+/** Disease / condition tokens that signal topic kinship in headlines. */
+const TOPIC_KEYWORD_PATTERNS: readonly RegExp[] = [
+  /\bebola\b/i,
+  /\bmarburg\b/i,
+  /\bcholera\b/i,
+  /\bdengue\b/i,
+  /\bmalaria\b/i,
+  /\btuberculosis\b|\b\bTB\b/,
+  /\bHIV\b|\bAIDS\b/i,
+  /\bmpox\b|\bmonkeypox\b/i,
+  /\bmeasles\b/i,
+  /\bpolio\b/i,
+  /\bcovid\b|\bcoronavirus\b/i,
+  /\binfluenza\b|\bflu\b/i,
+  /\bhepatitis\b/i,
+  /\bcancer\b/i,
+  /\bdiabetes\b/i,
+  /\bvaccine\b|\bimmuni[sz]/i,
+  /\boutbreak\b/i,
+  /\bepidemic\b/i,
+  /\bpandemic\b/i,
+];
+
 function normalizeGeo(value: string | null | undefined): string {
   return (value ?? "").trim().toLowerCase();
 }
@@ -279,9 +301,18 @@ function topicFamilyIds(slugs: Set<string>): Set<number> {
 function significanceBoost(text: string): number {
   let boost = 0;
   for (const pattern of SIGNIFICANCE_PATTERNS) {
-    if (pattern.test(text)) boost += 6;
+    if (pattern.test(text)) boost += 5;
   }
-  return Math.min(boost, 24);
+  return Math.min(boost, 20);
+}
+
+/** Shared disease/outbreak keywords in title+excerpt (topic signal without CMS tags). */
+function topicKeywordOverlap(sourceText: string, candidateText: string): number {
+  let hits = 0;
+  for (const pattern of TOPIC_KEYWORD_PATTERNS) {
+    if (pattern.test(sourceText) && pattern.test(candidateText)) hits += 1;
+  }
+  return Math.min(hits * 35, 70);
 }
 
 function daysSince(iso: string): number {
@@ -290,81 +321,84 @@ function daysSince(iso: string): number {
   return Math.max(0, (Date.now() - t) / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Ranking priority:
+ * 1. Topic (exact tags, topic family, shared disease keywords)
+ * 2. Region (country → sub-region → continental region)
+ * 3. Editorial significance + recency
+ */
 function scoreRelatedCandidate(source: CmsArticle, candidate: CmsArticle): number {
   let score = 0;
 
-  // Level 1 — same country
-  if (source.country && candidate.country && source.country === candidate.country) {
-    score += 55;
-  }
-
-  // Level 2 — same sub-region (e.g. East Africa)
-  const srcSub = subregionOf(source.country);
-  const candSub = subregionOf(candidate.country);
-  if (srcSub && candSub && srcSub === candSub && source.country !== candidate.country) {
-    score += 32;
-  }
-
-  // Level 3 — same continental / free-text region field
-  const srcRegion = normalizeGeo(source.region);
-  const candRegion = normalizeGeo(candidate.region);
-  if (srcRegion && candRegion && srcRegion === candRegion) {
-    score += 18;
-  } else if (
-    srcRegion &&
-    candRegion &&
-    (srcRegion.includes("africa") || candRegion.includes("africa")) &&
-    (srcRegion.includes("africa") && candRegion.includes("africa"))
-  ) {
-    score += 14;
-  }
-
-  // Editorial category tabs (Kenya / Africa / Global)
-  if (
-    source.category &&
-    candidate.category &&
-    source.category.slug === candidate.category.slug
-  ) {
-    score += 8;
-  }
-
-  // Topic: exact shared topics (strong but not exclusive)
   const sourceTopics = new Set(source.topics.map((t) => t.slug));
   const candidateTopics = candidate.topics.map((t) => t.slug);
-  const sharedExact = candidateTopics.filter((s) => sourceTopics.has(s)).length;
-  score += sharedExact * 28;
+  const sourceText = `${source.title} ${source.excerpt ?? ""}`;
+  const candidateText = `${candidate.title} ${candidate.excerpt ?? ""}`;
 
-  // Topic families: e.g. outbreaks ↔ infectious disease ↔ vaccines
+  // ——— 1. TOPIC (highest weight) ———
+  const sharedExact = candidateTopics.filter((s) => sourceTopics.has(s)).length;
+  score += sharedExact * 80;
+
   const sourceFamilies = topicFamilyIds(sourceTopics);
   const candidateFamilies = topicFamilyIds(new Set(candidateTopics));
   let familyHits = 0;
   for (const id of sourceFamilies) {
     if (candidateFamilies.has(id)) familyHits += 1;
   }
-  score += familyHits * 22;
+  score += familyHits * 50;
 
-  // Editorial significance from existing title/excerpt wording (no new DB fields)
-  const sourceText = `${source.title} ${source.excerpt ?? ""}`;
-  const candidateText = `${candidate.title} ${candidate.excerpt ?? ""}`;
+  score += topicKeywordOverlap(sourceText, candidateText);
+
+  // ——— 2. REGION (secondary) ———
+  if (source.country && candidate.country && source.country === candidate.country) {
+    score += 28;
+  }
+
+  const srcSub = subregionOf(source.country);
+  const candSub = subregionOf(candidate.country);
+  if (srcSub && candSub && srcSub === candSub && source.country !== candidate.country) {
+    score += 16;
+  }
+
+  const srcRegion = normalizeGeo(source.region);
+  const candRegion = normalizeGeo(candidate.region);
+  if (srcRegion && candRegion && srcRegion === candRegion) {
+    score += 12;
+  } else if (
+    srcRegion &&
+    candRegion &&
+    srcRegion.includes("africa") &&
+    candRegion.includes("africa")
+  ) {
+    score += 8;
+  }
+
+  if (
+    source.category &&
+    candidate.category &&
+    source.category.slug === candidate.category.slug
+  ) {
+    score += 5;
+  }
+
+  // ——— 3. Significance + recency (tertiary) ———
   if (significanceBoost(sourceText) > 0) {
     score += significanceBoost(candidateText);
   } else {
     score += Math.floor(significanceBoost(candidateText) / 2);
   }
 
-  // Recency: meaningful but secondary to geography/topic
   const age = daysSince(candidate.publicationDate);
-  if (age <= 2) score += 20;
-  else if (age <= 7) score += 14;
-  else if (age <= 30) score += 8;
-  else if (age <= 90) score += 3;
+  if (age <= 2) score += 16;
+  else if (age <= 7) score += 11;
+  else if (age <= 30) score += 6;
+  else if (age <= 90) score += 2;
 
   return score;
 }
 
 /**
- * Prefer a balanced set: avoid filling every slot with the same exact topic
- * when higher-scoring alternatives from other relevant families exist.
+ * Prefer topic-coherent picks first; only diversify after several same-topic slots.
  */
 function diversifyRelated(
   ranked: { candidate: CmsArticle; score: number }[],
@@ -378,13 +412,13 @@ function diversifyRelated(
 
   for (const { candidate, score } of ranked) {
     if (picked.length >= limit) break;
-    if (score < 8) continue; // weak matches: prefer empty slot over noise
+    if (score < 8) continue;
     if (usedIds.has(candidate.id)) continue;
 
     const key = primaryTopic(candidate);
     const count = topicCounts.get(key) ?? 0;
-    // Cap near-identical topic dominance (e.g. five Ebola-only stories)
-    if (count >= 2 && picked.length + 1 < limit) {
+    // Allow more same-topic stories (outbreak packs) before forcing variety
+    if (count >= 3 && picked.length + 1 < limit) {
       continue;
     }
 
@@ -393,7 +427,6 @@ function diversifyRelated(
     topicCounts.set(key, count + 1);
   }
 
-  // Second pass: fill remaining slots with next-best scores if still short
   if (picked.length < limit) {
     for (const { candidate, score } of ranked) {
       if (picked.length >= limit) break;
@@ -408,9 +441,8 @@ function diversifyRelated(
 }
 
 /**
- * Related Stories: ranks published candidates by country → sub-region →
- * continent → topic family → editorial significance signals → recency.
- * Does not require the same disease; uses existing article fields only.
+ * Related / You may also like: ranks by topic → region → significance → recency.
+ * Example: Ebola story prefers other outbreak/infectious stories, then same region.
  */
 export async function getRelatedArticles(article: CmsArticle, limit = 4): Promise<CmsArticle[]> {
   const supabase = await createClient();
@@ -432,7 +464,11 @@ export async function getRelatedArticles(article: CmsArticle, limit = 4): Promis
     score: scoreRelatedCandidate(article, candidate),
   }));
 
-  scored.sort((a, b) => b.score - a.score || daysSince(a.candidate.publicationDate) - daysSince(b.candidate.publicationDate));
+  scored.sort(
+    (a, b) =>
+      b.score - a.score ||
+      daysSince(a.candidate.publicationDate) - daysSince(b.candidate.publicationDate)
+  );
 
   return diversifyRelated(scored, limit);
 }
