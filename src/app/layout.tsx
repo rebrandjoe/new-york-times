@@ -131,10 +131,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           disable={process.env.NODE_ENV !== "production"}
           reloadOnOnline={false}
         >
+          {/* Slim notification tab — top of viewport, first visit only */}
+          <NotificationPrompt vapidPublicKey={vapidPublicKey} />
           <SiteChrome ticker={ticker}>{children}</SiteChrome>
-          <div className="fixed inset-x-0 bottom-0 z-40 flex flex-col-reverse">
+          <div className="fixed inset-x-0 bottom-0 z-40">
             <InstallPrompt />
-            <NotificationPrompt vapidPublicKey={vapidPublicKey} />
           </div>
         </SerwistProvider>
         <Analytics />
