@@ -4,7 +4,6 @@ import { BlockRenderer } from "@/components/article/BlockRenderer";
 import { AuthorBlock } from "@/components/article/AuthorBlock";
 import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
-import { ArticleJustInRail } from "@/components/article/ArticleJustInRail";
 import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
@@ -12,8 +11,10 @@ import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { ArticleListen } from "@/components/article/ArticleListen";
 import { SoftJoinPrompt } from "@/components/article/SoftJoinPrompt";
+import { StoryCarousel } from "@/components/sections/StoryCarousel";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
+import { toHomepageArticle } from "@/lib/cms/mappers";
 import { majorRegions } from "@/lib/nav";
 import type { CmsArticle } from "@/lib/cms/types";
 import type { CommentRow } from "@/lib/actions/comments";
@@ -100,8 +101,7 @@ export function ArticleView({
 
   const regionLink = article.region ? regionHref(article.region) : null;
   const showUpdated = wasUpdatedAfterPublish(article.publicationDate, article.updatedAt);
-  // Side rail + bottom related share the same relevance-ranked list
-  const railStories = related.slice(0, 6);
+  const alsoRead = related.map(toHomepageArticle);
   const bottomRelated = related.slice(0, 4);
 
   const jsonLd = {
@@ -236,31 +236,30 @@ export function ArticleView({
         </p>
       ) : null}
 
-      {/* Body + Just in rail (desktop right column, relevance-ranked) */}
-      <div className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 lg:px-8">
-        <div className="flex justify-center gap-10">
-          <div className="w-full max-w-3xl min-w-0">
-            <BlockRenderer blocks={bodyBlocks} />
-            {premiumLocked && <PaywallNotice />}
-            {!premiumLocked && article.correctionNote && (
-              <div className="mt-6">
-                <CorrectionNotice note={article.correctionNote} />
-              </div>
-            )}
-            {!premiumLocked && (
-              <div className="mt-6">
-                <SourceAttribution sources={article.sources} />
-              </div>
-            )}
-            <AuthorBlock name={article.author.name} title={article.author.title} />
-            {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
-            {interactive && !premiumLocked && <SoftJoinPrompt />}
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+        <BlockRenderer blocks={bodyBlocks} />
+        {premiumLocked && <PaywallNotice />}
+        {!premiumLocked && article.correctionNote && (
+          <div className="mt-6">
+            <CorrectionNotice note={article.correctionNote} />
           </div>
-          {!premiumLocked && <ArticleJustInRail articles={railStories} />}
-        </div>
+        )}
+        {!premiumLocked && (
+          <div className="mt-6">
+            <SourceAttribution sources={article.sources} />
+          </div>
+        )}
+        <AuthorBlock name={article.author.name} title={article.author.title} />
+        {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
+        {interactive && !premiumLocked && <SoftJoinPrompt />}
       </div>
 
       <div id="article-progress-end" />
+
+      {/* Horizontal auto-swipe related (relevance-ranked) */}
+      {!premiumLocked && alsoRead.length > 0 && (
+        <StoryCarousel articles={alsoRead} title="Also read" />
+      )}
 
       {interactive && !premiumLocked && (
         <Comments articleId={article.id} articlePath={articlePath} initialComments={comments} />
