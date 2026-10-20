@@ -26,7 +26,7 @@ function canOfferPush(vapidPublicKey: string): boolean {
 
 /**
  * Slim top tab for push opt-in — appears ~1s after first visit.
- * Does not block reading; full-screen modal removed.
+ * High-contrast so Allow is never lost on dark pages.
  */
 export function NotificationPrompt({
   vapidPublicKey = "",
@@ -44,7 +44,6 @@ export function NotificationPrompt({
   useEffect(() => {
     if (!canOfferPush(vapidPublicKey)) return;
 
-    // Appear quickly on first visit (~1s), or sooner on first interaction
     const timer = window.setTimeout(() => {
       show();
     }, 1000);
@@ -103,19 +102,19 @@ export function NotificationPrompt({
     <div
       role="dialog"
       aria-label="Turn on notifications"
-      className="fixed inset-x-0 top-0 z-[70] border-b border-charcoal bg-charcoal-deep/95 shadow-lg backdrop-blur-sm"
+      className="fixed inset-x-0 top-0 z-[70] border-b-2 border-accent bg-[#1a1a1a] shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
     >
-      <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-3 py-2 sm:gap-4 sm:px-6">
-        <p className="min-w-0 flex-1 text-xs leading-snug text-gray-secondary-light sm:text-sm">
-          <span className="font-semibold text-white">Stay ahead of health news that matters</span>
-          <span className="hidden sm:inline"> — get notified when we publish</span>
+      <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-6">
+        <p className="min-w-0 flex-1 text-xs leading-snug text-white/90 sm:text-sm">
+          <span className="font-bold text-white">Stay ahead of health news that matters</span>
+          <span className="hidden text-white/80 sm:inline"> — get notified when we publish</span>
         </p>
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={allow}
             disabled={busy}
-            className="focus-ring rounded-full bg-accent px-3 py-1.5 text-[11px] font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-60 sm:px-3.5 sm:text-xs"
+            className="focus-ring rounded-full bg-accent px-4 py-2 text-xs font-extrabold uppercase tracking-wide text-black shadow-[0_0_0_2px_rgba(0,0,0,0.4),0_2px_12px_rgba(212,175,55,0.45)] transition-transform hover:scale-[1.03] hover:brightness-110 disabled:opacity-60 sm:px-5 sm:text-sm"
           >
             {busy ? "…" : "Allow"}
           </button>
@@ -124,7 +123,7 @@ export function NotificationPrompt({
             onClick={dismiss}
             disabled={busy}
             aria-label="Dismiss"
-            className="focus-ring p-1.5 text-gray-muted transition-colors hover:text-white disabled:opacity-50"
+            className="focus-ring rounded-full border border-white/25 p-1.5 text-white/70 transition-colors hover:border-white/50 hover:text-white disabled:opacity-50"
           >
             <CloseIcon className="h-3.5 w-3.5" />
           </button>
