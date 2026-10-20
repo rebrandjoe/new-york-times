@@ -5,6 +5,7 @@ import { AuthorBlock } from "@/components/article/AuthorBlock";
 import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
 import { AlsoReadFixed } from "@/components/article/AlsoReadFixed";
+import { AlsoReadMid } from "@/components/article/AlsoReadMid";
 import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
@@ -99,6 +100,12 @@ export function ArticleView({
 }) {
   const bodyBlocks = premiumLocked ? truncateBlocksForPreview(article.body) : article.body;
 
+  // Split body so mobile “You may also like” appears mid-article
+  const midIndex =
+    bodyBlocks.length <= 2 ? bodyBlocks.length : Math.ceil(bodyBlocks.length / 2);
+  const bodyFirst = bodyBlocks.slice(0, midIndex);
+  const bodySecond = bodyBlocks.slice(midIndex);
+
   const regionLink = article.region ? regionHref(article.region) : null;
   const showUpdated = wasUpdatedAfterPublish(article.publicationDate, article.updatedAt);
   const alsoRead = related.map(toHomepageArticle);
@@ -135,7 +142,7 @@ export function ArticleView({
 
       {interactive && <ReadingProgress />}
 
-      {/* Fixed right rail — does not move with article scroll; xl+ only */}
+      {/* Desktop: fixed right rail */}
       {!premiumLocked && interactive && alsoRead.length > 0 && (
         <AlsoReadFixed articles={alsoRead} />
       )}
@@ -242,7 +249,13 @@ export function ArticleView({
       ) : null}
 
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={bodyBlocks} />
+        <BlockRenderer blocks={bodyFirst} />
+
+        {/* Mobile/tablet: mid-article swipe (hidden on desktop) */}
+        {!premiumLocked && alsoRead.length > 0 && <AlsoReadMid articles={alsoRead} />}
+
+        {bodySecond.length > 0 && <BlockRenderer blocks={bodySecond} />}
+
         {premiumLocked && <PaywallNotice />}
         {!premiumLocked && article.correctionNote && (
           <div className="mt-6">
