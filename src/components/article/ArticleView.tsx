@@ -4,6 +4,7 @@ import { BlockRenderer } from "@/components/article/BlockRenderer";
 import { AuthorBlock } from "@/components/article/AuthorBlock";
 import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
+import { ArticleJustInRail } from "@/components/article/ArticleJustInRail";
 import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
@@ -70,7 +71,6 @@ function wasUpdatedAfterPublish(publishedIso: string, updatedIso: string): boole
   const published = new Date(publishedIso).getTime();
   const updated = new Date(updatedIso).getTime();
   if (Number.isNaN(published) || Number.isNaN(updated)) return false;
-  // 2+ minutes after publish counts as a real update
   return updated - published >= 2 * 60 * 1000;
 }
 
@@ -100,6 +100,9 @@ export function ArticleView({
 
   const regionLink = article.region ? regionHref(article.region) : null;
   const showUpdated = wasUpdatedAfterPublish(article.publicationDate, article.updatedAt);
+  // Side rail + bottom related share the same relevance-ranked list
+  const railStories = related.slice(0, 6);
+  const bottomRelated = related.slice(0, 4);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -180,7 +183,6 @@ export function ArticleView({
           )}
         </div>
 
-        {/* Free browser TTS — no API keys or paid providers */}
         {interactive && (
           <ArticleListen title={article.title} excerpt={article.excerpt} body={bodyBlocks} />
         )}
@@ -199,7 +201,6 @@ export function ArticleView({
           </div>
         )}
 
-        {/* Instant Preferred Source deeplink — Google brand colors, like Citizen Digital */}
         {interactive && (
           <div className="mt-4">
             <a
@@ -235,29 +236,28 @@ export function ArticleView({
         </p>
       ) : null}
 
-      {/* Full body unbroken — better for readers and Google crawl */}
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={bodyBlocks} />
-        {premiumLocked && <PaywallNotice />}
-        {!premiumLocked && article.correctionNote && (
-          <div className="mt-6">
-            <CorrectionNotice note={article.correctionNote} />
+      {/* Body + Just in rail (desktop right column, relevance-ranked) */}
+      <div className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="flex justify-center gap-10">
+          <div className="w-full max-w-3xl min-w-0">
+            <BlockRenderer blocks={bodyBlocks} />
+            {premiumLocked && <PaywallNotice />}
+            {!premiumLocked && article.correctionNote && (
+              <div className="mt-6">
+                <CorrectionNotice note={article.correctionNote} />
+              </div>
+            )}
+            {!premiumLocked && (
+              <div className="mt-6">
+                <SourceAttribution sources={article.sources} />
+              </div>
+            )}
+            <AuthorBlock name={article.author.name} title={article.author.title} />
+            {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
+            {interactive && !premiumLocked && <SoftJoinPrompt />}
           </div>
-        )}
-      </div>
-
-      {!premiumLocked && (
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <SourceAttribution sources={article.sources} />
+          {!premiumLocked && <ArticleJustInRail articles={railStories} />}
         </div>
-      )}
-
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <AuthorBlock name={article.author.name} title={article.author.title} />
-        {!premiumLocked && <ShareRow url={canonicalUrl} title={article.title} />}
-
-        {/* Soft prompt after full article — optional join, no registration wall */}
-        {interactive && !premiumLocked && <SoftJoinPrompt />}
       </div>
 
       <div id="article-progress-end" />
@@ -266,7 +266,7 @@ export function ArticleView({
         <Comments articleId={article.id} articlePath={articlePath} initialComments={comments} />
       )}
 
-      {!premiumLocked && <RelatedArticles articles={related} />}
+      {!premiumLocked && <RelatedArticles articles={bottomRelated} />}
 
       {interactive && !premiumLocked && <Briefing />}
     </article>
