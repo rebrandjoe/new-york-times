@@ -52,14 +52,16 @@ export function AlsoReadFixed({ articles }: { articles: Article[] }) {
 
   return (
     <aside
-      aria-label="Also read"
+      aria-label="You may also like"
       className="pointer-events-none fixed bottom-24 right-3 z-30 hidden w-[220px] xl:block 2xl:right-6 2xl:w-[240px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       <div className="pointer-events-auto overflow-hidden rounded-lg border border-charcoal bg-[#0f0f0f]/95 shadow-xl backdrop-blur-sm">
         <div className="flex items-center justify-between border-b border-charcoal px-2.5 py-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">Also read</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-accent">
+            You may also like
+          </p>
           <div className="flex gap-1">
             <button
               type="button"
