@@ -5,13 +5,19 @@ import Link from "next/link";
 import { ArticleImage } from "@/components/ArticleImage";
 import type { Article } from "@/lib/types";
 
-const INTERVAL_MS = 4500;
+const INTERVAL_MS = 4000;
 
 /**
- * Horizontal story strip that auto-advances every few seconds.
+ * Horizontal story strip — auto-swipes left every few seconds.
  * Pauses on hover/focus; respects prefers-reduced-motion.
  */
-export function StoryCarousel({ articles }: { articles: Article[] }) {
+export function StoryCarousel({
+  articles,
+  title = "More to read",
+}: {
+  articles: Article[];
+  title?: string;
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -22,7 +28,7 @@ export function StoryCarousel({ articles }: { articles: Article[] }) {
     if (!el) return;
     const child = el.children[i] as HTMLElement | undefined;
     if (!child) return;
-    el.scrollTo({ left: child.offsetLeft - el.offsetLeft, behavior: "smooth" });
+    el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
     setIndex(i);
   }, []);
 
@@ -39,7 +45,8 @@ export function StoryCarousel({ articles }: { articles: Article[] }) {
         if (el) {
           const child = el.children[next] as HTMLElement | undefined;
           if (child) {
-            el.scrollTo({ left: child.offsetLeft - el.offsetLeft, behavior: "smooth" });
+            // Scroll so the next card moves in from the right (content shifts left)
+            el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
           }
         }
         return next;
@@ -51,9 +58,11 @@ export function StoryCarousel({ articles }: { articles: Article[] }) {
 
   if (count === 0) return null;
 
+  const headingId = `story-carousel-${title.replace(/\s+/g, "-").toLowerCase()}`;
+
   return (
     <section
-      aria-labelledby="story-carousel-heading"
+      aria-labelledby={headingId}
       className="border-y border-charcoal bg-[#0a0a0a]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -65,10 +74,10 @@ export function StoryCarousel({ articles }: { articles: Article[] }) {
       <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2
-            id="story-carousel-heading"
+            id={headingId}
             className="text-xs font-bold uppercase tracking-[0.18em] text-accent"
           >
-            More to read
+            {title}
           </h2>
           <div className="flex items-center gap-2">
             <button
@@ -99,7 +108,7 @@ export function StoryCarousel({ articles }: { articles: Article[] }) {
             <Link
               key={article.id}
               href={`/article/${article.slug}`}
-              className="focus-ring group w-[min(72vw,260px)] shrink-0 scroll-snap-align-start sm:w-[240px]"
+              className="focus-ring group w-[min(72vw,260px)] shrink-0 sm:w-[240px]"
               style={{ scrollSnapAlign: "start" }}
             >
               <ArticleImage
