@@ -89,8 +89,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   // Avoid session/cookies on free public articles so the page can be cached.
   // Premium stories still check access when needed.
+  // Fetch extra related for the desktop Just in rail (relevance-ranked).
   const [related, comments, premiumAccess] = await Promise.all([
-    getRelatedArticles(article, 4),
+    getRelatedArticles(article, 8),
     getPublicComments(article.id),
     article.premium
       ? (async () => {
