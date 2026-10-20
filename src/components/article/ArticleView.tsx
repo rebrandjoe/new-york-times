@@ -4,6 +4,7 @@ import { BlockRenderer } from "@/components/article/BlockRenderer";
 import { AuthorBlock } from "@/components/article/AuthorBlock";
 import { ShareRow } from "@/components/article/ShareRow";
 import { RelatedArticles } from "@/components/article/RelatedArticles";
+import { AlsoReadFixed } from "@/components/article/AlsoReadFixed";
 import { Comments } from "@/components/article/Comments";
 import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
@@ -11,7 +12,6 @@ import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { ArticleListen } from "@/components/article/ArticleListen";
 import { SoftJoinPrompt } from "@/components/article/SoftJoinPrompt";
-import { StoryCarousel } from "@/components/sections/StoryCarousel";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import { toHomepageArticle } from "@/lib/cms/mappers";
@@ -135,6 +135,11 @@ export function ArticleView({
 
       {interactive && <ReadingProgress />}
 
+      {/* Fixed right rail — does not move with article scroll; xl+ only */}
+      {!premiumLocked && interactive && alsoRead.length > 0 && (
+        <AlsoReadFixed articles={alsoRead} />
+      )}
+
       <div id="article-progress-start" className="mx-auto max-w-3xl px-4 pt-12 sm:px-6 lg:px-8">
         {article.category && (
           <Link
@@ -255,11 +260,6 @@ export function ArticleView({
       </div>
 
       <div id="article-progress-end" />
-
-      {/* Horizontal auto-swipe related (relevance-ranked) */}
-      {!premiumLocked && alsoRead.length > 0 && (
-        <StoryCarousel articles={alsoRead} title="Also read" />
-      )}
 
       {interactive && !premiumLocked && (
         <Comments articleId={article.id} articlePath={articlePath} initialComments={comments} />
