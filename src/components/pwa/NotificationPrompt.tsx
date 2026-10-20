@@ -25,8 +25,8 @@ function canOfferPush(vapidPublicKey: string): boolean {
 }
 
 /**
- * Slim top tab for push opt-in — appears ~1s after first visit.
- * High-contrast so Allow is never lost on dark pages.
+ * Compact top-left card (similar placement to browser notification prompts).
+ * Appears ~1s on first visit; does not block the page.
  */
 export function NotificationPrompt({
   vapidPublicKey = "",
@@ -101,33 +101,50 @@ export function NotificationPrompt({
   return (
     <div
       role="dialog"
-      aria-label="Turn on notifications"
-      className="fixed inset-x-0 top-0 z-[70] border-b-2 border-accent bg-[#1a1a1a] shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
+      aria-label="Show notifications"
+      className="fixed left-3 top-3 z-[70] w-[min(100%-1.5rem,320px)] overflow-hidden rounded-xl border border-white/10 bg-[#2b2b2b] shadow-2xl sm:left-4 sm:top-4"
     >
-      <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-6">
-        <p className="min-w-0 flex-1 text-xs leading-snug text-white/90 sm:text-sm">
-          <span className="font-bold text-white">Stay ahead of health news that matters</span>
-          <span className="hidden text-white/80 sm:inline"> — get notified when we publish</span>
-        </p>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={allow}
-            disabled={busy}
-            className="focus-ring rounded-full bg-accent px-4 py-2 text-xs font-extrabold uppercase tracking-wide text-black shadow-[0_0_0_2px_rgba(0,0,0,0.4),0_2px_12px_rgba(212,175,55,0.45)] transition-transform hover:scale-[1.03] hover:brightness-110 disabled:opacity-60 sm:px-5 sm:text-sm"
-          >
-            {busy ? "…" : "Allow"}
-          </button>
-          <button
-            type="button"
-            onClick={dismiss}
-            disabled={busy}
-            aria-label="Dismiss"
-            className="focus-ring rounded-full border border-white/25 p-1.5 text-white/70 transition-colors hover:border-white/50 hover:text-white disabled:opacity-50"
-          >
-            <CloseIcon className="h-3.5 w-3.5" />
-          </button>
+      <div className="flex items-start gap-3 px-4 pb-2 pt-3">
+        <span
+          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/20 text-sm"
+          aria-hidden
+        >
+          🔔
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium text-white/70">josephmmwa.com</p>
+          <p className="mt-1 text-sm font-semibold leading-snug text-white">Show notifications</p>
+          <p className="mt-1 text-xs leading-relaxed text-white/60">
+            Stay ahead of health news that matters. Get notified when we publish.
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={dismiss}
+          disabled={busy}
+          aria-label="Dismiss"
+          className="focus-ring -mr-1 -mt-0.5 shrink-0 p-1.5 text-white/50 transition-colors hover:text-white disabled:opacity-50"
+        >
+          <CloseIcon className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="flex justify-end gap-2 px-4 pb-3 pt-1">
+        <button
+          type="button"
+          onClick={dismiss}
+          disabled={busy}
+          className="focus-ring rounded-full px-4 py-1.5 text-xs font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50"
+        >
+          Block
+        </button>
+        <button
+          type="button"
+          onClick={allow}
+          disabled={busy}
+          className="focus-ring rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-60"
+        >
+          {busy ? "…" : "Allow"}
+        </button>
       </div>
     </div>
   );
