@@ -25,13 +25,8 @@ function canOfferPush(vapidPublicKey: string): boolean {
 }
 
 /**
- * One-time professional opt-in for push alerts on new health stories.
- *
- * VAPID public key must be passed from a Server Component (layout).
- * Reading process.env.NEXT_PUBLIC_* only inside this client module does not
- * reliably embed the key in the production browser bundle.
- *
- * Renders site-wide (homepage and articles) from the root layout.
+ * Slim top tab for push opt-in — appears ~1s after first visit.
+ * Does not block reading; full-screen modal removed.
  */
 export function NotificationPrompt({
   vapidPublicKey = "",
@@ -49,23 +44,22 @@ export function NotificationPrompt({
   useEffect(() => {
     if (!canOfferPush(vapidPublicKey)) return;
 
-    const onEngage = () => {
-      show();
-      cleanup();
-    };
-
+    // Appear quickly on first visit (~1s), or sooner on first interaction
     const timer = window.setTimeout(() => {
       show();
-      cleanup();
-    }, 4500);
+    }, 1000);
 
-    function cleanup() {
+    const onEngage = () => {
+      show();
       window.clearTimeout(timer);
-      document.removeEventListener("pointerdown", onEngage);
-    }
+    };
 
     document.addEventListener("pointerdown", onEngage, { once: true, passive: true });
-    return cleanup;
+
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("pointerdown", onEngage);
+    };
   }, [show, vapidPublicKey]);
 
   function dismiss() {
@@ -107,70 +101,33 @@ export function NotificationPrompt({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center p-4 sm:items-center"
       role="dialog"
-      aria-modal="true"
-      aria-labelledby="push-prompt-title"
-      aria-describedby="push-prompt-desc"
+      aria-label="Turn on notifications"
+      className="fixed inset-x-0 top-0 z-[70] border-b border-charcoal bg-charcoal-deep/95 shadow-lg backdrop-blur-sm"
     >
-      <button
-        type="button"
-        aria-label="Dismiss notification prompt"
-        className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
-        onClick={dismiss}
-      />
-
-      <div className="relative w-full max-w-md overflow-hidden rounded-sm border border-white/10 bg-charcoal-deep shadow-2xl">
-        <div className="h-1 w-full bg-accent" />
-
-        <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-                JOSEPH MMWA
-              </p>
-              <h2
-                id="push-prompt-title"
-                className="mt-2 font-serif text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-[1.65rem]"
-              >
-                Stay ahead of health news that matters
-              </h2>
-            </div>
-            <button
-              type="button"
-              onClick={dismiss}
-              aria-label="Close"
-              className="focus-ring -mr-1 -mt-1 shrink-0 p-2 text-gray-muted transition-colors hover:text-white"
-            >
-              <CloseIcon className="h-4 w-4" />
-            </button>
-          </div>
-
-          <p
-            id="push-prompt-desc"
-            className="mt-3 text-sm leading-relaxed text-gray-secondary-light"
+      <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-3 py-2 sm:gap-4 sm:px-6">
+        <p className="min-w-0 flex-1 text-xs leading-snug text-gray-secondary-light sm:text-sm">
+          <span className="font-semibold text-white">Stay ahead of health news that matters</span>
+          <span className="hidden sm:inline"> — get notified when we publish</span>
+        </p>
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={allow}
+            disabled={busy}
+            className="focus-ring rounded-full bg-accent px-3 py-1.5 text-[11px] font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-60 sm:px-3.5 sm:text-xs"
           >
-            Get notified as soon as we publish. Turn on notifications.
-          </p>
-
-          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              onClick={dismiss}
-              disabled={busy}
-              className="focus-ring px-4 py-2.5 text-sm font-medium text-gray-secondary-light transition-colors hover:text-white disabled:opacity-50"
-            >
-              Not now
-            </button>
-            <button
-              type="button"
-              onClick={allow}
-              disabled={busy}
-              className="focus-ring bg-accent px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-60"
-            >
-              {busy ? "Enabling…" : "Allow notifications"}
-            </button>
-          </div>
+            {busy ? "…" : "Allow"}
+          </button>
+          <button
+            type="button"
+            onClick={dismiss}
+            disabled={busy}
+            aria-label="Dismiss"
+            className="focus-ring p-1.5 text-gray-muted transition-colors hover:text-white disabled:opacity-50"
+          >
+            <CloseIcon className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>
