@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
-import { AUTHOR_PHOTO_ALT, AUTHOR_PHOTO_SRC } from "@/lib/constants";
 
 const steps = ["Read", "Understand", "Verify", "Attribute", "Write", "Publish"];
 
@@ -55,21 +54,24 @@ export function WhoIAm() {
         </p>
       </div>
 
-      {/* Portrait — clean borders matching site chrome */}
-      <div className="mt-12 max-w-md">
+      {/* Facebook page screenshot — supports the combined audience figure */}
+      <figure className="mt-12 max-w-md">
         <div className="h-1 w-16 bg-accent" aria-hidden />
-        <div className="relative mt-4 aspect-[4/5] w-full overflow-hidden border border-charcoal bg-charcoal-deep">
-          <Image
-            src={AUTHOR_PHOTO_SRC}
-            alt={AUTHOR_PHOTO_ALT}
-            fill
-            sizes="(min-width: 768px) 28rem, 100vw"
-            className="object-cover object-top"
-            priority
+        <div className="mt-4 overflow-hidden rounded-lg border border-charcoal bg-charcoal-deep shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element -- local static asset */}
+          <img
+            src="/images/joseph-mmwa-facebook-profile.svg"
+            alt="Joseph Mmwa on Facebook — 153K followers, supporting a combined digital audience of more than 180,000"
+            className="block h-auto w-full"
+            width={400}
+            height={539}
+            loading="lazy"
           />
         </div>
-        <p className="mt-3 text-sm text-gray-muted">Joseph Mmwa · Health journalist</p>
-      </div>
+        <figcaption className="mt-3 text-sm text-gray-muted">
+          Facebook page reach · part of a combined audience of more than 180,000 across digital platforms
+        </figcaption>
+      </figure>
     </section>
   );
 }
