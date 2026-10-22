@@ -9,7 +9,7 @@ export function AboutHero() {
           Joseph Mmwa
         </h1>
         <p className="mt-5 text-lg font-medium text-accent sm:mt-6 sm:text-xl">
-          If it's health, it's here.
+          If it's health, it's here
         </p>
       </div>
 
