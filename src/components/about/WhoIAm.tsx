@@ -28,11 +28,10 @@ export function WhoIAm() {
         </p>
         <p>
           Through my digital platforms, I reach a combined audience of more than
-          180,000 followers, sharing health and medical news with audiences in
-          Kenya, across Africa and around the world.
+          180,000 followers.
         </p>
 
-        <p className="!mt-8 font-semibold text-offwhite">My approach:</p>
+        <p className="!mt-8 font-semibold text-offwhite">My approach is simple:</p>
 
         <div className="!mt-3 flex flex-wrap items-center gap-x-3 gap-y-3">
           {steps.map((step, i) => (
