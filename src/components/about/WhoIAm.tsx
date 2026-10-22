@@ -8,9 +8,8 @@ export function WhoIAm() {
       <SectionHeading title="Who I Am" />
       <div className="max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
         <p className="pt-2">
-          Joseph Mmwa is a Kenyan health news editor and journalist focused on
-          making health and medical news clear, accessible and meaningful to
-          everyone.
+          Joseph Mmwa is a Kenyan health journalist focused on making health and
+          medical news clear, accessible and meaningful to everyone.
         </p>
         <p>
           I follow important health developments across Kenya, Africa and the
