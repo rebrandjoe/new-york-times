@@ -7,6 +7,7 @@ import {
   XIcon,
   YouTubeIcon,
 } from "@/components/icons";
+import { LogoMark } from "@/components/Wordmark";
 import { socialLinks } from "@/lib/nav";
 
 const socialIconMap = {
@@ -49,17 +50,22 @@ export function AboutContactCta() {
         </p>
       </div>
 
-      {/* Clean left-aligned sign-off + social */}
-      <div className="mt-16 max-w-sm border-t border-charcoal pt-8 text-left">
-        <p className="font-serif text-lg font-bold text-white sm:text-xl">
-          Joseph Mmwa
-        </p>
-        <p className="mt-1 text-sm font-medium text-accent">
-          If it's health, it's here
-        </p>
+      {/* Left-aligned sign-off: logo + name/tagline side by side */}
+      <div className="mt-16 border-t border-charcoal pt-8 text-left">
+        <div className="flex items-center gap-4">
+          <LogoMark size={56} className="ring-1 ring-charcoal" />
+          <div>
+            <p className="font-serif text-lg font-bold text-white sm:text-xl">
+              Joseph Mmwa
+            </p>
+            <p className="mt-0.5 text-sm font-medium text-accent">
+              If it's health, it's here
+            </p>
+          </div>
+        </div>
 
         <p className="mt-6 text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
-          Follow us
+          Follow me
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-5">
           {socialLinks.map((social) => {
