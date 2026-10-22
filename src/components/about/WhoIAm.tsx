@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
+import { AUTHOR_PHOTO_ALT, AUTHOR_PHOTO_SRC } from "@/lib/constants";
 
 const steps = ["Read", "Understand", "Verify", "Attribute", "Write", "Publish"];
 
@@ -21,6 +23,11 @@ export function WhoIAm() {
           they mean, verifying the information, attributing it to the original
           sources and presenting it clearly — with people at the centre, helping
           them understand the health issues around them and why they matter.
+        </p>
+        <p>
+          Through my digital platforms, I reach a combined audience of more than
+          180,000 followers, sharing health and medical news with audiences in
+          Kenya, across Africa and around the world.
         </p>
 
         <p className="!mt-8 font-semibold text-offwhite">My approach:</p>
@@ -46,6 +53,22 @@ export function WhoIAm() {
           audiences — making health and medicine better understood across
           borders.
         </p>
+      </div>
+
+      {/* Portrait — clean borders matching site chrome */}
+      <div className="mt-12 max-w-md">
+        <div className="h-1 w-16 bg-accent" aria-hidden />
+        <div className="relative mt-4 aspect-[4/5] w-full overflow-hidden border border-charcoal bg-charcoal-deep">
+          <Image
+            src={AUTHOR_PHOTO_SRC}
+            alt={AUTHOR_PHOTO_ALT}
+            fill
+            sizes="(min-width: 768px) 28rem, 100vw"
+            className="object-cover object-top"
+            priority
+          />
+        </div>
+        <p className="mt-3 text-sm text-gray-muted">Joseph Mmwa · Health journalist</p>
       </div>
     </section>
   );
