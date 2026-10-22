@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
-import { LogoMarkLink, Tagline, WordmarkLink } from "@/components/Wordmark";
+import { Tagline, WordmarkLink } from "@/components/Wordmark";
 import { signOutAction } from "@/lib/actions/auth";
 import { ADMIN_EMAIL } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
@@ -36,7 +36,13 @@ export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             {isAboutPage ? (
-              <LogoMarkLink size={48} />
+              /* Brand lives in the page hero on /about — keep a minimal home control */
+              <Link
+                href="/"
+                className="focus-ring text-sm font-semibold tracking-wide text-gray-muted transition-colors hover:text-accent"
+              >
+                Home
+              </Link>
             ) : (
               <>
                 <WordmarkLink className="text-2xl sm:text-3xl" />
