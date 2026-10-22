@@ -21,6 +21,10 @@ const SITE_NAME = "JOSEPH MMWA";
 const SITE_DESCRIPTION =
   "The world's biggest health and medical news explained as they happen.";
 
+/** Exact brand logo (Supabase public Storage). */
+const BRAND_LOGO_URL =
+  "https://uhkmgirkogzmnkkidcgm.supabase.co/storage/v1/object/public/logo/logo.jpeg";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -44,12 +48,13 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: BRAND_LOGO_URL, type: "image/jpeg" },
       { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: BRAND_LOGO_URL, sizes: "180x180", type: "image/jpeg" }],
   },
 };
 
@@ -117,11 +122,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
 
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href={BRAND_LOGO_URL} type="image/jpeg" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href={BRAND_LOGO_URL} />
         <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <link rel="manifest" href="/site.webmanifest" />
