@@ -48,10 +48,9 @@ export function WhoIAm() {
         </div>
 
         <p className="!mt-8">
-          I am building a health journalism platform that takes African health
-          stories to the world and brings important global health developments to
-          African audiences, making health and medicine better understood across
-          borders.
+          I envision a health news platform that takes African health stories to
+          the world and brings important global health developments to African
+          audiences, making health and medicine better understood across borders.
         </p>
       </div>
     </section>
