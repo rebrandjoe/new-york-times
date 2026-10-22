@@ -8,8 +8,8 @@ export function AboutHero() {
       <div className="mx-auto max-w-3xl text-center">
         {/* Brand mark first — striking open */}
         <div className="flex justify-center">
-          <LogoMark size={128} className="sm:hidden ring-1 ring-charcoal" />
-          <LogoMark size={160} className="hidden sm:inline-block ring-1 ring-charcoal" />
+          <LogoMark size={168} className="sm:hidden ring-1 ring-charcoal" />
+          <LogoMark size={220} className="hidden sm:inline-block ring-1 ring-charcoal" />
         </div>
 
         <h1 className="mt-8 font-serif text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:mt-10 sm:text-6xl lg:text-7xl">
