@@ -2,6 +2,10 @@ import { SectionHeading } from "@/components/SectionHeading";
 
 const steps = ["Read", "Understand", "Verify", "Attribute", "Write", "Publish"];
 
+/** Public Supabase Storage URL — Facebook page screenshot (audience reach). */
+const FACEBOOK_REACH_IMAGE_URL =
+  "https://uhkmgirkogzmnkkidcgm.supabase.co/storage/v1/object/public/logo/WhatsApp%20Image%202026-10-22%20at%2011.16.49.jpeg";
+
 export function WhoIAm() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
@@ -57,9 +61,9 @@ export function WhoIAm() {
       <figure className="mt-12 max-w-md">
         <div className="h-1 w-16 bg-accent" aria-hidden />
         <div className="mt-4 overflow-hidden rounded-xl border border-charcoal bg-[#0F0F0F]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- static public asset */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- Supabase public Storage URL */}
           <img
-            src="/images/joseph-mmwa-facebook-profile.jpg"
+            src={FACEBOOK_REACH_IMAGE_URL}
             alt="Joseph Mmwa Facebook page — 153K followers, part of a combined digital audience of more than 180,000"
             className="block h-auto w-full"
             width={720}
