@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="JOSEPH MMWA">
+  <rect width="512" height="512" fill="#0A0A0A"/>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D76E"/>
+      <stop offset="50%" stop-color="#C9A227"/>
+      <stop offset="100%" stop-color="#8B6914"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#g)" d="M96 210c0-90 72-162 160-162s160 72 160 162H96z" opacity="0.95"/>
+  <path fill="#0A0A0A" d="M128 210c0-70 56-126 128-126s128 56 128 126H128z"/>
+  <path fill="none" stroke="url(#g)" stroke-width="10" d="M160 120c40 50 40 130 0 180M352 120c-40 50-40 130 0 180M256 48v162"/>
+  <text x="256" y="340" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="170" fill="#FFFFFF">JM</text>
+</svg>
