@@ -64,7 +64,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": `${SITE_URL}/#person`,
       name: "Joseph Mmwa",
-      jobTitle: "Health news editor and journalist",
+      jobTitle: "Health journalist",
       url: SITE_URL,
     },
     {
