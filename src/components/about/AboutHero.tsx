@@ -25,15 +25,14 @@ export function AboutHero() {
           imageSrc={AUTHOR_PHOTO_SRC}
           imageAlt={AUTHOR_PHOTO_ALT}
         />
-        {/* Caption: name in accent; role in white headline weight; publication slightly bolder */}
-        <figcaption className="mt-2 text-left text-[15px] leading-snug">
-          <span className="font-semibold text-accent">Joseph Mmwa</span>
-          <span className="font-serif font-bold text-white">
-            —Health Journalist and Founder of{" "}
-          </span>
-          <span className="font-serif font-extrabold text-white">
-            Joseph Mmwa Health News Publication
-          </span>
+        {/* Photo caption: larger accent name + clean headline-weight role line */}
+        <figcaption className="mt-3 text-left">
+          <p className="text-base font-semibold tracking-tight text-accent sm:text-lg">
+            Joseph Mmwa
+          </p>
+          <p className="mt-1 font-serif text-base font-extrabold leading-snug tracking-tight text-white sm:text-lg">
+            Health Journalist and Founder of Joseph Mmwa Health News Publication
+          </p>
         </figcaption>
       </figure>
     </section>
