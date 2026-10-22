@@ -7,14 +7,14 @@ import { WhyItMatters } from "@/components/about/WhyItMatters";
 import { AboutContactCta } from "@/components/about/AboutContactCta";
 
 export const metadata: Metadata = {
-  title: "Joseph Mmwa — Health News Publisher & Aggregator",
+  title: "Joseph Mmwa — Health Journalist",
   description:
-    "Joseph Mmwa is a Kenyan health news editor and aggregator focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
+    "Joseph Mmwa is a Kenyan health journalist focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "Joseph Mmwa — Health News Publisher & Aggregator",
+    title: "Joseph Mmwa — Health Journalist",
     description:
-      "Joseph Mmwa is a Kenyan health news editor and aggregator focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
+      "Joseph Mmwa is a Kenyan health journalist focused on making health and medical news clear, accessible, and meaningful to everyone — across Kenya, Africa, and the world.",
     url: "/about",
   },
 };
