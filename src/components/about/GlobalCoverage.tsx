@@ -21,7 +21,10 @@ const regions = [
 export function GlobalCoverage() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-      <SectionHeading title="Health News Without Borders, where my reporting spans" />
+      <SectionHeading title="Health News Without Borders" />
+      <p className="-mt-2 mb-8 text-base text-gray-secondary-light sm:-mt-4 sm:mb-10 sm:text-lg">
+        where my reporting spans
+      </p>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6">
         {regions.map((region) => (
           <div key={region.name} className="border-t-2 border-accent pt-5">
