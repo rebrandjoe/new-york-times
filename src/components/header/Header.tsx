@@ -49,13 +49,15 @@ export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
           </div>
 
           <div className="hidden items-center gap-5 pt-1 md:flex">
-            <Link
-              href="/search"
-              aria-label="Search"
-              className="focus-ring text-offwhite transition-colors hover:text-accent"
-            >
-              <SearchIcon className="h-5 w-5" />
-            </Link>
+            {!isAboutPage && (
+              <Link
+                href="/search"
+                aria-label="Search"
+                className="focus-ring text-offwhite transition-colors hover:text-accent"
+              >
+                <SearchIcon className="h-5 w-5" />
+              </Link>
+            )}
             {user === undefined ? (
               <span className="inline-block h-5 w-14" aria-hidden="true" />
             ) : user ? (
@@ -100,14 +102,16 @@ export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
             aria-label="Open menu"
             aria-expanded={drawerOpen}
           >
-            <Link
-              href="/search"
-              aria-label="Search"
-              className="focus-ring mr-1 text-offwhite"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SearchIcon className="h-5 w-5" />
-            </Link>
+            {!isAboutPage && (
+              <Link
+                href="/search"
+                aria-label="Search"
+                className="focus-ring mr-1 text-offwhite"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <SearchIcon className="h-5 w-5" />
+              </Link>
+            )}
             <MenuIcon className="h-6 w-6" />
           </button>
         </div>
