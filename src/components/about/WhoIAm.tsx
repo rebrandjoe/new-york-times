@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
 
 const steps = ["Read", "Understand", "Verify", "Attribute", "Write", "Publish"];
@@ -57,19 +56,19 @@ export function WhoIAm() {
       {/* Facebook page screenshot — supports the combined audience figure */}
       <figure className="mt-12 max-w-md">
         <div className="h-1 w-16 bg-accent" aria-hidden />
-        <div className="mt-4 overflow-hidden rounded-lg border border-charcoal bg-charcoal-deep shadow-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element -- local static asset */}
+        <div className="mt-4 overflow-hidden rounded-xl border border-charcoal bg-[#0F0F0F]">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static public asset */}
           <img
-            src="/images/joseph-mmwa-facebook-profile.svg"
-            alt="Joseph Mmwa on Facebook — 153K followers, supporting a combined digital audience of more than 180,000"
+            src="/images/joseph-mmwa-facebook-profile.jpg"
+            alt="Joseph Mmwa Facebook page — 153K followers, part of a combined digital audience of more than 180,000"
             className="block h-auto w-full"
-            width={400}
-            height={539}
+            width={720}
+            height={960}
             loading="lazy"
           />
         </div>
         <figcaption className="mt-3 text-sm text-gray-muted">
-          Facebook page reach · part of a combined audience of more than 180,000 across digital platforms
+          Facebook · 153K followers — part of a combined audience of more than 180,000 across digital platforms
         </figcaption>
       </figure>
     </section>
