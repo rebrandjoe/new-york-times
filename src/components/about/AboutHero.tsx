@@ -20,16 +20,17 @@ export function AboutHero() {
         </p>
       </div>
 
-      <div className="mx-auto mt-12 max-w-md sm:mt-14 lg:mt-16">
+      <figure className="mx-auto mt-12 max-w-md sm:mt-14 lg:mt-16">
         <ProfilePhoto
           imageSrc={AUTHOR_PHOTO_SRC}
           imageAlt={AUTHOR_PHOTO_ALT}
         />
-        <p className="mt-4 text-center text-sm font-medium leading-relaxed text-accent sm:text-base">
+        {/* Same pattern as article featured-image captions; accent colour, slightly larger */}
+        <figcaption className="mt-2 text-left text-[15px] leading-snug text-accent">
           Joseph Mmwa—health journalist and founder of Joseph Mmwa Health News
           Publication
-        </p>
-      </div>
+        </figcaption>
+      </figure>
     </section>
   );
 }
