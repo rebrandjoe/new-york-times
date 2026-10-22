@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CloseIcon, MenuIcon, SearchIcon } from "@/components/icons";
-import { Tagline, WordmarkLink } from "@/components/Wordmark";
+import { LogoMarkLink, Tagline, WordmarkLink } from "@/components/Wordmark";
 import { signOutAction } from "@/lib/actions/auth";
 import { ADMIN_EMAIL } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
@@ -13,6 +14,8 @@ import { LiveTicker } from "./LiveTicker";
 import { TopicsMenu } from "./TopicsMenu";
 
 export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
+  const pathname = usePathname();
+  const isAboutPage = pathname === "/about";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topicsExpanded, setTopicsExpanded] = useState(false);
   const user = useAuthUser();
@@ -32,8 +35,14 @@ export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
       <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <WordmarkLink className="text-2xl sm:text-3xl" />
-            <Tagline className="mt-1 text-xs text-gray-secondary sm:text-sm" />
+            {isAboutPage ? (
+              <LogoMarkLink size={48} />
+            ) : (
+              <>
+                <WordmarkLink className="text-2xl sm:text-3xl" />
+                <Tagline className="mt-1 text-xs text-gray-secondary sm:text-sm" />
+              </>
+            )}
           </div>
 
           <div className="hidden items-center gap-5 pt-1 md:flex">
