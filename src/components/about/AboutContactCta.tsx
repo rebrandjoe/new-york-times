@@ -7,8 +7,9 @@ import {
   XIcon,
   YouTubeIcon,
 } from "@/components/icons";
-import { LogoMark } from "@/components/Wordmark";
+import { LogoMark, Tagline } from "@/components/Wordmark";
 import { socialLinks } from "@/lib/nav";
+import { AboutPageActions } from "./AboutPageActions";
 
 const socialIconMap = {
   Facebook: FacebookIcon,
@@ -50,7 +51,7 @@ export function AboutContactCta() {
         </p>
       </div>
 
-      {/* Left-aligned sign-off: logo + name/tagline side by side */}
+      {/* Sign-off + Follow me (once — footer omits this on /about) */}
       <div className="mt-16 border-t border-charcoal pt-8 text-left">
         <div className="flex items-center gap-4">
           <LogoMark size={56} className="ring-1 ring-charcoal" />
@@ -85,6 +86,14 @@ export function AboutContactCta() {
             );
           })}
         </div>
+
+        <AboutPageActions />
+      </div>
+
+      {/* Final brand mark on the About page — sits above copyright in footer */}
+      <div className="mt-20 flex flex-col items-center border-t border-charcoal pt-12 text-center">
+        <LogoMark size={72} className="ring-1 ring-charcoal" />
+        <Tagline className="mt-4 text-sm text-gray-secondary sm:text-base" />
       </div>
     </section>
   );
