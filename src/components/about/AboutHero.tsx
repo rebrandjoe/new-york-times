@@ -25,6 +25,10 @@ export function AboutHero() {
           imageSrc={AUTHOR_PHOTO_SRC}
           imageAlt={AUTHOR_PHOTO_ALT}
         />
+        <p className="mt-4 text-center text-sm font-medium leading-relaxed text-accent sm:text-base">
+          Health journalist and founder of Joseph Mmwa, an independent health
+          journalism publication
+        </p>
       </div>
     </section>
   );
