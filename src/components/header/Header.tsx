@@ -32,18 +32,15 @@ export function Header({ ticker = null }: { ticker?: ActiveTicker | null }) {
     <header className="sticky top-0 z-50 bg-black">
       <LiveTicker headline={ticker?.headline ?? null} href={ticker?.href ?? null} />
 
-      <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-6 lg:px-8">
+      {/* Brand row — hidden on /about so the page logo leads; actions stay on the right */}
+      <div
+        className={`mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 ${
+          isAboutPage ? "py-3" : "py-4"
+        }`}
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
-            {isAboutPage ? (
-              /* Brand lives in the page hero on /about — keep a minimal home control */
-              <Link
-                href="/"
-                className="focus-ring text-sm font-semibold tracking-wide text-gray-muted transition-colors hover:text-accent"
-              >
-                Home
-              </Link>
-            ) : (
+            {!isAboutPage && (
               <>
                 <WordmarkLink className="text-2xl sm:text-3xl" />
                 <Tagline className="mt-1 text-xs text-gray-secondary sm:text-sm" />
