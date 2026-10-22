@@ -1,4 +1,22 @@
 import Link from "next/link";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  TikTokIcon,
+  XIcon,
+  YouTubeIcon,
+} from "@/components/icons";
+import { socialLinks } from "@/lib/nav";
+
+const socialIconMap = {
+  Facebook: FacebookIcon,
+  LinkedIn: LinkedInIcon,
+  YouTube: YouTubeIcon,
+  X: XIcon,
+  Instagram: InstagramIcon,
+  TikTok: TikTokIcon,
+};
 
 export function AboutContactCta() {
   return (
@@ -31,7 +49,7 @@ export function AboutContactCta() {
         </p>
       </div>
 
-      {/* Clean left-aligned sign-off */}
+      {/* Clean left-aligned sign-off + social */}
       <div className="mt-16 max-w-sm border-t border-charcoal pt-8 text-left">
         <p className="font-serif text-lg font-bold text-white sm:text-xl">
           Joseph Mmwa
@@ -39,6 +57,28 @@ export function AboutContactCta() {
         <p className="mt-1 text-sm font-medium text-accent">
           If it's health, it's here
         </p>
+
+        <p className="mt-6 text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
+          Follow us
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-5">
+          {socialLinks.map((social) => {
+            const Icon = socialIconMap[social.label as keyof typeof socialIconMap];
+            if (!Icon) return null;
+            return (
+              <a
+                key={social.href}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                className="focus-ring text-gray-secondary transition-colors hover:text-accent"
+              >
+                <Icon className="h-5 w-5" />
+              </a>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
