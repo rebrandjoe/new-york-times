@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SocialFollow } from "@/components/SocialFollow";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -64,7 +65,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+      <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:pb-16 lg:pt-16">
         <div className="mx-auto max-w-2xl">
           <h2 className="font-serif text-2xl font-extrabold text-white sm:text-3xl">
             Send us a message
@@ -75,6 +76,10 @@ export default function ContactPage() {
           <div className="mt-8 border border-accent/30 bg-charcoal-deep p-6 sm:p-8">
             <div className="mb-6 h-1 w-16 bg-accent" aria-hidden />
             <ContactForm />
+          </div>
+
+          <div className="mt-10 border-t border-charcoal pt-8">
+            <SocialFollow iconSize="sm" />
           </div>
         </div>
       </section>
