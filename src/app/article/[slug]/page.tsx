@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleView } from "@/components/article/ArticleView";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms/queries";
+import { resolveCmsArticleMetaDescription } from "@/lib/cms/seo-description";
 import { getPublicComments } from "@/lib/actions/comments";
 import { createClient } from "@/lib/supabase/server";
 import { hasActivePremiumAccess } from "@/lib/premium/access";
@@ -44,7 +45,7 @@ export async function generateMetadata({
   if (!article) return { title: "Article" };
 
   const title = article.title;
-  const description = article.excerpt || undefined;
+  const description = resolveCmsArticleMetaDescription(article);
   const canonical = `/article/${article.slug}`;
   const image = toShareImageUrl(article.featuredImage?.url);
   const alt = article.featuredImage?.altText || article.title;
@@ -106,12 +107,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
   const imageUrl = toShareImageUrl(article.featuredImage?.url);
+  const metaDescription = resolveCmsArticleMetaDescription(article);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: article.title,
-    description: article.excerpt,
+    description: metaDescription,
     image: [imageUrl],
     datePublished: article.publicationDate,
     dateModified: article.updatedAt || article.publicationDate,
