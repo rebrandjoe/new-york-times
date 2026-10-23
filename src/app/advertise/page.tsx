@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  TikTokIcon,
-  XIcon,
-  YouTubeIcon,
-} from "@/components/icons";
-import { socialLinks } from "@/lib/nav";
+import { SocialFollow } from "@/components/SocialFollow";
 
 export const metadata: Metadata = {
   title: "Advertise with Joseph Mmwa",
@@ -21,15 +13,6 @@ export const metadata: Metadata = {
       "Advertising and partnership opportunities with Joseph Mmwa — reach a combined social media following of over 180,000 interested in health, medicine and public health.",
     url: "/advertise",
   },
-};
-
-const socialIconMap = {
-  Facebook: FacebookIcon,
-  LinkedIn: LinkedInIcon,
-  YouTube: YouTubeIcon,
-  X: XIcon,
-  Instagram: InstagramIcon,
-  TikTok: TikTokIcon,
 };
 
 const body = "text-base leading-relaxed text-gray-secondary-light sm:text-lg";
@@ -216,49 +199,16 @@ export default function AdvertisePage() {
           >
             Enquire About Advertising & Partnerships
           </Link>
-          <p className={`mt-4 ${body}`}>
-            Email:{" "}
-            <a
-              href="mailto:contact@josephmmwa.com"
-              className="font-semibold text-accent hover:underline"
-            >
-              contact@josephmmwa.com
-            </a>
-          </p>
         </div>
       </section>
 
-      {/* Follow me — target of “combined following” links */}
       <section
         id="follow"
         className="scroll-mt-24 border-t border-charcoal bg-charcoal-deep"
       >
         <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
-              Follow me
-            </p>
-            <p className={`mt-3 ${body}`}>
-              Connect on the platforms that make up the combined following of over 180,000.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-5">
-              {socialLinks.map((social) => {
-                const Icon = socialIconMap[social.label as keyof typeof socialIconMap];
-                if (!Icon) return null;
-                return (
-                  <a
-                    key={social.href}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="focus-ring text-gray-secondary transition-colors hover:text-accent"
-                  >
-                    <Icon className="h-6 w-6" />
-                  </a>
-                );
-              })}
-            </div>
+            <SocialFollow />
           </div>
         </div>
       </section>
