@@ -6,9 +6,8 @@ export function WhoIAm() {
       <div className="mx-auto max-w-3xl space-y-5 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
         <p>
           Joseph Mmwa is a Kenyan health journalist and the founder and editor of
-          Joseph Mmwa, an independent health journalism publication focused on
-          making health and medical news clear, accessible and meaningful to
-          everyone.
+          Joseph Mmwa, a Kenyan health news publication focused on making health
+          and medical news clear, accessible and meaningful to everyone.
         </p>
         <p>
           I follow important health developments across Kenya, Africa and the
