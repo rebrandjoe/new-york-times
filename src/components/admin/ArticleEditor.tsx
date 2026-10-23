@@ -19,6 +19,8 @@ import { majorRegions } from "@/lib/nav";
 
 type SaveState = "idle" | "unsaved" | "saving" | "saved" | "error";
 
+const META_DESC_RECOMMENDED = 160;
+
 function toDatetimeLocalValue(iso: string): string {
   const d = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -59,6 +61,7 @@ export function ArticleEditor({
   const [title, setTitle] = useState(initial?.title ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
+  const [seoDescription, setSeoDescription] = useState(initial?.seoDescription ?? "");
   const [body, setBody] = useState<ContentBlock[]>(initial?.body ?? []);
   const [featuredImageId, setFeaturedImageId] = useState(initial?.featuredImage?.id ?? "");
   const [topicIds, setTopicIds] = useState<string[]>(initialTopicIds);
@@ -88,6 +91,7 @@ export function ArticleEditor({
       title,
       slug,
       excerpt,
+      seoDescription: seoDescription.trim() || null,
       body,
       featuredImageId: featuredImageId || null,
       topicIds,
@@ -131,7 +135,7 @@ export function ArticleEditor({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    title, slug, excerpt, body, featuredImageId, topicIds, region, country,
+    title, slug, excerpt, seoDescription, body, featuredImageId, topicIds, region, country,
     authorId, publicationDate, autoReadTime, readTimeMinutes, premium, isGlobalStory,
     correctionNote, sources,
   ]);
@@ -186,6 +190,14 @@ export function ArticleEditor({
     await deleteArticle(id);
     router.push("/admin/articles");
   }
+
+  const metaLen = seoDescription.length;
+  const metaLenHint =
+    metaLen === 0
+      ? "Recommended 150–160 characters"
+      : metaLen <= META_DESC_RECOMMENDED
+        ? `${metaLen} / ~${META_DESC_RECOMMENDED} characters`
+        : `${metaLen} characters (a bit long for search snippets)`;
 
   const saveLabel = {
     idle: "",
@@ -314,6 +326,38 @@ export function ArticleEditor({
               onChange={(e) => setExcerpt(e.target.value)}
               className={fieldClass()}
             />
+          </div>
+
+          <div>
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <label className={labelClass()} htmlFor="meta-description">
+                Meta description
+              </label>
+              {excerpt.trim() && !seoDescription.trim() && (
+                <button
+                  type="button"
+                  onClick={() => setSeoDescription(excerpt.trim())}
+                  className="focus-ring text-xs font-semibold text-accent hover:underline"
+                >
+                  Use excerpt
+                </button>
+              )}
+            </div>
+            <textarea
+              id="meta-description"
+              rows={3}
+              value={seoDescription}
+              onChange={(e) => setSeoDescription(e.target.value)}
+              placeholder="Optional. Shown in Google search results and social shares. Leave blank to use the excerpt."
+              className={fieldClass()}
+            />
+            <p
+              className={`mt-1.5 text-xs ${
+                metaLen > META_DESC_RECOMMENDED ? "text-amber-400/90" : "text-gray-muted"
+              }`}
+            >
+              {metaLenHint}. Does not overwrite a value you have already written.
+            </p>
           </div>
 
           <div>
