@@ -3,31 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tagline, WordmarkLink } from "@/components/Wordmark";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  TikTokIcon,
-  XIcon,
-  YouTubeIcon,
-} from "@/components/icons";
+import { SocialFollow } from "@/components/SocialFollow";
 import {
   footerEditorial,
   footerInformation,
   footerNews,
   footerTopics,
-  socialLinks,
 } from "@/lib/nav";
 import type { NavLink } from "@/lib/nav";
-
-const socialIconMap = {
-  Facebook: FacebookIcon,
-  LinkedIn: LinkedInIcon,
-  YouTube: YouTubeIcon,
-  X: XIcon,
-  Instagram: InstagramIcon,
-  TikTok: TikTokIcon,
-};
 
 function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   return (
@@ -95,32 +78,12 @@ export function Footer() {
               </p>
             </div>
 
-            <div className="mt-10 flex flex-col items-center gap-4">
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
-                Follow me
-              </p>
-              <div className="flex items-center gap-5">
-                {socialLinks.map((social) => {
-                  const Icon = socialIconMap[social.label as keyof typeof socialIconMap];
-                  return (
-                    <a
-                      key={social.href}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.label}
-                      className="focus-ring text-gray-secondary transition-colors hover:text-accent"
-                    >
-                      <Icon className="h-5 w-5" />
-                    </a>
-                  );
-                })}
-              </div>
+            <div className="mt-10 flex justify-center">
+              <SocialFollow align="center" iconSize="sm" />
             </div>
           </>
         )}
 
-        {/* Bottom legal / policy links — full on all pages; essential set on /about */}
         <div
           className={`flex flex-col items-center gap-3 ${
             isAboutPage ? "pt-2" : "mt-10 border-t border-charcoal pt-6"
