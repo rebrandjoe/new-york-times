@@ -51,21 +51,25 @@ export function AboutContactCta() {
         </p>
       </div>
 
-      {/* Sign-off + Follow me (once — footer omits this on /about) */}
-      <div className="mt-16 border-t border-charcoal pt-8 text-left">
-        <div className="flex items-center gap-4">
-          <LogoMark size={56} className="ring-1 ring-charcoal" />
-          <div>
-            <p className="font-serif text-lg font-bold text-white sm:text-xl">
-              Joseph Mmwa
-            </p>
-            <p className="mt-0.5 text-sm font-medium text-accent">
-              If it's health, it's here
-            </p>
-          </div>
-        </div>
+      {/* Advertise with me — after contact, before social */}
+      <div className="mx-auto mt-16 max-w-2xl border-t border-charcoal pt-12 text-center">
+        <h2 className="font-serif text-2xl font-extrabold text-white sm:text-3xl">
+          Advertise with me
+        </h2>
+        <p className="mt-4 text-base leading-relaxed text-gray-secondary-light sm:text-lg">
+          Reach audiences engaged with the stories shaping health and medicine through
+          digital advertising, sponsored campaigns and strategic partnerships.
+        </p>
+        <Link
+          href="/advertise"
+          className="focus-ring mt-6 inline-block border border-charcoal px-6 py-3 text-sm font-semibold text-offwhite transition-colors hover:border-accent hover:text-accent"
+        >
+          Advertise with me →
+        </Link>
+      </div>
 
-        <p className="mt-6 text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
+      <div className="mt-16 border-t border-charcoal pt-8 text-left">
+        <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
           Follow me
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-5">
@@ -90,10 +94,11 @@ export function AboutContactCta() {
         <AboutPageActions />
       </div>
 
-      {/* Final brand mark on the About page — sits above copyright in footer */}
+      {/* Final brand mark — last content before footer copyright */}
       <div className="mt-20 flex flex-col items-center border-t border-charcoal pt-12 text-center">
         <LogoMark size={72} className="ring-1 ring-charcoal" />
-        <Tagline className="mt-4 text-sm text-gray-secondary sm:text-base" />
+        <p className="mt-4 font-serif text-lg font-bold text-white">Joseph Mmwa</p>
+        <Tagline className="mt-1 text-sm text-gray-secondary sm:text-base" />
       </div>
     </section>
   );
