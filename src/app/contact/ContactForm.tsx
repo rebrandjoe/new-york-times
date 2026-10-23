@@ -7,6 +7,18 @@ import { SubmitButton } from "@/components/form/SubmitButton";
 import { submitContactMessage } from "@/lib/actions/contact";
 import { initialContactState } from "@/lib/actions/form-state";
 
+const SUBJECT_OPTIONS = [
+  "News tip or story submission",
+  "Correction or clarification",
+  "Research or media enquiry",
+  "Partnerships and collaboration",
+  "Advertising and sponsorship",
+  "Other professional matter",
+] as const;
+
+const fieldClass =
+  "focus-ring mt-2 w-full border border-white/15 bg-black/50 px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent";
+
 export function ContactForm() {
   const [state, formAction] = useActionState(submitContactMessage, initialContactState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -34,7 +46,23 @@ export function ContactForm() {
         required={false}
         autoComplete="organization"
       />
-      <FormField id="subject" name="subject" label="Subject" />
+
+      <div>
+        <label htmlFor="subject" className="text-sm font-semibold text-offwhite">
+          Subject
+        </label>
+        <select id="subject" name="subject" required defaultValue="" className={fieldClass}>
+          <option value="" disabled>
+            Select a subject…
+          </option>
+          {SUBJECT_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <FormTextArea id="message" name="message" label="Message" />
       <FormMessage status={state.status} message={state.message} />
       <div className="pt-1">
