@@ -66,6 +66,8 @@ interface ArticleInput {
   title: string;
   slug?: string;
   excerpt: string;
+  /** Optional SEO meta description (stored as articles.seo_description). */
+  seoDescription?: string | null;
   body: ContentBlock[];
   featuredImageId: string | null;
   topicIds: string[];
@@ -107,6 +109,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       title: input.title,
       slug,
       excerpt: input.excerpt || null,
+      seo_description: input.seoDescription?.trim() || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
       category_id: await resolveCategoryId(supabase, input.country, input.isGlobalStory),
@@ -168,6 +171,7 @@ export async function updateArticle(
       title: input.title,
       slug,
       excerpt: input.excerpt || null,
+      seo_description: input.seoDescription?.trim() || null,
       body: toJson(input.body),
       featured_image_id: input.featuredImageId,
       category_id: await resolveCategoryId(supabase, input.country, input.isGlobalStory),
@@ -189,6 +193,7 @@ export async function updateArticle(
   await saveTopics(supabase, articleId, input.topicIds);
   revalidatePath("/admin/articles");
   revalidatePath(`/admin/articles/${articleId}`);
+  revalidatePath(`/article/${slug}`);
   return { ok: true };
 }
 
@@ -255,6 +260,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       title: `${original.title} (Copy)`,
       slug,
       excerpt: original.excerpt,
+      seo_description: original.seoDescription,
       body: toJson(original.body as ContentBlock[]),
       featured_image_id: original.featuredImage?.id ?? null,
       category_id: await resolveCategoryId(supabase, original.country, original.category?.slug === "global"),
