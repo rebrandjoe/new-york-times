@@ -20,7 +20,13 @@ export function ContactForm() {
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-5" noValidate>
       <FormField id="name" name="name" label="Name" autoComplete="name" />
-      <FormField id="email" name="email" label="Email" type="email" autoComplete="email" />
+      <FormField
+        id="email"
+        name="email"
+        label="Email address"
+        type="email"
+        autoComplete="email"
+      />
       <FormField
         id="organisation"
         name="organisation"
@@ -31,7 +37,9 @@ export function ContactForm() {
       <FormField id="subject" name="subject" label="Subject" />
       <FormTextArea id="message" name="message" label="Message" />
       <FormMessage status={state.status} message={state.message} />
-      <SubmitButton>Send Message</SubmitButton>
+      <div className="pt-1">
+        <SubmitButton>Send Message</SubmitButton>
+      </div>
     </form>
   );
 }
