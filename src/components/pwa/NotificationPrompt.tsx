@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { CloseIcon } from "@/components/icons";
 import { subscribeToPush } from "@/lib/actions/push-notifications";
 
+/** Remembered forever in this browser (until storage is cleared). */
 const DISMISS_KEY = "push-notification-dismissed";
+const ACCEPTED_KEY = "push-notification-accepted";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -13,20 +15,74 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
+function alreadyHandled(): boolean {
+  try {
+    if (window.localStorage.getItem(ACCEPTED_KEY) === "1") return true;
+    if (window.localStorage.getItem(DISMISS_KEY) === "1") return true;
+  } catch {
+    /* private mode may throw */
+  }
+  return false;
+}
+
+function markDismissed() {
+  try {
+    window.localStorage.setItem(DISMISS_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
+function markAccepted() {
+  try {
+    window.localStorage.setItem(ACCEPTED_KEY, "1");
+    window.localStorage.setItem(DISMISS_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
+async function ensurePushSubscription(vapidPublicKey: string): Promise<boolean> {
+  if (!vapidPublicKey) return false;
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return false;
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+      });
+    }
+    const json = subscription.toJSON();
+    if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) return false;
+    const result = await subscribeToPush({
+      endpoint: json.endpoint,
+      keys: { p256dh: json.keys.p256dh, auth: json.keys.auth },
+    });
+    return !("error" in result);
+  } catch (err) {
+    console.error("[push] ensure subscription failed:", err);
+    return false;
+  }
+}
+
 function canOfferPush(vapidPublicKey: string): boolean {
   if (typeof window === "undefined") return false;
   if (!vapidPublicKey) return false;
   if (!("Notification" in window)) return false;
   if (!("serviceWorker" in navigator)) return false;
   if (!("PushManager" in window)) return false;
+  if (alreadyHandled()) return false;
+  // Only prompt while the browser has not decided yet.
   if (Notification.permission !== "default") return false;
-  if (window.localStorage.getItem(DISMISS_KEY) === "1") return false;
   return true;
 }
 
 /**
- * Compact top-left card (similar placement to browser notification prompts).
- * Appears ~1s on first visit; does not block the page.
+ * Compact top-left card. First visit only until Allow / Block / dismiss.
+ * Once accepted or dismissed, it must not return on later visits.
  */
 export function NotificationPrompt({
   vapidPublicKey = "",
@@ -35,6 +91,26 @@ export function NotificationPrompt({
 }) {
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  // If the user already granted permission (e.g. earlier session), never show
+  // the card — just make sure the subscription is stored for publish pushes.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!vapidPublicKey) return;
+    if (!("Notification" in window)) return;
+
+    if (Notification.permission === "granted") {
+      markAccepted();
+      void ensurePushSubscription(vapidPublicKey);
+      setVisible(false);
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      markDismissed();
+      setVisible(false);
+    }
+  }, [vapidPublicKey]);
 
   const show = useCallback(() => {
     if (!canOfferPush(vapidPublicKey)) return;
@@ -63,7 +139,7 @@ export function NotificationPrompt({
 
   function dismiss() {
     setVisible(false);
-    window.localStorage.setItem(DISMISS_KEY, "1");
+    markDismissed();
   }
 
   async function allow() {
@@ -72,26 +148,20 @@ export function NotificationPrompt({
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        dismiss();
+        markDismissed();
+        setVisible(false);
         return;
       }
 
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-      });
-
-      await subscribeToPush(
-        subscription.toJSON() as {
-          endpoint: string;
-          keys: { p256dh: string; auth: string };
-        }
-      );
+      markAccepted();
+      setVisible(false);
+      await ensurePushSubscription(vapidPublicKey);
     } catch (err) {
       console.error("[push] subscribe failed:", err);
+      // Still hide permanently for this browser so the card does not loop.
+      markAccepted();
+      setVisible(false);
     } finally {
-      dismiss();
       setBusy(false);
     }
   }
