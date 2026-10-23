@@ -47,7 +47,6 @@ export default function ContactPage() {
                 >
                   contact@josephmmwa.com
                 </a>
-                <p className="mt-2 text-xs text-gray-muted">Opens your email app</p>
               </div>
               <div className="border border-charcoal bg-black/40 p-6 transition-colors hover:border-accent/40">
                 <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
@@ -59,7 +58,6 @@ export default function ContactPage() {
                 >
                   +254 729 147 765
                 </a>
-                <p className="mt-2 text-xs text-gray-muted">Opens your phone dialler</p>
               </div>
             </div>
           </div>
@@ -74,7 +72,8 @@ export default function ContactPage() {
           <p className="mt-3 text-sm text-gray-muted sm:text-base">
             Fill in the form below and your message will be sent directly.
           </p>
-          <div className="mt-8 border border-charcoal bg-charcoal-deep/50 p-6 sm:p-8">
+          <div className="mt-8 border border-accent/30 bg-charcoal-deep p-6 sm:p-8">
+            <div className="mb-6 h-1 w-16 bg-accent" aria-hidden />
             <ContactForm />
           </div>
         </div>
