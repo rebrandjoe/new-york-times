@@ -47,6 +47,7 @@ const aboutBottomLinks = [
 export function Footer() {
   const pathname = usePathname();
   const isAboutPage = pathname === "/about";
+  const isContactPage = pathname === "/contact";
 
   return (
     <footer className="border-t border-charcoal bg-black">
@@ -78,9 +79,11 @@ export function Footer() {
               </p>
             </div>
 
-            <div className="mt-10 flex justify-center">
-              <SocialFollow align="center" iconSize="sm" />
-            </div>
+            {!isContactPage && (
+              <div className="mt-10 flex justify-center">
+                <SocialFollow align="center" iconSize="sm" />
+              </div>
+            )}
           </>
         )}
 
