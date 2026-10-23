@@ -51,6 +51,16 @@ function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   );
 }
 
+const aboutBottomLinks = [
+  { label: "Editorial Standards", href: "/editorial-standards" },
+  { label: "Corrections & Fact-Checking", href: "/corrections-and-fact-checking" },
+  { label: "AI Policy", href: "/ai-policy" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Contact", href: "/contact" },
+  { label: "Advertise", href: "/advertise" },
+];
+
 export function Footer() {
   const pathname = usePathname();
   const isAboutPage = pathname === "/about";
@@ -110,34 +120,50 @@ export function Footer() {
           </>
         )}
 
-        {/* Copyright always last — especially on /about after page brand mark */}
+        {/* Bottom legal / policy links — full on all pages; essential set on /about */}
         <div
-          className={`flex flex-col items-center gap-2 ${
-            isAboutPage ? "pt-0" : "mt-10 border-t border-charcoal pt-6"
+          className={`flex flex-col items-center gap-3 ${
+            isAboutPage ? "pt-2" : "mt-10 border-t border-charcoal pt-6"
           }`}
         >
-          <div className="flex items-center gap-4">
-            <Link
-              href="/privacy-policy"
-              className="focus-ring text-xs text-gray-muted hover:text-accent"
-            >
-              Privacy Policy
-            </Link>
-            <span className="text-gray-muted">|</span>
-            <Link
-              href="/terms-of-service"
-              className="focus-ring text-xs text-gray-muted hover:text-accent"
-            >
-              Terms of Service
-            </Link>
-            <span className="text-gray-muted">|</span>
-            <a
-              href="mailto:contact@josephmmwa.com"
-              className="focus-ring text-xs text-gray-muted hover:text-accent"
-            >
-              Contact
-            </a>
-          </div>
+          {isAboutPage ? (
+            <div className="flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-2">
+              {aboutBottomLinks.map((link, i) => (
+                <span key={link.href} className="inline-flex items-center gap-3">
+                  {i > 0 && <span className="text-gray-muted">·</span>}
+                  <Link
+                    href={link.href}
+                    className="focus-ring text-xs text-gray-muted hover:text-accent"
+                  >
+                    {link.label}
+                  </Link>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link
+                href="/privacy-policy"
+                className="focus-ring text-xs text-gray-muted hover:text-accent"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-gray-muted">|</span>
+              <Link
+                href="/terms-of-service"
+                className="focus-ring text-xs text-gray-muted hover:text-accent"
+              >
+                Terms of Service
+              </Link>
+              <span className="text-gray-muted">|</span>
+              <a
+                href="mailto:contact@josephmmwa.com"
+                className="focus-ring text-xs text-gray-muted hover:text-accent"
+              >
+                Contact
+              </a>
+            </div>
+          )}
           <p className="text-xs text-gray-muted">
             © 2026 Joseph Mmwa. All rights reserved
           </p>
