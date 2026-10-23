@@ -11,7 +11,6 @@ import { PaywallNotice } from "@/components/article/PaywallNotice";
 import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
-import { ArticleListen } from "@/components/article/ArticleListen";
 import { SoftJoinPrompt } from "@/components/article/SoftJoinPrompt";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
@@ -194,10 +193,6 @@ export function ArticleView({
             </>
           )}
         </div>
-
-        {interactive && (
-          <ArticleListen title={article.title} excerpt={article.excerpt} body={bodyBlocks} />
-        )}
 
         {article.topics.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
