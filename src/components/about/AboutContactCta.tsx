@@ -1,24 +1,7 @@
 import Link from "next/link";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  TikTokIcon,
-  XIcon,
-  YouTubeIcon,
-} from "@/components/icons";
 import { LogoMark, Tagline } from "@/components/Wordmark";
-import { socialLinks } from "@/lib/nav";
+import { SocialFollow } from "@/components/SocialFollow";
 import { AboutPageActions } from "./AboutPageActions";
-
-const socialIconMap = {
-  Facebook: FacebookIcon,
-  LinkedIn: LinkedInIcon,
-  YouTube: YouTubeIcon,
-  X: XIcon,
-  Instagram: InstagramIcon,
-  TikTok: TikTokIcon,
-};
 
 export function AboutContactCta() {
   return (
@@ -51,7 +34,6 @@ export function AboutContactCta() {
         </p>
       </div>
 
-      {/* Advertise with me — after contact, before social */}
       <div className="mx-auto mt-16 max-w-2xl border-t border-charcoal pt-12 text-center">
         <h2 className="font-serif text-2xl font-extrabold text-white sm:text-3xl">
           Advertise with me
@@ -69,32 +51,10 @@ export function AboutContactCta() {
       </div>
 
       <div className="mt-16 border-t border-charcoal pt-8 text-left">
-        <p className="text-xs font-bold uppercase tracking-[0.15em] text-gray-muted">
-          Follow me
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-5">
-          {socialLinks.map((social) => {
-            const Icon = socialIconMap[social.label as keyof typeof socialIconMap];
-            if (!Icon) return null;
-            return (
-              <a
-                key={social.href}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                className="focus-ring text-gray-secondary transition-colors hover:text-accent"
-              >
-                <Icon className="h-5 w-5" />
-              </a>
-            );
-          })}
-        </div>
-
+        <SocialFollow iconSize="sm" />
         <AboutPageActions />
       </div>
 
-      {/* Final brand mark — last content before footer copyright */}
       <div className="mt-20 flex flex-col items-center border-t border-charcoal pt-12 text-center">
         <LogoMark size={72} className="ring-1 ring-charcoal" />
         <p className="mt-4 font-serif text-lg font-bold text-white">Joseph Mmwa</p>
