@@ -1,17 +1,29 @@
+import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 
-const topics = [
-  "Global health and public health",
-  "Medical research and clinical developments",
-  "Infectious diseases and emerging outbreaks",
-  "HIV and AIDS",
-  "Vaccines and immunisation",
-  "Cancer and other major diseases",
-  "Health policy and healthcare systems",
-  "Artificial intelligence and health technology",
-  "Maternal and child health",
-  "Nutrition and mental health",
-  "Medical breakthroughs and emerging treatments",
+/** Display label → site topic slug (matches primaryTopics in nav). */
+const topics: { label: string; slug: string }[] = [
+  { label: "Global health and public health", slug: "public-health" },
+  { label: "Medical research and clinical developments", slug: "medical-research" },
+  {
+    label: "Infectious diseases and emerging outbreaks",
+    slug: "disease-outbreaks-epidemics",
+  },
+  { label: "HIV and AIDS", slug: "hiv-aids" },
+  { label: "Vaccines and immunisation", slug: "vaccines-immunization" },
+  { label: "Cancer and other major diseases", slug: "cancer" },
+  { label: "Health policy and healthcare systems", slug: "health-policy-systems" },
+  {
+    label: "Artificial intelligence and health technology",
+    slug: "ai-in-healthcare-and-telemedicine",
+  },
+  { label: "Maternal and child health", slug: "maternal-child-health" },
+  { label: "Nutrition", slug: "nutrition" },
+  { label: "Mental health", slug: "mental-health" },
+  {
+    label: "Medical breakthroughs and emerging treatments",
+    slug: "treatments-medicines",
+  },
 ];
 
 export function WhatICover() {
@@ -23,12 +35,13 @@ export function WhatICover() {
       </p>
       <div className="flex flex-wrap gap-3">
         {topics.map((topic) => (
-          <span
-            key={topic}
-            className="border border-charcoal px-4 py-2 text-sm text-gray-secondary-light"
+          <Link
+            key={topic.slug}
+            href={`/topics/${topic.slug}`}
+            className="focus-ring border border-charcoal px-4 py-2 text-sm text-gray-secondary-light transition-colors hover:border-accent hover:text-accent active:border-accent"
           >
-            {topic}
-          </span>
+            {topic.label}
+          </Link>
         ))}
       </div>
     </section>
