@@ -5,23 +5,20 @@ import { redirect } from "next/navigation";
 import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import { getArticleForEdit, getAdminArticles } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
+import {
+  classifyMedicalDisclaimerRelevance,
+  parseMedicalDisclaimerMode,
+  type MedicalDisclaimerMode,
+} from "@/lib/cms/medical-disclaimer";
 import { ARTICLE_SELECT, mapRowToCmsArticle, serializeArticleSources, type RawArticleRow } from "@/lib/cms/mappers";
 import type { ArticleSource } from "@/lib/cms/types";
 import { sendNewArticlePush } from "@/lib/push/send";
 import type { Json } from "@/lib/supabase/database.types";
 
-// Content blocks are a closed set of interfaces, not an index-signature type,
-// so they don't structurally satisfy Json — but they're always plain
-// JSON-serializable data, so this cast is safe.
 function toJson(blocks: ContentBlock[]): Json {
   return blocks as unknown as Json;
 }
 
-/** Category is only ever set in two cases now: automatically for Kenya
- * (country = "Kenya"), or when the editor explicitly marks a story as a
- * genuine worldwide story. Everything else gets no category at all — it's
- * still fully findable via its Region and Country fields, just not
- * force-listed under Global the way "not Kenya" used to be treated. */
 async function resolveCategoryId(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
@@ -66,7 +63,6 @@ interface ArticleInput {
   title: string;
   slug?: string;
   excerpt: string;
-  /** Optional SEO meta description (stored as articles.seo_description). */
   seoDescription?: string | null;
   body: ContentBlock[];
   featuredImageId: string | null;
@@ -79,7 +75,8 @@ interface ArticleInput {
   readTimeMinutes: number | null;
   premium: boolean;
   correctionNote: string | null;
-  /** Multi-source attribution list from the admin form (not free-text JSON for editors). */
+  /** auto | show | hide — article-level medical disclaimer control. */
+  medicalDisclaimerMode?: MedicalDisclaimerMode;
   sources: ArticleSource[];
 }
 
@@ -102,6 +99,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
 
   const slug = await uniqueSlug(supabase, input.slug || input.title);
   const readTime = input.readTimeMinutes ?? estimateReadTimeMinutes(input.body);
+  const medicalMode = parseMedicalDisclaimerMode(input.medicalDisclaimerMode ?? "auto");
 
   const { data, error } = await supabase
     .from("articles")
@@ -121,6 +119,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       status: "draft",
       premium: input.premium,
       correction_note: input.correctionNote,
+      medical_disclaimer_mode: medicalMode,
       ...serializeArticleSources(input.sources ?? []),
       source_published_at: null,
       created_by: user.id,
@@ -164,6 +163,7 @@ export async function updateArticle(
 
   const slug = await uniqueSlug(supabase, input.slug || input.title, articleId);
   const readTime = input.readTimeMinutes ?? estimateReadTimeMinutes(input.body);
+  const medicalMode = parseMedicalDisclaimerMode(input.medicalDisclaimerMode ?? "auto");
 
   const { error } = await supabase
     .from("articles")
@@ -182,6 +182,7 @@ export async function updateArticle(
       read_time_minutes: readTime,
       premium: input.premium,
       correction_note: input.correctionNote,
+      medical_disclaimer_mode: medicalMode,
       ...serializeArticleSources(input.sources ?? []),
       source_published_at: null,
       updated_at: new Date().toISOString(),
@@ -218,9 +219,6 @@ export async function setArticleStatus(
   await logAdminAction(supabase, user.email!, "set_article_status", "articles", articleId, { status });
 
   if (status === "published") {
-    // Fire-and-forget: never let a push-sending problem block or fail the
-    // publish action itself — every individual send failure is already
-    // caught inside sendNewArticlePush, this just guards the lookup above it.
     try {
       const { data: article } = await supabase
         .from("articles")
@@ -271,6 +269,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       read_time_minutes: original.readTimeMinutes,
       status: "draft",
       premium: original.premium,
+      medical_disclaimer_mode: original.medicalDisclaimerMode ?? "auto",
       ...serializeArticleSources(original.sources ?? []),
       source_published_at: null,
       created_by: user.id,
@@ -294,9 +293,6 @@ export async function deleteArticleAndRedirect(articleId: string) {
   redirect("/admin/articles");
 }
 
-/** Used by the article body editor's "link to another article" search —
- * only searches published articles, so an internal link never points at a
- * draft a reader can't actually see. */
 export async function searchArticlesForLinking(
   query: string,
   excludeId?: string
@@ -315,4 +311,81 @@ export async function searchArticlesForLinking(
     .filter((r) => r.id !== excludeId)
     .slice(0, 8)
     .map((r) => ({ id: r.id, title: r.title, slug: r.slug }));
+}
+
+export type MedicalDisclaimerPreviewRow = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  currentMode: MedicalDisclaimerMode;
+  suggested: "show" | "hide";
+  reason: string;
+  uncertain: boolean;
+};
+
+/** Preview auto-classification for existing articles (no writes). */
+export async function previewMedicalDisclaimerClassifications(): Promise<
+  | { rows: MedicalDisclaimerPreviewRow[] }
+  | { error: string }
+> {
+  const { supabase } = await requireAdmin();
+  const { data, error } = await supabase.from("articles").select(ARTICLE_SELECT).order("publication_date", {
+    ascending: false,
+  });
+
+  if (error) return { error: error.message };
+
+  const rows: MedicalDisclaimerPreviewRow[] = (data ?? []).map((raw) => {
+    const article = mapRowToCmsArticle(raw as unknown as RawArticleRow);
+    const classification = classifyMedicalDisclaimerRelevance({
+      title: article.title,
+      excerpt: article.excerpt,
+      body: article.body,
+      topicNames: article.topics.map((t) => t.name),
+    });
+    return {
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      status: article.status,
+      currentMode: article.medicalDisclaimerMode,
+      suggested: classification.suggested,
+      reason: classification.reason,
+      uncertain: classification.uncertain,
+    };
+  });
+
+  return { rows };
+}
+
+/**
+ * Apply classifications as explicit show/hide modes for rows still on "auto".
+ * Does not overwrite manual show/hide overrides unless forceAll is true.
+ */
+export async function applyMedicalDisclaimerClassifications(options?: {
+  forceAll?: boolean;
+}): Promise<{ updated: number } | { error: string }> {
+  const { supabase, user } = await requireAdmin();
+  const preview = await previewMedicalDisclaimerClassifications();
+  if ("error" in preview) return preview;
+
+  let updated = 0;
+  for (const row of preview.rows) {
+    if (!options?.forceAll && row.currentMode !== "auto") continue;
+    const mode: MedicalDisclaimerMode = row.suggested;
+    const { error } = await supabase
+      .from("articles")
+      .update({ medical_disclaimer_mode: mode, updated_at: new Date().toISOString() })
+      .eq("id", row.id);
+    if (!error) updated += 1;
+  }
+
+  await logAdminAction(supabase, user.email!, "apply_medical_disclaimer_modes", "articles", null, {
+    updated,
+    forceAll: !!options?.forceAll,
+  });
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
+  return { updated };
 }
