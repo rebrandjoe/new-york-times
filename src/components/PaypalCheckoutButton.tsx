@@ -9,12 +9,18 @@ type Props = {
   /** Display-only amounts for the button label. Never sent as the charge amount. */
   displayAmountUsd?: number;
   displayAmountKes?: number;
+  /** Override button label (display only). */
+  buttonLabel?: string;
+  /** Visual style — editorial matches the Premium membership page. */
+  variant?: "default" | "editorial";
 };
 
 export function PaypalCheckoutButton({
   planSlug,
   displayAmountUsd,
   displayAmountKes,
+  buttonLabel,
+  variant = "default",
 }: Props) {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -69,9 +75,20 @@ export function PaypalCheckoutButton({
     }
   };
 
+  const editorial =
+    "w-full rounded-md bg-[#0B0B0B] px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#77613D] disabled:cursor-not-allowed disabled:opacity-50";
+  const defaultClass =
+    "w-full rounded-xl bg-[#0070ba] px-6 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#003087] disabled:opacity-50";
+
   if (!isMounted) {
     return (
-      <div className="w-full rounded-xl bg-[#0070ba]/50 px-6 py-3.5 text-center text-sm font-bold text-white">
+      <div
+        className={
+          variant === "editorial"
+            ? `${editorial} opacity-60`
+            : "w-full rounded-xl bg-[#0070ba]/50 px-6 py-3.5 text-center text-sm font-bold text-white"
+        }
+      >
         Loading PayPal...
       </div>
     );
@@ -79,11 +96,13 @@ export function PaypalCheckoutButton({
 
   const hasUsd = displayAmountUsd != null && displayAmountUsd > 0;
   const hasKes = displayAmountKes != null && displayAmountKes > 0;
-  let label = "Pay with PayPal";
-  if (hasUsd && hasKes) {
-    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")} / KES ${displayAmountKes!.toLocaleString("en-KE")}`;
-  } else if (hasUsd) {
-    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")}`;
+  let label = buttonLabel ?? "Pay with PayPal";
+  if (!buttonLabel) {
+    if (hasUsd && hasKes) {
+      label = `Pay $${displayAmountUsd!.toLocaleString("en-US")} / KES ${displayAmountKes!.toLocaleString("en-KE")}`;
+    } else if (hasUsd) {
+      label = `Pay $${displayAmountUsd!.toLocaleString("en-US")}`;
+    }
   }
 
   return (
@@ -92,11 +111,13 @@ export function PaypalCheckoutButton({
         type="button"
         onClick={handlePay}
         disabled={loading || !planSlug}
-        className="w-full rounded-xl bg-[#0070ba] px-6 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#003087] disabled:opacity-50"
+        className={variant === "editorial" ? editorial : defaultClass}
       >
         {loading ? "Redirecting to PayPal..." : label}
       </button>
-      {errorMsg && <p className="text-xs text-red-500 text-center">{errorMsg}</p>}
+      {errorMsg && (
+        <p className="text-center text-xs text-red-600">{errorMsg}</p>
+      )}
     </div>
   );
 }
