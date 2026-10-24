@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
+import { MedicalDisclaimerTab } from "@/components/MedicalDisclaimerTab";
 import type { ActiveTicker } from "@/lib/cms/ticker";
 
 /**
@@ -31,6 +32,7 @@ export function SiteChrome({
         {children}
       </main>
       <Footer />
+      <MedicalDisclaimerTab />
     </>
   );
 }
