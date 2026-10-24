@@ -303,14 +303,20 @@ export default function PremiumPage() {
             </div>
 
             <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-muted">
-              Secure payment processing. Review your{" "}
+              By clicking continue, you agree to our{" "}
+              <Link
+                href="/terms-of-service"
+                className="font-semibold text-accent underline-offset-2 hover:underline"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
               <Link
                 href="/privacy-policy"
                 className="font-semibold text-accent underline-offset-2 hover:underline"
               >
-                privacy policy
-              </Link>{" "}
-              before subscribing.
+                Privacy Policy
+              </Link>
             </p>
           </div>
         </div>
