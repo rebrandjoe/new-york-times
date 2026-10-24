@@ -4,14 +4,10 @@ import { useState, useEffect } from "react";
 import { initiatePaypalCheckout } from "@/lib/actions/premium";
 
 type Props = {
-  /** Plan slug only — server loads authoritative USD price from subscription_plans. */
   planSlug: string;
-  /** Display-only amounts for the button label. Never sent as the charge amount. */
   displayAmountUsd?: number;
   displayAmountKes?: number;
-  /** Override button label (display only). */
   buttonLabel?: string;
-  /** Visual style — editorial matches the Premium membership page. */
   variant?: "default" | "editorial";
 };
 
@@ -76,19 +72,13 @@ export function PaypalCheckoutButton({
   };
 
   const editorial =
-    "w-full rounded-md bg-[#0B0B0B] px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#77613D] disabled:cursor-not-allowed disabled:opacity-50";
+    "focus-ring w-full bg-accent px-6 py-3.5 text-center text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50";
   const defaultClass =
     "w-full rounded-xl bg-[#0070ba] px-6 py-3.5 text-center text-sm font-bold text-white transition hover:bg-[#003087] disabled:opacity-50";
 
   if (!isMounted) {
     return (
-      <div
-        className={
-          variant === "editorial"
-            ? `${editorial} opacity-60`
-            : "w-full rounded-xl bg-[#0070ba]/50 px-6 py-3.5 text-center text-sm font-bold text-white"
-        }
-      >
+      <div className={`${variant === "editorial" ? editorial : defaultClass} opacity-60`}>
         Loading PayPal...
       </div>
     );
@@ -115,9 +105,7 @@ export function PaypalCheckoutButton({
       >
         {loading ? "Redirecting to PayPal..." : label}
       </button>
-      {errorMsg && (
-        <p className="text-center text-xs text-red-600">{errorMsg}</p>
-      )}
+      {errorMsg && <p className="text-center text-xs text-red-500">{errorMsg}</p>}
     </div>
   );
 }
