@@ -71,11 +71,12 @@ export function Footer() {
                 About Joseph Mmwa
               </h4>
               <p className="text-xs leading-relaxed text-gray-secondary-light">
-                Joseph Mmwa is a Kenyan health news publication covering major
-                developments in Kenya, Africa and around the world. I report and explain
-                breaking health news, medical research, public health, diseases, vaccines,
-                healthcare policy and scientific developments—with context, evidence and a
-                focus on why the story matters.
+                Joseph Mmwa is a health journalism platform delivering news, reporting and
+                analysis on the medical and public health developments shaping Kenya, Africa
+                and the world. From disease outbreaks and vaccines to medical breakthroughs,
+                pharmaceutical developments, healthcare policy and scientific research, Joseph
+                Mmwa brings readers credible information, evidence-based reporting and context
+                to understand the stories shaping global health and medicine.
               </p>
             </div>
 
