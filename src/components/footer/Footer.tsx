@@ -34,16 +34,6 @@ function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   );
 }
 
-const aboutBottomLinks = [
-  { label: "Editorial Standards", href: "/editorial-standards" },
-  { label: "Corrections & Fact-Checking", href: "/corrections-and-fact-checking" },
-  { label: "AI Policy", href: "/ai-policy" },
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms of Service", href: "/terms-of-service" },
-  { label: "Contact", href: "/contact" },
-  { label: "Advertise", href: "/advertise" },
-];
-
 export function Footer() {
   const pathname = usePathname();
   const isAboutPage = pathname === "/about";
@@ -71,12 +61,12 @@ export function Footer() {
                 About Joseph Mmwa
               </h4>
               <p className="text-xs leading-relaxed text-gray-secondary-light">
-                Joseph Mmwa is a health journalism platform delivering news, reporting and
-                analysis on the medical and public health developments shaping Kenya, Africa
-                and the world. From disease outbreaks and vaccines to medical breakthroughs,
-                pharmaceutical developments, healthcare policy and scientific research, Joseph
-                Mmwa brings readers credible information, evidence-based reporting and context
-                to understand the stories shaping global health and medicine.
+                Joseph Mmwa is a health journalism platform delivering news, reporting and analysis
+                on the medical and public health developments shaping Kenya, Africa and the world.
+                From disease outbreaks and vaccines to medical breakthroughs, pharmaceutical
+                developments, healthcare policy and scientific research, Joseph Mmwa brings readers
+                credible information, evidence-based reporting and context to understand the stories
+                shaping global health and medicine.
               </p>
             </div>
 
@@ -88,52 +78,13 @@ export function Footer() {
           </>
         )}
 
+        {/* Bottom strip: logo / name context + copyright only */}
         <div
-          className={`flex flex-col items-center gap-3 ${
+          className={`flex flex-col items-center gap-2 text-center ${
             isAboutPage ? "pt-2" : "mt-10 border-t border-charcoal pt-6"
           }`}
         >
-          {isAboutPage ? (
-            <div className="flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-2">
-              {aboutBottomLinks.map((link, i) => (
-                <span key={link.href} className="inline-flex items-center gap-3">
-                  {i > 0 && <span className="text-gray-muted">·</span>}
-                  <Link
-                    href={link.href}
-                    className="focus-ring text-xs text-gray-muted hover:text-accent"
-                  >
-                    {link.label}
-                  </Link>
-                </span>
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Link
-                href="/privacy-policy"
-                className="focus-ring text-xs text-gray-muted hover:text-accent"
-              >
-                Privacy Policy
-              </Link>
-              <span className="text-gray-muted">|</span>
-              <Link
-                href="/terms-of-service"
-                className="focus-ring text-xs text-gray-muted hover:text-accent"
-              >
-                Terms of Service
-              </Link>
-              <span className="text-gray-muted">|</span>
-              <a
-                href="mailto:contact@josephmmwa.com"
-                className="focus-ring text-xs text-gray-muted hover:text-accent"
-              >
-                Contact
-              </a>
-            </div>
-          )}
-          <p className="text-xs text-gray-muted">
-            © 2026 Joseph Mmwa. All rights reserved
-          </p>
+          <p className="text-xs text-gray-muted">© 2026 Joseph Mmwa. All rights reserved</p>
         </div>
       </div>
     </footer>
