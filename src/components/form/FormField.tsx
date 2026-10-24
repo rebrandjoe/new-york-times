@@ -1,3 +1,7 @@
+/** Shared field styles — visible against dark charcoal cards. */
+export const formControlClassName =
+  "focus-ring mt-2 w-full border border-white/25 bg-black px-4 py-3 text-sm text-white caret-accent placeholder:text-gray-muted transition-colors hover:border-white/40 focus:border-accent focus:bg-[#0a0a0a]";
+
 export function FormField({
   id,
   name,
@@ -27,7 +31,7 @@ export function FormField({
         required={required}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="focus-ring mt-2 w-full border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
+        className={formControlClassName}
       />
     </div>
   );
@@ -56,7 +60,7 @@ export function FormTextArea({
         name={name}
         required={required}
         rows={rows}
-        className="focus-ring mt-2 w-full resize-y border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
+        className={`${formControlClassName} resize-y`}
       />
     </div>
   );
