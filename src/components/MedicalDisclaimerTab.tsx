@@ -30,7 +30,7 @@ function shouldHide(pathname: string | null): boolean {
 }
 
 /**
- * Distinct, always-visible edge tab linking to the Medical Disclaimer.
+ * Distinct edge tab linking to the Medical Disclaimer.
  * Shown on public news pages; hidden on Information, Editorial and auth routes.
  */
 export function MedicalDisclaimerTab() {
@@ -41,14 +41,13 @@ export function MedicalDisclaimerTab() {
     <Link
       href="/medical-disclaimer"
       aria-label="Medical Disclaimer — health information is not medical advice"
-      className="fixed right-0 top-1/2 z-50 flex -translate-y-1/2 flex-col items-center gap-1 border border-r-0 border-accent bg-black/95 px-1.5 py-3 shadow-[0_0_0_1px_rgba(119,97,61,0.35)] transition-colors hover:bg-accent hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+      className="group fixed right-0 top-1/2 z-50 -translate-y-1/2 border border-r-0 border-accent bg-black px-2 py-4 shadow-lg transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
-      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent group-hover:text-black [a:hover_&]:text-black">
-        Medical
-      </span>
-      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-offwhite [a:hover_&]:text-black">
-        Disclaimer
+      <span
+        className="block text-[11px] font-extrabold uppercase tracking-[0.2em] text-accent transition-colors group-hover:text-black"
+        style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+      >
+        Medical Disclaimer
       </span>
     </Link>
   );
