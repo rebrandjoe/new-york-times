@@ -35,6 +35,52 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
+/** Safaricom M-PESA wordmark style (green bar). */
+function MpesaBrand() {
+  return (
+    <span
+      className="inline-flex h-7 items-center rounded bg-[#41B649] px-2.5 font-sans text-[11px] font-black tracking-tight text-white"
+      aria-hidden
+    >
+      M-PESA
+    </span>
+  );
+}
+
+/** Visa + Mastercard marks side by side. */
+function CardBrands() {
+  return (
+    <span className="inline-flex items-center gap-1.5" aria-hidden>
+      <span className="inline-flex h-6 items-center rounded bg-[#1A1F71] px-1.5 text-[10px] font-bold italic tracking-wide text-white">
+        VISA
+      </span>
+      <span className="relative inline-flex h-6 w-10 items-center justify-center">
+        <span className="absolute left-0 h-5 w-5 rounded-full bg-[#EB001B]" />
+        <span className="absolute right-0 h-5 w-5 rounded-full bg-[#F79E1B]/95" />
+      </span>
+    </span>
+  );
+}
+
+/** PayPal wordmark (navy + blue). */
+function PaypalBrand() {
+  return (
+    <span
+      className="inline-flex h-7 items-center rounded bg-[#003087] px-2.5 font-serif text-xs font-extrabold italic tracking-tight"
+      aria-hidden
+    >
+      <span className="text-white">Pay</span>
+      <span className="text-[#009CDE]">Pal</span>
+    </span>
+  );
+}
+
+function PaymentBrand({ id }: { id: PaymentGateway }) {
+  if (id === "mpesa") return <MpesaBrand />;
+  if (id === "card") return <CardBrands />;
+  return <PaypalBrand />;
+}
+
 export default function PremiumPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [tier, setTier] = useState<BillingTier>("monthly");
@@ -82,7 +128,6 @@ export default function PremiumPage() {
   return (
     <div className="bg-black text-offwhite">
       <main className="mx-auto max-w-3xl px-4 pb-8 pt-12 sm:px-6 sm:pt-16">
-        {/* Editorial introduction */}
         <div className="mx-auto max-w-xl text-center">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
             Member Access
@@ -96,7 +141,6 @@ export default function PremiumPage() {
           </p>
         </div>
 
-        {/* Billing interval */}
         <div className="mx-auto mt-10 flex max-w-[420px] justify-center">
           <div
             className="inline-flex border border-charcoal bg-charcoal-deep p-0.5"
@@ -131,7 +175,6 @@ export default function PremiumPage() {
           </div>
         </div>
 
-        {/* Membership card */}
         <div className="mx-auto mt-8 max-w-[420px] border border-charcoal bg-charcoal-deep">
           <div className="px-6 py-8 sm:px-8">
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
@@ -183,7 +226,7 @@ export default function PremiumPage() {
                   {
                     id: "card" as const,
                     title: "Credit or debit card",
-                    subtitle: "Visa · Currency and final amount shown at checkout",
+                    subtitle: "Visa · Mastercard · Amount shown at checkout",
                   },
                   {
                     id: "paypal" as const,
@@ -200,14 +243,14 @@ export default function PremiumPage() {
                     role="radio"
                     aria-checked={selected}
                     onClick={() => setSelectedGateway(option.id)}
-                    className={`flex w-full items-start gap-3 border px-4 py-3.5 text-left transition-colors ${
+                    className={`flex w-full items-center gap-3 border px-4 py-3.5 text-left transition-colors ${
                       selected
                         ? "border-accent bg-black/40"
                         : "border-charcoal bg-black/20 hover:border-white/20"
                     }`}
                   >
                     <span
-                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
                         selected ? "border-accent" : "border-charcoal"
                       }`}
                       aria-hidden
@@ -221,6 +264,9 @@ export default function PremiumPage() {
                       <span className="mt-0.5 block text-xs leading-snug text-gray-muted">
                         {option.subtitle}
                       </span>
+                    </span>
+                    <span className="shrink-0">
+                      <PaymentBrand id={option.id} />
                     </span>
                   </button>
                 );
@@ -265,7 +311,6 @@ export default function PremiumPage() {
           </div>
         </div>
 
-        {/* Closing brand — same treatment as About */}
         <div className="mx-auto mt-16 flex max-w-sm flex-col items-center border-t border-charcoal pt-12 text-center">
           <LogoMark size={72} className="ring-1 ring-charcoal" />
           <p className="mt-4 font-serif text-lg font-bold text-white">Joseph Mmwa</p>
