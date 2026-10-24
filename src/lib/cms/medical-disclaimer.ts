@@ -1,5 +1,4 @@
 import type { ContentBlock } from "./blocks";
-import type { CmsArticle } from "./types";
 
 export type MedicalDisclaimerMode = "auto" | "show" | "hide";
 
@@ -18,7 +17,6 @@ function blocksToPlainText(blocks: ContentBlock[]): string {
     if (typeof b.text === "string") parts.push(b.text);
     if (typeof b.content === "string") parts.push(b.content);
     if (Array.isArray(b.items)) parts.push(b.items.join(" "));
-    // Nested shapes used by some block types
     const anyBlock = block as unknown as Record<string, unknown>;
     if (typeof anyBlock.html === "string") parts.push(anyBlock.html.replace(/<[^>]+>/g, " "));
   }
@@ -33,7 +31,6 @@ function normalizeText(input: string): string {
     .trim();
 }
 
-/** Signals that the article may guide personal healthcare decisions. */
 const SHOW_PATTERNS: { re: RegExp; label: string }[] = [
   { re: /\bsymptom(s)?\b/, label: "symptoms" },
   { re: /\bdiagnos(e|is|ed|ing)\b/, label: "diagnosis" },
@@ -55,7 +52,6 @@ const SHOW_PATTERNS: { re: RegExp; label: string }[] = [
   { re: /\bseek (immediate )?medical\b|\bemeragency care\b/, label: "emergency care advice" },
 ];
 
-/** Signals of routine institutional / administrative news. */
 const HIDE_PATTERNS: { re: RegExp; label: string }[] = [
   { re: /\bappoint(ed|ment|s)\b.*\b(director|minister|secretary|board|ceo)\b/, label: "appointments" },
   { re: /\bnamed (as |the )?(new )?(director|minister|head|chair)/, label: "leadership naming" },
@@ -108,7 +104,6 @@ export function classifyMedicalDisclaimerRelevance(input: {
     }
   }
 
-  // Strong medical substance wins even if institutional framing is present
   if (showScore >= 2) {
     return {
       suggested: "show",
@@ -134,7 +129,6 @@ export function classifyMedicalDisclaimerRelevance(input: {
   }
 
   if (hideScore >= 1 && showScore === 1) {
-    // Mixed — prefer show for safety
     return {
       suggested: "show",
       reason: `Mixed signals (${showHits.join(", ")} vs ${hideHits.join(", ")}) — prefer show; editor may override.`,
@@ -152,7 +146,12 @@ export function classifyMedicalDisclaimerRelevance(input: {
 /** Resolve whether the article-level notice should render. */
 export function shouldShowMedicalDisclaimer(
   mode: MedicalDisclaimerMode | null | undefined,
-  article: Pick<CmsArticle, "title" | "excerpt" | "body" | "topics">
+  article: {
+    title: string;
+    excerpt: string | null;
+    body: ContentBlock[];
+    topics: { name: string }[];
+  }
 ): boolean {
   const resolved: MedicalDisclaimerMode = mode ?? "auto";
   if (resolved === "show") return true;
