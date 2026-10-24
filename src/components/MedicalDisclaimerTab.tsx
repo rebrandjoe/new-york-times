@@ -8,8 +8,8 @@ const SESSION_KEY = "mmwa_medical_disclaimer_dismissed";
 
 /** Delay before the notice slides in (reading pace). */
 const APPEAR_DELAY_MS = 4500;
-/** How long it remains fully visible before auto-hiding. */
-const VISIBLE_HOLD_MS = 6000;
+/** Minimum time fully visible before auto-hiding. */
+const VISIBLE_HOLD_MS = 10000;
 /** Slow slide duration — not rushed. */
 const SLIDE_MS = 1400;
 
@@ -19,9 +19,8 @@ function isArticlePath(pathname: string | null): boolean {
 
 /**
  * Quiet medical-disclaimer notice on article pages only.
- * Slides in slowly from the left a few seconds after open, holds, then
- * slides away. Can be dismissed with X. Kept on the upper-left so it stays
- * clear of “You may also like” (right rail / end of article).
+ * Slides in slowly from the left a few seconds after open, holds ≥10s, then
+ * slides away. Can be dismissed with X. Upper-left, clear of related stories.
  */
 export function MedicalDisclaimerTab() {
   const pathname = usePathname();
@@ -81,7 +80,7 @@ export function MedicalDisclaimerTab() {
     <div
       role="complementary"
       aria-label="Medical disclaimer notice"
-      className="pointer-events-none fixed left-0 top-[22%] z-40 w-[min(100%,18rem)] sm:top-[24%] sm:w-72"
+      className="pointer-events-none fixed left-0 top-[20%] z-40 w-[min(100%,20rem)] sm:top-[22%] sm:w-80"
     >
       <div
         className="pointer-events-auto border border-l-0 border-accent/80 bg-black/95 shadow-lg backdrop-blur-sm"
@@ -91,7 +90,7 @@ export function MedicalDisclaimerTab() {
           transition: `transform ${SLIDE_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${SLIDE_MS}ms ease`,
         }}
       >
-        <div className="relative px-4 pb-3.5 pt-3">
+        <div className="relative px-4 pb-4 pt-3">
           <button
             type="button"
             onClick={dismiss}
@@ -106,15 +105,16 @@ export function MedicalDisclaimerTab() {
           <p className="pr-7 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
             Medical disclaimer
           </p>
-          <p className="mt-2 text-xs leading-relaxed text-gray-secondary-light">
-            Health information is for public understanding. Medical decisions require appropriate
-            professional guidance.
+          <p className="mt-2.5 text-xs leading-relaxed text-gray-secondary-light">
+            My health reporting is for informational and educational purposes only and is not a
+            substitute for professional medical advice, diagnosis or treatment. Always consult a
+            qualified healthcare professional for medical decisions.
           </p>
           <Link
             href="/medical-disclaimer"
-            className="mt-2.5 inline-block text-xs font-semibold text-accent underline-offset-2 transition-colors hover:underline"
+            className="mt-3 inline-block text-xs font-semibold text-accent underline-offset-2 transition-colors hover:underline"
           >
-            Read full disclaimer →
+            Read our full Medical Disclaimer →
           </Link>
         </div>
       </div>
