@@ -70,6 +70,7 @@ export const footerEditorial: NavLink[] = [
   { label: "Editorial Standards", href: "/editorial-standards" },
   { label: "Corrections & Fact-Checking", href: "/corrections-and-fact-checking" },
   { label: "AI Policy", href: "/ai-policy" },
+  { label: "Medical Disclaimer", href: "/medical-disclaimer" },
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms-of-service" },
 ];
