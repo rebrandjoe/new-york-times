@@ -4,17 +4,11 @@ import { useState, useEffect } from "react";
 import { initializePaystackTransaction } from "@/lib/actions/paystack";
 
 type Props = {
-  /** Existing plan slug from subscription_plans — server loads authoritative price. */
   planSlug: string;
-  /** Display-only KES amount for the button label. Never sent as the charge amount. */
   displayAmountKes?: number;
-  /** Display-only USD amount for international clients. Never sent as the charge amount. */
   displayAmountUsd?: number;
-  /** Payment method for the payments row (mpesa or card). */
   method?: "mpesa" | "card";
-  /** Override button label (display only). */
   buttonLabel?: string;
-  /** Visual style — editorial matches the Premium membership page. */
   variant?: "default" | "editorial";
 };
 
@@ -94,19 +88,13 @@ export function PaystackCheckoutButton({
   };
 
   const editorial =
-    "w-full rounded-md bg-[#0B0B0B] px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#77613D] disabled:cursor-not-allowed disabled:opacity-50";
+    "focus-ring w-full bg-accent px-6 py-3.5 text-center text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50";
   const defaultClass =
     "w-full rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] disabled:opacity-50";
 
   if (!isMounted) {
     return (
-      <div
-        className={
-          variant === "editorial"
-            ? `${editorial} opacity-60`
-            : "w-full rounded-full bg-accent/50 px-6 py-3.5 text-center text-sm font-bold text-black"
-        }
-      >
+      <div className={`${variant === "editorial" ? editorial : defaultClass} opacity-60`}>
         Loading payment...
       </div>
     );
@@ -136,9 +124,7 @@ export function PaystackCheckoutButton({
       >
         {loading ? "Redirecting to Paystack..." : label}
       </button>
-      {errorMsg && (
-        <p className="text-center text-xs text-red-600">{errorMsg}</p>
-      )}
+      {errorMsg && <p className="text-center text-xs text-red-500">{errorMsg}</p>}
     </div>
   );
 }
