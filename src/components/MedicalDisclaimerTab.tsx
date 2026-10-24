@@ -1,31 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const SESSION_KEY = "mmwa_medical_disclaimer_dismissed";
 
-/** Delay before the notice slides in (reading pace). */
 const APPEAR_DELAY_MS = 4500;
-/** Minimum time fully visible before auto-hiding. */
 const VISIBLE_HOLD_MS = 10000;
-/** Slow slide duration — not rushed. */
 const SLIDE_MS = 1400;
 
-function isArticlePath(pathname: string | null): boolean {
-  return !!pathname && (pathname === "/article" || pathname.startsWith("/article/"));
-}
-
 /**
- * Quiet medical-disclaimer notice on article pages only.
- * Slides in slowly from the left a few seconds after open, holds ≥10s, then
- * slides away. Can be dismissed with X. Upper-left, clear of related stories.
+ * In-article medical disclaimer notice. Parent decides relevance (mode + auto rules).
+ * Slides in slowly from the left, holds ≥10s, optional × dismiss for the session.
  */
-export function MedicalDisclaimerTab() {
-  const pathname = usePathname();
-  const onArticle = isArticlePath(pathname);
-
+export function MedicalDisclaimerTab({ enabled }: { enabled: boolean }) {
   const [phase, setPhase] = useState<"idle" | "in" | "out" | "gone">("idle");
 
   const dismiss = useCallback(() => {
@@ -38,7 +26,7 @@ export function MedicalDisclaimerTab() {
   }, []);
 
   useEffect(() => {
-    if (!onArticle) {
+    if (!enabled) {
       setPhase("idle");
       return;
     }
@@ -64,7 +52,7 @@ export function MedicalDisclaimerTab() {
       window.clearTimeout(appearTimer);
       window.clearTimeout(holdTimer);
     };
-  }, [onArticle, pathname]);
+  }, [enabled]);
 
   useEffect(() => {
     if (phase !== "out") return;
@@ -72,7 +60,7 @@ export function MedicalDisclaimerTab() {
     return () => window.clearTimeout(done);
   }, [phase]);
 
-  if (!onArticle || phase === "idle" || phase === "gone") return null;
+  if (!enabled || phase === "idle" || phase === "gone") return null;
 
   const visible = phase === "in";
 
