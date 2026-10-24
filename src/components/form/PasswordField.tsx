@@ -30,7 +30,7 @@ export function PasswordField({
           type={visible ? "text" : "password"}
           required={required}
           autoComplete={autoComplete}
-          className="focus-ring w-full border border-white/10 bg-charcoal-deep px-4 py-3 pr-11 text-sm text-offwhite placeholder:text-gray-muted transition-colors focus:border-accent"
+          className="focus-ring w-full border border-white/25 bg-black px-4 py-3 pr-11 text-sm text-white caret-accent placeholder:text-gray-muted transition-colors hover:border-white/40 focus:border-accent focus:bg-[#0a0a0a]"
         />
         <button
           type="button"
