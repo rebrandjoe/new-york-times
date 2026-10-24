@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const SESSION_KEY = "mmwa_medical_disclaimer_dismissed";
@@ -9,11 +10,19 @@ const APPEAR_DELAY_MS = 4500;
 const VISIBLE_HOLD_MS = 10000;
 const SLIDE_MS = 1400;
 
+function isArticlePath(pathname: string | null): boolean {
+  return !!pathname && (pathname === "/article" || pathname.startsWith("/article/"));
+}
+
 /**
- * In-article medical disclaimer notice. Parent decides relevance (mode + auto rules).
- * Slides in slowly from the left, holds ≥10s, optional × dismiss for the session.
+ * Quiet medical-disclaimer notice on article pages only.
+ * Slides in slowly from the left a few seconds after open, holds ≥10s, then
+ * slides away. Can be dismissed with X. Upper-left, clear of related stories.
  */
-export function MedicalDisclaimerTab({ enabled }: { enabled: boolean }) {
+export function MedicalDisclaimerTab() {
+  const pathname = usePathname();
+  const onArticle = isArticlePath(pathname);
+
   const [phase, setPhase] = useState<"idle" | "in" | "out" | "gone">("idle");
 
   const dismiss = useCallback(() => {
@@ -26,7 +35,7 @@ export function MedicalDisclaimerTab({ enabled }: { enabled: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!onArticle) {
       setPhase("idle");
       return;
     }
@@ -52,7 +61,7 @@ export function MedicalDisclaimerTab({ enabled }: { enabled: boolean }) {
       window.clearTimeout(appearTimer);
       window.clearTimeout(holdTimer);
     };
-  }, [enabled]);
+  }, [onArticle, pathname]);
 
   useEffect(() => {
     if (phase !== "out") return;
@@ -60,7 +69,7 @@ export function MedicalDisclaimerTab({ enabled }: { enabled: boolean }) {
     return () => window.clearTimeout(done);
   }, [phase]);
 
-  if (!enabled || phase === "idle" || phase === "gone") return null;
+  if (!onArticle || phase === "idle" || phase === "gone") return null;
 
   const visible = phase === "in";
 
