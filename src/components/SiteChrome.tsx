@@ -3,13 +3,11 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
-import { MedicalDisclaimerTab } from "@/components/MedicalDisclaimerTab";
 import type { ActiveTicker } from "@/lib/cms/ticker";
 
 /**
- * Admin routes get their own work-focused shell (see /admin/layout.tsx) —
- * no live ticker, public nav, or Subscribe/Sign-in bar. Everywhere else
- * gets the standard public header/footer.
+ * Admin routes get their own work-focused shell (see /admin/layout.tsx).
+ * Medical disclaimer notice is rendered from ArticleView when relevant.
  */
 export function SiteChrome({
   ticker,
@@ -32,7 +30,6 @@ export function SiteChrome({
         {children}
       </main>
       <Footer />
-      <MedicalDisclaimerTab />
     </>
   );
 }
