@@ -10,7 +10,8 @@ import {
   updateArticle,
 } from "@/lib/actions/admin-articles";
 import type { ContentBlock } from "@/lib/cms/blocks";
-import type { ArticleSource, CmsArticle, CmsAuthor, CmsMedia, CmsTopic } from "@/lib/cms/types";
+import type { ArticleSource, CmsArticle, CmsAuthor, CmsMedia, CmsTopic, MedicalDisclaimerMode } from "@/lib/cms/types";
+import { classifyMedicalDisclaimerRelevance } from "@/lib/cms/medical-disclaimer";
 import { SourcesEditor } from "./SourcesEditor";
 import { TiptapEditor } from "./editor/TiptapEditor";
 import { MediaPickerField } from "./MediaPickerField";
@@ -76,6 +77,9 @@ export function ArticleEditor({
   const [readTimeMinutes, setReadTimeMinutes] = useState(initial?.readTimeMinutes ?? 3);
   const [premium, setPremium] = useState(initial?.premium ?? false);
   const [correctionNote, setCorrectionNote] = useState(initial?.correctionNote ?? "");
+  const [medicalDisclaimerMode, setMedicalDisclaimerMode] = useState<MedicalDisclaimerMode>(
+    initial?.medicalDisclaimerMode ?? "auto"
+  );
   const [sources, setSources] = useState<ArticleSource[]>(() => initial?.sources ?? []);
   const [scheduledFor, setScheduledFor] = useState("");
 
@@ -103,6 +107,7 @@ export function ArticleEditor({
       readTimeMinutes: autoReadTime ? null : readTimeMinutes,
       premium,
       correctionNote: correctionNote || null,
+      medicalDisclaimerMode,
       sources: sources
         .map((s) => ({
           author: s.author?.trim() || null,
@@ -113,7 +118,6 @@ export function ArticleEditor({
     };
   }
 
-  // Autosave: only once the article exists, debounced after edits settle.
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -137,7 +141,7 @@ export function ArticleEditor({
   }, [
     title, slug, excerpt, seoDescription, body, featuredImageId, topicIds, region, country,
     authorId, publicationDate, autoReadTime, readTimeMinutes, premium, isGlobalStory,
-    correctionNote, sources,
+    correctionNote, medicalDisclaimerMode, sources,
   ]);
 
   async function handleCreateDraft() {
@@ -206,6 +210,16 @@ export function ArticleEditor({
     saved: "Saved",
     error: "Could not save",
   }[saveState];
+
+  const autoSuggestion =
+    medicalDisclaimerMode === "auto"
+      ? classifyMedicalDisclaimerRelevance({
+          title,
+          excerpt,
+          body,
+          topicNames: topics.filter((t) => topicIds.includes(t.id)).map((t) => t.name),
+        })
+      : null;
 
   return (
     <div>
@@ -389,6 +403,77 @@ export function ArticleEditor({
 
           <div>
             <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">
+              Medical disclaimer
+            </h2>
+            <div className="mt-4 space-y-3">
+              <p className="text-xs text-gray-muted">
+                Controls the in-article notice. Automatic uses the story's content to decide.
+              </p>
+              <div className="flex flex-col gap-2">
+                <label
+                  className={`flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm ${
+                    medicalDisclaimerMode === "auto"
+                      ? "border-accent text-accent"
+                      : "border-charcoal text-gray-secondary-light"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="medical-disclaimer-mode"
+                    checked={medicalDisclaimerMode === "auto"}
+                    onChange={() => setMedicalDisclaimerMode("auto")}
+                    className="accent-[var(--brand-accent)]"
+                  />
+                  Automatic
+                </label>
+                <label
+                  className={`flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm ${
+                    medicalDisclaimerMode === "show"
+                      ? "border-accent text-accent"
+                      : "border-charcoal text-gray-secondary-light"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="medical-disclaimer-mode"
+                    checked={medicalDisclaimerMode === "show"}
+                    onChange={() => setMedicalDisclaimerMode("show")}
+                    className="accent-[var(--brand-accent)]"
+                  />
+                  Always show
+                </label>
+                <label
+                  className={`flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm ${
+                    medicalDisclaimerMode === "hide"
+                      ? "border-accent text-accent"
+                      : "border-charcoal text-gray-secondary-light"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="medical-disclaimer-mode"
+                    checked={medicalDisclaimerMode === "hide"}
+                    onChange={() => setMedicalDisclaimerMode("hide")}
+                    className="accent-[var(--brand-accent)]"
+                  />
+                  Hide
+                </label>
+              </div>
+              {autoSuggestion && (
+                <div className="border border-charcoal bg-charcoal-deep p-3 text-xs text-gray-secondary-light">
+                  <p>
+                    <span className="font-semibold text-offwhite">Suggested: </span>
+                    {autoSuggestion.suggested === "show" ? "Show" : "Hide"}
+                    {autoSuggestion.uncertain ? " (needs review)" : ""}
+                  </p>
+                  <p className="mt-1">{autoSuggestion.reason}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h2 className="border-b border-charcoal pb-2 font-serif text-lg font-bold text-white">
               Correction
             </h2>
             <div className="mt-4">
@@ -474,7 +559,9 @@ export function ArticleEditor({
             <label className={labelClass()}>Author</label>
             <select value={authorId} onChange={(e) => setAuthorId(e.target.value)} className={fieldClass()}>
               {authors.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
               ))}
             </select>
           </div>
