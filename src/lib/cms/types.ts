@@ -68,8 +68,8 @@ export interface CmsArticle {
   canonicalUrl: string | null;
   correctionNote: string | null;
   socialImage: CmsMedia | null;
-  /** Article-level control for the in-article medical disclaimer notice. */
-  medicalDisclaimerMode: MedicalDisclaimerMode;
+  /** Article-level control for the in-article medical disclaimer notice. Defaults to auto. */
+  medicalDisclaimerMode?: MedicalDisclaimerMode;
   /** Structured sources for the article accordion (independent per article). */
   sources: ArticleSource[];
   source: {
