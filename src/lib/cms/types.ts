@@ -1,4 +1,7 @@
 import type { ContentBlock } from "./blocks";
+import type { MedicalDisclaimerMode } from "./medical-disclaimer";
+
+export type { MedicalDisclaimerMode };
 
 export interface CmsCategory {
   id: string;
@@ -65,6 +68,8 @@ export interface CmsArticle {
   canonicalUrl: string | null;
   correctionNote: string | null;
   socialImage: CmsMedia | null;
+  /** Article-level control for the in-article medical disclaimer notice. */
+  medicalDisclaimerMode: MedicalDisclaimerMode;
   /** Structured sources for the article accordion (independent per article). */
   sources: ArticleSource[];
   source: {
