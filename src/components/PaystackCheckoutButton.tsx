@@ -12,6 +12,10 @@ type Props = {
   displayAmountUsd?: number;
   /** Payment method for the payments row (mpesa or card). */
   method?: "mpesa" | "card";
+  /** Override button label (display only). */
+  buttonLabel?: string;
+  /** Visual style — editorial matches the Premium membership page. */
+  variant?: "default" | "editorial";
 };
 
 function friendlyErrorMessage(err: unknown): string {
@@ -30,6 +34,8 @@ export function PaystackCheckoutButton({
   displayAmountKes,
   displayAmountUsd,
   method = "mpesa",
+  buttonLabel,
+  variant = "default",
 }: Props) {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -87,9 +93,20 @@ export function PaystackCheckoutButton({
     }
   };
 
+  const editorial =
+    "w-full rounded-md bg-[#0B0B0B] px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#77613D] disabled:cursor-not-allowed disabled:opacity-50";
+  const defaultClass =
+    "w-full rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] disabled:opacity-50";
+
   if (!isMounted) {
     return (
-      <div className="w-full rounded-full bg-accent/50 px-6 py-3.5 text-center text-sm font-bold text-black">
+      <div
+        className={
+          variant === "editorial"
+            ? `${editorial} opacity-60`
+            : "w-full rounded-full bg-accent/50 px-6 py-3.5 text-center text-sm font-bold text-black"
+        }
+      >
         Loading payment...
       </div>
     );
@@ -98,13 +115,15 @@ export function PaystackCheckoutButton({
   const hasKes = displayAmountKes != null && displayAmountKes > 0;
   const hasUsd = displayAmountUsd != null && displayAmountUsd > 0;
 
-  let label = "Pay with Paystack";
-  if (hasKes && hasUsd) {
-    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")} / KES ${displayAmountKes!.toLocaleString("en-KE")}`;
-  } else if (hasKes) {
-    label = `Pay KES ${displayAmountKes!.toLocaleString("en-KE")}`;
-  } else if (hasUsd) {
-    label = `Pay $${displayAmountUsd!.toLocaleString("en-US")}`;
+  let label = buttonLabel ?? "Pay with Paystack";
+  if (!buttonLabel) {
+    if (hasKes && hasUsd) {
+      label = `Pay $${displayAmountUsd!.toLocaleString("en-US")} / KES ${displayAmountKes!.toLocaleString("en-KE")}`;
+    } else if (hasKes) {
+      label = `Pay KES ${displayAmountKes!.toLocaleString("en-KE")}`;
+    } else if (hasUsd) {
+      label = `Pay $${displayAmountUsd!.toLocaleString("en-US")}`;
+    }
   }
 
   return (
@@ -113,11 +132,13 @@ export function PaystackCheckoutButton({
         type="button"
         onClick={handlePay}
         disabled={loading || !planSlug}
-        className="w-full rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] disabled:opacity-50"
+        className={variant === "editorial" ? editorial : defaultClass}
       >
         {loading ? "Redirecting to Paystack..." : label}
       </button>
-      {errorMsg && <p className="text-xs text-red-500 text-center">{errorMsg}</p>}
+      {errorMsg && (
+        <p className="text-center text-xs text-red-600">{errorMsg}</p>
+      )}
     </div>
   );
 }
