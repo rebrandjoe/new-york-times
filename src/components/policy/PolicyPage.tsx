@@ -7,11 +7,14 @@ export function PolicyPage({
   eyebrow,
   title,
   intro,
+  updatedOn,
   children,
 }: {
   eyebrow: string;
   title: string;
-  intro: string;
+  intro?: string;
+  /** Faint but readable date line under the headline, e.g. "24 October 2026". */
+  updatedOn?: string;
   children: ReactNode;
 }) {
   return (
@@ -20,10 +23,33 @@ export function PolicyPage({
       <h1 className="mt-3 font-serif text-3xl font-extrabold leading-[1.1] text-white sm:text-4xl">
         {title}
       </h1>
-      <p className="mt-6 font-serif text-lg font-bold text-white sm:text-xl">{intro}</p>
-      <div className="mt-10">{children}</div>
+      {updatedOn && (
+        <p className="mt-3 text-sm text-gray-muted/90">
+          Updated on <time dateTime={updatedOn}>{formatUpdatedOn(updatedOn)}</time>
+        </p>
+      )}
+      {intro && (
+        <p className="mt-6 font-serif text-lg font-bold text-white sm:text-xl">{intro}</p>
+      )}
+      <div className={intro || updatedOn ? "mt-10" : "mt-8"}>{children}</div>
     </div>
   );
+}
+
+function formatUpdatedOn(isoOrDisplay: string): string {
+  // Accept ISO date (YYYY-MM-DD) or a pre-formatted display string.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(isoOrDisplay)) {
+    const d = new Date(`${isoOrDisplay}T12:00:00Z`);
+    if (!Number.isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+    }
+  }
+  return isoOrDisplay;
 }
 
 export function PolicySection({
