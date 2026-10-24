@@ -43,7 +43,7 @@ export default function EditorialStandardsPage() {
         to accuracy, transparency, fairness and accountability in health journalism.
       </PolicyParagraph>
 
-      <PolicySection heading="What I cover">
+      <PolicySection heading="1. What I cover">
         <PolicyParagraph>
           I cover health and medical developments across Kenya, Africa and internationally.
         </PolicyParagraph>
@@ -70,7 +70,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Evidence before excitement">
+      <PolicySection heading="2. Evidence before excitement">
         <PolicyParagraph>
           Medical news frequently arrives with dramatic language: breakthrough, revolutionary,
           miracle or game-changing.
@@ -92,7 +92,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Verification and sourcing">
+      <PolicySection heading="3. Verification and sourcing">
         <PolicyParagraph>
           I assess the reliability of information before publication, prioritising original research,
           peer-reviewed studies, official health advisories, regulatory documents and information
@@ -111,7 +111,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Original reporting and attribution">
+      <PolicySection heading="4. Original reporting and attribution">
         <PolicyParagraph>
           I publish original journalism, explain developments reported elsewhere, aggregate important
           health news and provide context around medical research and public-health events.
@@ -131,7 +131,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="The reader comes first">
+      <PolicySection heading="5. The reader comes first">
         <PolicyParagraph>
           I write for readers who may not have a medical or scientific background.
         </PolicyParagraph>
@@ -143,7 +143,7 @@ export default function EditorialStandardsPage() {
         <PolicyParagraph>My aim is clarity without oversimplification.</PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="People, not statistics">
+      <PolicySection heading="6. People, not statistics">
         <PolicyParagraph>
           Behind every health statistic are people whose lives and communities may be affected by the
           developments I report.
@@ -158,7 +158,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Headlines">
+      <PolicySection heading="7. Headlines">
         <PolicyParagraph>
           A headline should earn the reader's attention rather than manipulate it.
         </PolicyParagraph>
@@ -172,7 +172,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Developing stories">
+      <PolicySection heading="8. Developing stories">
         <PolicyParagraph>
           When a story is unfolding, I may publish information before every detail is known. In such
           situations, I make uncertainty visible.
@@ -187,7 +187,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Scientific uncertainty">
+      <PolicySection heading="9. Scientific uncertainty">
         <PolicyParagraph>
           Science evolves as new evidence emerges. Further research can strengthen, qualify or
           overturn previous conclusions.
@@ -202,7 +202,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Independence">
+      <PolicySection heading="10. Independence">
         <PolicyParagraph>
           I maintain editorial independence from advertisers, sponsors, commercial partners and
           outside interests.
@@ -216,7 +216,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Conflicts of interest">
+      <PolicySection heading="11. Conflicts of interest">
         <PolicyParagraph>
           Financial, professional and institutional relationships can affect how health information
           is produced, interpreted or perceived.
@@ -228,7 +228,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Corrections and accountability">
+      <PolicySection heading="12. Corrections and accountability">
         <PolicyParagraph>
           Despite my efforts to verify information, errors can occur. When I identify a material
           factual error, I correct it promptly.
@@ -246,7 +246,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="Health information, not medical advice">
+      <PolicySection heading="13. Health information, not medical advice">
         <PolicyParagraph>
           I publish health journalism to inform public understanding of health, medicine and
           scientific research. My reporting does not replace individual medical advice, diagnosis or
@@ -258,7 +258,7 @@ export default function EditorialStandardsPage() {
         </PolicyParagraph>
       </PolicySection>
 
-      <PolicySection heading="My editorial standard">
+      <PolicySection heading="14. My editorial standard">
         <PolicyParagraph>Before publication, I ask myself:</PolicyParagraph>
         <PolicyList
           items={[
