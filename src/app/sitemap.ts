@@ -16,6 +16,7 @@ const STATIC_ROUTES = [
   "/editorial-standards",
   "/ai-policy",
   "/corrections-and-fact-checking",
+  "/medical-disclaimer",
   "/terms-of-service",
   "/privacy-policy",
   "/premium",
