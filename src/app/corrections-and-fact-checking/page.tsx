@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
-import { PolicyGroup, PolicyList, PolicyPage, PolicyParagraph, PolicySection } from "@/components/policy/PolicyPage";
+import Link from "next/link";
+import {
+  PolicyLead,
+  PolicyList,
+  PolicyPage,
+  PolicyParagraph,
+  PolicySection,
+  PolicySubheading,
+} from "@/components/policy/PolicyPage";
 
 export const metadata: Metadata = {
   title: "Corrections & Fact-Checking",
@@ -16,210 +24,441 @@ export const metadata: Metadata = {
 
 export default function CorrectionsAndFactCheckingPage() {
   return (
-    <PolicyPage
-      eyebrow="Corrections & Fact-Checking"
-      title="Corrections & Fact-Checking"
-      intro="Before we ask the reader to believe it"
-    >
-      <PolicyParagraph>Health information does not become true because it is widely shared.</PolicyParagraph>
-      <PolicyParagraph>A study can be real and still be misunderstood.</PolicyParagraph>
-      <PolicyParagraph>A statistic can be accurate and still lack context.</PolicyParagraph>
-      <PolicyParagraph>A claim can come from a respected institution and still require scrutiny.</PolicyParagraph>
-      <PolicyParagraph>Our fact-checking approach is designed around one fundamental question:</PolicyParagraph>
-      <PolicyParagraph>What evidence supports this claim?</PolicyParagraph>
+    <PolicyPage title="Corrections & Fact-Checking" updatedOn="2026-10-24">
+      <PolicyLead>Before we ask readers to believe it, we must examine the evidence.</PolicyLead>
+
       <PolicyParagraph>
-        And when we get it wrong, accuracy also means correcting the record clearly and promptly.
+        Health information does not become true because it is widely shared.
+      </PolicyParagraph>
+      <PolicyParagraph>
+        A study can be genuine and still be misunderstood. A statistic can be accurate and still
+        lack context. A claim can come from a respected institution and still require scrutiny.
+      </PolicyParagraph>
+      <PolicyParagraph>
+        At JOSEPH MMWA, fact-checking begins with a fundamental question:
+      </PolicyParagraph>
+      <PolicyLead>
+        What evidence supports this claim, and does that evidence justify the way it is presented?
+      </PolicyLead>
+      <PolicyParagraph>
+        My approach is to examine the available evidence, identify the original source where
+        possible, understand the limitations of the information and communicate findings accurately.
+        When an error occurs, accountability requires taking reasonable steps to correct the record
+        clearly and promptly.
       </PolicyParagraph>
 
-      <PolicyGroup heading="Fact-Checking">
-        <PolicySection headingLevel={3} heading="Our editorial sequence">
-          <PolicyParagraph>Our working approach is:</PolicyParagraph>
-          <PolicyParagraph>Read → Understand → Verify → Attribute → Write → Publish</PolicyParagraph>
-          <PolicyParagraph>Each stage serves a purpose.</PolicyParagraph>
-          <PolicyParagraph>
-            <strong className="text-white">Read</strong>
-          </PolicyParagraph>
-          <PolicyParagraph>
-            Where possible, we go beyond summaries and examine the original material.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            For research stories, this may mean reviewing the study itself rather than relying solely
-            on a press release or social-media description.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            <strong className="text-white">Understand</strong>
-          </PolicyParagraph>
-          <PolicyParagraph>
-            Before explaining a scientific or medical development, we seek to understand:
-          </PolicyParagraph>
-          <PolicyList
-            items={[
-              "what was actually studied;",
-              "who or what was studied;",
-              "how the study was conducted;",
-              "what the researchers found;",
-              "what they did not find;",
-              "what limitations exist.",
-            ]}
-          />
-          <PolicyParagraph>
-            <strong className="text-white">Verify</strong>
-          </PolicyParagraph>
-          <PolicyParagraph>Claims are checked against sources appropriate to the subject. These may include:</PolicyParagraph>
-          <PolicyList
-            items={[
-              "peer-reviewed research;",
-              "official government data;",
-              "regulatory authorities;",
-              "international health organisations;",
-              "universities and research institutions;",
-              "original documents;",
-              "official statistics;",
-              "credible original reporting.",
-            ]}
-          />
-          <PolicyParagraph>No single source is automatically sufficient for every claim.</PolicyParagraph>
-        </PolicySection>
+      <PolicySection heading="Fact-checking">
+        <PolicySubheading>1. The editorial process</PolicySubheading>
+        <PolicyParagraph>My working approach is:</PolicyParagraph>
+        <p className="font-serif text-base font-bold text-white sm:text-lg">
+          Read → Understand → Verify → Attribute → Write → Review → Publish
+        </p>
+        <PolicyParagraph>
+          Each stage serves a purpose. This sequence describes my editorial approach; the checks
+          required depend on the subject, the evidence available and the potential consequences of an
+          error.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Research is read in context">
-          <PolicyParagraph>
-            We pay attention to distinctions that can materially change the meaning of medical
-            evidence. For example:
-          </PolicyParagraph>
-          <PolicyList
-            items={[
-              "laboratory research versus human research;",
-              "animal studies versus clinical studies;",
-              "observational studies versus controlled trials;",
-              "association versus causation;",
-              "preliminary findings versus established evidence;",
-              "statistical significance versus clinical significance.",
-            ]}
-          />
-        </PolicySection>
+        <PolicySubheading>Read</PolicySubheading>
+        <PolicyParagraph>
+          Where possible, I examine original material rather than relying solely on summaries, press
+          releases, headlines or social-media posts.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          For medical research, this may mean reviewing the published study, clinical trial record,
+          research abstract, supplementary material or relevant regulatory documentation.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When the original material is unavailable, I consider what reliable sources are accessible
+          and whether the available evidence is sufficient to support publication.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Sources and expertise">
-          <PolicyParagraph>Experts can help explain complex evidence.</PolicyParagraph>
-          <PolicyParagraph>But expertise does not eliminate verification.</PolicyParagraph>
-          <PolicyParagraph>
-            Where expert interpretation is used, we consider relevant qualifications, institutional
-            affiliations and potential conflicts of interest.
-          </PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>Understand</PolicySubheading>
+        <PolicyParagraph>
+          Before explaining a scientific or medical development, I seek to establish:
+        </PolicyParagraph>
+        <PolicyList
+          items={[
+            "What was actually studied.",
+            "Who or what was studied.",
+            "How the research was conducted.",
+            "What the researchers found.",
+            "What the findings do not establish.",
+            "What limitations could affect the interpretation.",
+            "Whether the article or announcement accurately reflects the underlying evidence.",
+          ]}
+        />
 
-        <PolicySection headingLevel={3} heading="Viral claims">
-          <PolicyParagraph>Virality is not verification.</PolicyParagraph>
-          <PolicyParagraph>
-            A health claim being repeated across social media does not increase its evidentiary value.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            In some circumstances, widespread circulation is precisely why a claim deserves closer
-            scrutiny.
-          </PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>Verify</PolicySubheading>
+        <PolicyParagraph>
+          I check factual claims against sources appropriate to the subject. Depending on the story,
+          these may include original research, peer-reviewed studies, official government data,
+          regulatory authorities, international health organisations, universities, research
+          institutions, official records and credible original reporting.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          No single source is automatically sufficient for every claim. The verification required
+          depends on the nature of the claim, the reliability of the source and the consequences of
+          getting it wrong.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="AI-generated information">
-          <PolicyParagraph>
-            Information generated by AI is not accepted as a substitute for primary evidence or
-            authoritative sources.
-          </PolicyParagraph>
-          <PolicyParagraph>AI can assist research. It cannot independently verify itself.</PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>Attribute</PolicySubheading>
+        <PolicyParagraph>
+          I identify where information originated and distinguish between my own reporting, findings
+          from researchers, statements from institutions and reporting published by other
+          journalists.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where information comes from an external publication or original reporter, I seek to
+          acknowledge that source appropriately. I do not present another journalist's original
+          reporting as my own.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Attribution">
-          <PolicyParagraph>
-            When information originates elsewhere, we seek to identify the original reporting or
-            source.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            Fact-checking is not simply about deciding whether something is true. It is also about
-            understanding where the information came from and how confidently it can be presented.
-          </PolicyParagraph>
-        </PolicySection>
-      </PolicyGroup>
+        <PolicySubheading>Review</PolicySubheading>
+        <PolicyParagraph>
+          Before publication, I assess whether the article's claims, quotations, figures,
+          headline and conclusions are supported by the available evidence.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I pay particular attention to details that could materially change the meaning of a story,
+          especially medical claims, statistics, dates, study findings and statements attributed to
+          individuals or institutions.
+        </PolicyParagraph>
 
-      <PolicyGroup heading="Corrections">
-        <PolicySection headingLevel={3} heading="Accuracy includes what happens after publication">
-          <PolicyParagraph>Every newsroom wants to be accurate.</PolicyParagraph>
-          <PolicyParagraph>A trustworthy newsroom also knows what to do when it is not.</PolicyParagraph>
-          <PolicyParagraph>
-            If JOSEPH MMWA publishes a material factual error, we believe the responsible response is
-            to correct the record clearly and promptly.
-          </PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>2. Research must be understood in context</PolicySubheading>
+        <PolicyParagraph>
+          Scientific findings can be misrepresented even when individual facts are technically
+          correct. Context matters.
+        </PolicyParagraph>
+        <PolicyParagraph>I pay particular attention to distinctions such as:</PolicyParagraph>
+        <PolicyList
+          items={[
+            "Laboratory research versus research involving humans.",
+            "Animal studies versus human clinical studies.",
+            "Observational studies versus randomised controlled trials.",
+            "Association versus causation.",
+            "Preliminary findings versus established evidence.",
+            "Statistical significance versus clinical significance.",
+            "Relative risk reduction versus absolute risk reduction.",
+            "Research results versus regulatory approval or established clinical practice.",
+          ]}
+        />
+        <PolicyParagraph>
+          I also consider the size and design of a study, its limitations, the population studied and
+          whether the conclusions are supported by the results.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          A promising result is not automatically a proven treatment. A study involving a small group
+          of participants does not necessarily establish effectiveness across a wider population. A
+          press release's interpretation of a study does not replace examination of the available
+          evidence.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          My reporting should reflect what the evidence supports, not what would make the story more
+          dramatic.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="What we correct">
-          <PolicyParagraph>We may issue a correction for material errors involving:</PolicyParagraph>
-          <PolicyList
-            items={[
-              "names;",
-              "dates;",
-              "locations;",
-              "numbers;",
-              "medical findings;",
-              "study details;",
-              "quotations;",
-              "attribution;",
-              "institutions;",
-              "descriptions of events;",
-              "other facts that materially affect the reader's understanding.",
-            ]}
-          />
-        </PolicySection>
+        <PolicySubheading>3. Sources and expertise</PolicySubheading>
+        <PolicyParagraph>
+          Experts can help explain complex research, interpret findings and provide context. However,
+          expertise does not eliminate the need for verification.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where expert commentary is used, I consider relevant qualifications, experience,
+          institutional affiliations and potential conflicts of interest.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I distinguish between an expert's interpretation and established findings. I also
+          consider whether a source has direct knowledge of the issue being discussed.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When a material claim requires clarification or a response from a relevant institution or
+          individual, I may seek comment from the appropriate source. Where such contact is material
+          to the story, I aim to represent the response fairly and distinguish a response received
+          from a request that remains unanswered.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I do not invent expert opinions, interviews, quotations or institutional responses.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Correction or update?">
-          <PolicyParagraph>Not every change is a correction.</PolicyParagraph>
-          <PolicyParagraph>
-            An update adds new verified information that was not available when the article was
-            originally published.
-          </PolicyParagraph>
-          <PolicyParagraph>A correction addresses information that was previously published inaccurately.</PolicyParagraph>
-          <PolicyParagraph>Where appropriate, we distinguish between the two.</PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>4. Official statements and press releases</PolicySubheading>
+        <PolicyParagraph>
+          Official statements, press releases and institutional announcements can be valuable sources
+          of information, but they are not automatically conclusive evidence.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I assess what the announcement establishes, what evidence it provides and whether its
+          claims require further verification.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where an institution describes a development as a breakthrough, a first, a major advance or
+          a success, I seek to establish whether the available evidence supports that description.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I distinguish between what an organisation says, what the underlying evidence shows and
+          what remains uncertain.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="We do not quietly erase significant mistakes">
-          <PolicyParagraph>
-            For material errors, we may include a correction notice explaining what was incorrect and
-            what has been changed.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            The purpose is not to draw attention away from the mistake. It is to give readers an
-            accurate record.
-          </PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>5. Statistics and numerical claims</PolicySubheading>
+        <PolicyParagraph>
+          Numbers can be misleading when their definitions, time periods, denominators or limitations
+          are omitted.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When reporting statistics, I seek to verify the original source and understand what the
+          figures measure, the population they cover and the period to which they apply.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where relevant, I distinguish estimates from confirmed counts, projections from observed
+          outcomes and percentages from absolute numbers.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I do not knowingly change a figure's meaning through selective presentation,
+          misleading comparisons or the removal of important context.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          If a statistic cannot be traced to a sufficiently reliable source, I assess whether it can
+          responsibly be used, qualified or should be omitted.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Serious errors">
-          <PolicyParagraph>
-            Where an error substantially undermines an article, we may take additional action,
-            including prominent correction, substantial revision or withdrawal of the article where
-            necessary.
-          </PolicyParagraph>
-          <PolicyParagraph>The response should be proportionate to the seriousness of the error.</PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>6. Breaking news and developing claims</PolicySubheading>
+        <PolicyParagraph>
+          Breaking health news may emerge before all relevant details are available.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          In such situations, I distinguish confirmed information from preliminary reports,
+          attributed claims and details that remain under verification.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I identify uncertainty where it matters and update stories when material new information
+          becomes available.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Speed does not justify presenting an unconfirmed claim as established fact. If the
+          available evidence is insufficient, I may wait for confirmation, narrow the claim or
+          explain what remains unknown.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Reader corrections">
-          <PolicyParagraph>Readers are encouraged to alert us to potential errors.</PolicyParagraph>
-          <PolicyParagraph>A useful correction request should identify:</PolicyParagraph>
-          <PolicyList items={["the article;", "the specific statement;", "why it may be inaccurate;", "evidence supporting the concern."]} />
-          <PolicyParagraph>
-            A correction request does not automatically result in a correction. We review claims
-            against the available evidence.
-          </PolicyParagraph>
-        </PolicySection>
+        <PolicySubheading>7. Viral claims and misinformation</PolicySubheading>
+        <PolicyParagraph>
+          <strong className="text-white">Virality is not verification.</strong>
+        </PolicyParagraph>
+        <PolicyParagraph>
+          A claim repeated across social media does not become more reliable because it has attracted
+          attention or been shared by prominent accounts.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When examining a viral health claim, I seek to identify its origin, check the evidence it
+          relies on and assess whether it accurately represents the available facts.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I distinguish between demonstrably false claims, unsupported claims, misleading
+          interpretations and questions that remain unresolved. I do not label a claim false merely
+          because evidence is incomplete, nor describe a claim as established simply because it has
+          not been disproved.
+        </PolicyParagraph>
 
-        <PolicySection headingLevel={3} heading="Our standard">
-          <PolicyParagraph>We do not ask: &quot;Is this interesting enough to publish?&quot;</PolicyParagraph>
-          <PolicyParagraph>We ask: &quot;Do we have enough evidence to present this as fact?&quot;</PolicyParagraph>
-          <PolicyParagraph>
-            We do not consider a correction an admission that journalism has failed. We consider
-            refusing to correct a known error the greater failure.
-          </PolicyParagraph>
-          <PolicyParagraph>
-            We will not defend an error simply because it has already been published. When the
-            evidence changes—or when we discover that we were wrong—we will act accordingly.
-          </PolicyParagraph>
-        </PolicySection>
-      </PolicyGroup>
+        <PolicySubheading>8. AI-assisted fact-checking</PolicySubheading>
+        <PolicyParagraph>
+          AI tools may assist with research organisation, document analysis, identifying claims that
+          require checking and reviewing drafts for possible inconsistencies.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          However, AI-generated information is not treated as proof, and AI-assisted fact-checking is
+          not infallible.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          AI systems can misinterpret research, invent references, omit qualifications and produce
+          inaccurate conclusions. Where AI identifies a source or makes a factual claim, I seek to
+          check it against the original material or another appropriate reliable source before
+          relying on it.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          AI does not replace source verification or editorial judgment. I remain responsible for the
+          accuracy and attribution of the material I publish.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Further information is available in the{" "}
+          <Link href="/ai-policy" className="font-semibold text-accent hover:underline">
+            AI Policy
+          </Link>
+          .
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="9. Corrections">
+        <PolicyLead>Accuracy includes what happens after publication</PolicyLead>
+        <PolicyParagraph>
+          I aim to publish accurate journalism, but errors can occur despite reasonable efforts to
+          verify information.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When I identify a material factual error, I seek to correct it promptly and transparently. I
+          do not defend a known error simply because it has already been published.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Accountability requires assessing the evidence, determining what was wrong and taking
+          appropriate action.
+        </PolicyParagraph>
+
+        <PolicySubheading>What may warrant a correction?</PolicySubheading>
+        <PolicyParagraph>Corrections may be necessary for material errors involving:</PolicyParagraph>
+        <PolicyList
+          items={[
+            "Names, titles or identities.",
+            "Dates, locations or timelines.",
+            "Figures, statistics or numerical comparisons.",
+            "Medical findings or descriptions of research.",
+            "Quotations or statements attributed to individuals.",
+            "Sources, attribution or institutional affiliations.",
+            "Descriptions of events or public-health developments.",
+            "Claims about medicines, vaccines, treatments or medical risks.",
+            "Other factual details that materially affect a reader's understanding.",
+          ]}
+        />
+        <PolicyParagraph>
+          Not every editorial preference or minor wording change amounts to a factual correction. The
+          appropriate response depends on the nature and significance of the issue.
+        </PolicyParagraph>
+
+        <PolicySubheading>Corrections, updates and clarifications</PolicySubheading>
+        <PolicyParagraph>These terms describe different editorial actions.</PolicyParagraph>
+        <PolicyParagraph>
+          <strong className="text-white">Correction:</strong> Addresses information that was
+          published inaccurately or incorrectly. For a material error, I aim to identify the
+          correction and explain what has changed.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          <strong className="text-white">Update:</strong> Adds new verified information or
+          developments that became available after the original publication. An update does not
+          necessarily mean the original article was wrong.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          <strong className="text-white">Clarification:</strong> Makes wording or context clearer
+          where the original presentation could reasonably have caused misunderstanding, even if the
+          underlying facts were not necessarily incorrect.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where appropriate, I distinguish these actions so readers can understand why an article has
+          changed.
+        </PolicyParagraph>
+
+        <PolicySubheading>How significant errors are handled</PolicySubheading>
+        <PolicyParagraph>
+          When a material error is confirmed, I aim to correct the article and provide a correction
+          notice explaining the issue and the change made.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where an error substantially undermines a story, further action may be necessary. Depending
+          on the circumstances, this may include a prominent correction, substantial revision,
+          withdrawal of the article or a notice explaining why it is no longer available.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          The response should be proportionate to the seriousness of the error and the risk of
+          continued misunderstanding.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I do not promise that every correction will take the same form. I commit to assessing
+          identified errors and taking appropriate action based on the available evidence.
+        </PolicyParagraph>
+
+        <PolicySubheading>Corrections to developing stories</PolicySubheading>
+        <PolicyParagraph>
+          An article may be accurate based on the information available at the time of publication
+          and later require an update as events develop.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          However, new information does not automatically excuse an earlier factual error. If the
+          original article contained a material inaccuracy, I assess whether a correction is
+          warranted in addition to any update.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where a significant change affects the meaning of a story, readers should not be left with
+          a misleading impression of what was originally reported.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="10. How readers can request a correction">
+        <PolicyParagraph>
+          Readers are encouraged to report potential factual errors, misleading claims or problems
+          with source attribution.
+        </PolicyParagraph>
+        <PolicyParagraph>Send correction requests to:</PolicyParagraph>
+        <PolicyParagraph>
+          <a href="mailto:contact@josephmmwa.com" className="font-semibold text-accent hover:underline">
+            contact@josephmmwa.com
+          </a>
+        </PolicyParagraph>
+        <PolicyParagraph>Where possible, include:</PolicyParagraph>
+        <PolicyList
+          items={[
+            "The article's headline or URL.",
+            "The specific statement or passage in question.",
+            "An explanation of why it may be inaccurate or misleading.",
+            "Supporting evidence, such as an original research paper, official record or relevant source.",
+          ]}
+        />
+        <PolicyParagraph>
+          Providing supporting evidence can help me assess the concern more efficiently.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I review correction requests against the available evidence and editorial standards. A
+          request does not automatically establish that an error occurred or guarantee a change, but
+          credible concerns deserve consideration.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          Where further information is necessary, I may seek clarification before deciding what
+          action is appropriate.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="11. Accountability and transparency">
+        <PolicyParagraph>
+          I believe trust is strengthened when readers can understand how information was assessed
+          and when mistakes are acknowledged.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          I aim to make corrections clear enough for readers to understand what changed and why. I
+          also seek to preserve the distinction between an error, a legitimate update and a change in
+          scientific understanding.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          A correction is not proof that all journalism has failed. Refusing to address a known
+          material error undermines accountability.
+        </PolicyParagraph>
+        <PolicyParagraph>
+          When evidence shows that a report was wrong, I will seek to correct the record rather than
+          defend the original claim without justification.
+        </PolicyParagraph>
+      </PolicySection>
+
+      <PolicySection heading="Our standard">
+        <PolicyParagraph>Before publication, I ask:</PolicyParagraph>
+        <PolicyList
+          items={[
+            "What evidence supports this claim?",
+            "Have I checked the original source where possible?",
+            "Does the evidence justify the wording of the article and headline?",
+            "Have I understood the research and its limitations?",
+            "Have I attributed information fairly?",
+            "Have I communicated uncertainty honestly?",
+            "Would a reader be able to trace important claims to their supporting sources?",
+          ]}
+        />
+        <PolicyParagraph>After publication, I ask a related question:</PolicyParagraph>
+        <PolicyLead>
+          If credible evidence shows that something is wrong, am I prepared to correct it clearly and
+          promptly?
+        </PolicyLead>
+        <PolicyParagraph>
+          These questions guide my approach to fact-checking and corrections at JOSEPH MMWA.
+        </PolicyParagraph>
+        <PolicyLead>
+          The objective is not to claim that errors are impossible. It is to make evidence central to
+          publication, treat readers fairly and take responsibility when the record needs to be
+          corrected.
+        </PolicyLead>
+      </PolicySection>
     </PolicyPage>
   );
 }
