@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function EditorialStandardsPage() {
   return (
-    <PolicyPage eyebrow="Policy" title="Editorial Standards" updatedOn="2026-10-24">
+    <PolicyPage title="Editorial Standards" updatedOn="2026-10-24">
       <PolicyParagraph>
         Health journalism carries particular responsibilities. A health story can influence what
         people believe, the treatment they seek, the decisions a family makes or how a community
