@@ -70,6 +70,8 @@ interface ArticleInput {
   readTimeMinutes: number | null;
   premium: boolean;
   correctionNote: string | null;
+  /** Accepted for form compatibility; not persisted until a safe migration is applied. */
+  medicalDisclaimerMode?: string;
   sources: ArticleSource[];
 }
 
