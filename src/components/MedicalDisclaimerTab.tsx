@@ -2,53 +2,122 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
-/** Routes where the floating medical-disclaimer tab is hidden. */
-const HIDDEN_PREFIXES = [
-  "/about",
-  "/contact",
-  "/advertise",
-  "/editorial-standards",
-  "/corrections-and-fact-checking",
-  "/ai-policy",
-  "/privacy-policy",
-  "/terms-of-service",
-  "/medical-disclaimer",
-  "/admin",
-  "/sign-in",
-  "/sign-up",
-  "/reset-password",
-  "/account",
-  "/premium",
-] as const;
+const SESSION_KEY = "mmwa_medical_disclaimer_dismissed";
 
-function shouldHide(pathname: string | null): boolean {
-  if (!pathname) return true;
-  return HIDDEN_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
-  );
+/** Delay before the notice slides in (reading pace). */
+const APPEAR_DELAY_MS = 4500;
+/** How long it remains fully visible before auto-hiding. */
+const VISIBLE_HOLD_MS = 6000;
+/** Slow slide duration — not rushed. */
+const SLIDE_MS = 1400;
+
+function isArticlePath(pathname: string | null): boolean {
+  return !!pathname && (pathname === "/article" || pathname.startsWith("/article/"));
 }
 
 /**
- * Distinct edge tab linking to the Medical Disclaimer.
- * Shown on public news pages; hidden on Information, Editorial and auth routes.
+ * Quiet medical-disclaimer notice on article pages only.
+ * Slides in slowly from the left a few seconds after open, holds, then
+ * slides away. Can be dismissed with X. Kept on the upper-left so it stays
+ * clear of “You may also like” (right rail / end of article).
  */
 export function MedicalDisclaimerTab() {
   const pathname = usePathname();
-  if (shouldHide(pathname)) return null;
+  const onArticle = isArticlePath(pathname);
+
+  const [phase, setPhase] = useState<"idle" | "in" | "out" | "gone">("idle");
+
+  const dismiss = useCallback(() => {
+    setPhase("out");
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!onArticle) {
+      setPhase("idle");
+      return;
+    }
+
+    try {
+      if (sessionStorage.getItem(SESSION_KEY) === "1") {
+        setPhase("gone");
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    setPhase("idle");
+
+    const appearTimer = window.setTimeout(() => setPhase("in"), APPEAR_DELAY_MS);
+    const holdTimer = window.setTimeout(
+      () => setPhase("out"),
+      APPEAR_DELAY_MS + VISIBLE_HOLD_MS
+    );
+
+    return () => {
+      window.clearTimeout(appearTimer);
+      window.clearTimeout(holdTimer);
+    };
+  }, [onArticle, pathname]);
+
+  useEffect(() => {
+    if (phase !== "out") return;
+    const done = window.setTimeout(() => setPhase("gone"), SLIDE_MS + 80);
+    return () => window.clearTimeout(done);
+  }, [phase]);
+
+  if (!onArticle || phase === "idle" || phase === "gone") return null;
+
+  const visible = phase === "in";
 
   return (
-    <Link
-      href="/medical-disclaimer"
-      aria-label="Medical Disclaimer — health information is not medical advice"
-      className="group fixed right-0 top-1/2 z-50 -translate-y-1/2 border border-r-0 border-accent bg-black px-2 py-4 shadow-lg transition-colors hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    <div
+      role="complementary"
+      aria-label="Medical disclaimer notice"
+      className="pointer-events-none fixed left-0 top-[22%] z-40 w-[min(100%,18rem)] sm:top-[24%] sm:w-72"
     >
-      <span
-        className="block text-[11px] font-extrabold uppercase tracking-[0.2em] text-accent transition-colors group-hover:text-black"
-        style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+      <div
+        className="pointer-events-auto border border-l-0 border-accent/80 bg-black/95 shadow-lg backdrop-blur-sm"
+        style={{
+          transform: visible ? "translateX(0)" : "translateX(-105%)",
+          opacity: visible ? 1 : 0.85,
+          transition: `transform ${SLIDE_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${SLIDE_MS}ms ease`,
+        }}
       >
-        Medical Disclaimer
-      </span>
-    </Link>
+        <div className="relative px-4 pb-3.5 pt-3">
+          <button
+            type="button"
+            onClick={dismiss}
+            aria-label="Dismiss medical disclaimer notice"
+            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-muted transition-colors hover:bg-white/10 hover:text-offwhite"
+          >
+            <span aria-hidden className="text-base leading-none">
+              ×
+            </span>
+          </button>
+
+          <p className="pr-7 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+            Medical disclaimer
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-gray-secondary-light">
+            Health information is for public understanding. Medical decisions require appropriate
+            professional guidance.
+          </p>
+          <Link
+            href="/medical-disclaimer"
+            className="mt-2.5 inline-block text-xs font-semibold text-accent underline-offset-2 transition-colors hover:underline"
+          >
+            Read full disclaimer →
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
