@@ -37,6 +37,11 @@ export default function EditorialStandardsPage() {
         My purpose is to help readers understand the developments shaping health, medicine, science
         and public health across Kenya, Africa and the world.
       </PolicyParagraph>
+      <PolicyParagraph>
+        The following editorial standards outline the principles and practices that guide how I
+        research, verify, report and present health news at JOSEPH MMWA. They reflect my commitment
+        to accuracy, transparency, fairness and accountability in health journalism.
+      </PolicyParagraph>
 
       <PolicySection heading="What I cover">
         <PolicyParagraph>
@@ -206,8 +211,8 @@ export default function EditorialStandardsPage() {
           Commercial relationships do not purchase editorial coverage or determine my conclusions.
         </PolicyParagraph>
         <PolicyParagraph>
-          I ensure that sponsored and commercial content is clearly distinguishable from independent
-          editorial journalism.
+          I ensure that sponsored and commercial content is clearly distinguishable from editorial
+          journalism.
         </PolicyParagraph>
       </PolicySection>
 
@@ -255,12 +260,17 @@ export default function EditorialStandardsPage() {
 
       <PolicySection heading="My editorial standard">
         <PolicyParagraph>Before publication, I ask myself:</PolicyParagraph>
-        <PolicyParagraph>
-          Is it accurate? Is it supported by reliable evidence? Have I understood the findings
-          correctly? Have I attributed the original work fairly? Have I given readers enough context?
-          Have I communicated uncertainty honestly? Have I considered the people affected by the
-          story?
-        </PolicyParagraph>
+        <PolicyList
+          items={[
+            "Is it accurate?",
+            "Is it supported by reliable evidence?",
+            "Have I understood the findings correctly?",
+            "Have I attributed the original work fairly?",
+            "Have I given readers enough context?",
+            "Have I communicated uncertainty honestly?",
+            "Have I considered the people affected by the story?",
+          ]}
+        />
         <PolicyParagraph>
           Would I stand behind this reporting if a reader, researcher or subject challenged it
           tomorrow?
