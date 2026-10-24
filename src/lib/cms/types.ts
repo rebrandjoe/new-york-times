@@ -1,7 +1,6 @@
 import type { ContentBlock } from "./blocks";
-import type { MedicalDisclaimerMode } from "./medical-disclaimer";
 
-export type { MedicalDisclaimerMode };
+export type MedicalDisclaimerMode = "auto" | "show" | "hide";
 
 export interface CmsCategory {
   id: string;
@@ -37,11 +36,8 @@ export type ArticleStatus = "draft" | "scheduled" | "published" | "unpublished";
 
 /** One attribution source on an article (admin multi-source form). */
 export interface ArticleSource {
-  /** Optional journalist, reporter, author, or named spokesperson. */
   author: string | null;
-  /** Publication, media outlet, or organisation. */
   publication: string;
-  /** Direct URL to the original material. */
   url: string | null;
 }
 
@@ -68,9 +64,8 @@ export interface CmsArticle {
   canonicalUrl: string | null;
   correctionNote: string | null;
   socialImage: CmsMedia | null;
-  /** Article-level control for the in-article medical disclaimer notice. Defaults to auto. */
+  /** Optional; not required for rendering until a DB column is safely added. */
   medicalDisclaimerMode?: MedicalDisclaimerMode;
-  /** Structured sources for the article accordion (independent per article). */
   sources: ArticleSource[];
   source: {
     name: string | null;
