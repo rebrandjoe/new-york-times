@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { PaystackCheckoutButton } from "@/components/PaystackCheckoutButton";
 import { PaypalCheckoutButton } from "@/components/PaypalCheckoutButton";
 import { LogoMark, Tagline } from "@/components/Wordmark";
@@ -35,7 +36,6 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-/** Safaricom M-PESA wordmark style (green bar). */
 function MpesaBrand() {
   return (
     <span
@@ -47,7 +47,6 @@ function MpesaBrand() {
   );
 }
 
-/** Visa + Mastercard marks side by side. */
 function CardBrands() {
   return (
     <span className="inline-flex items-center gap-1.5" aria-hidden>
@@ -62,7 +61,6 @@ function CardBrands() {
   );
 }
 
-/** PayPal wordmark (navy + blue). */
 function PaypalBrand() {
   return (
     <span
@@ -90,7 +88,6 @@ export default function PremiumPage() {
     setIsMounted(true);
   }, []);
 
-  // Display-only prices for UI. Server loads authoritative amounts from subscription_plans.
   const pricing = {
     monthly: {
       KES: 260,
@@ -133,11 +130,11 @@ export default function PremiumPage() {
             Member Access
           </p>
           <h1 className="mt-4 font-serif text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            Health journalism beyond the headlines.
+            Health Journalism Beyond The Headlines
           </h1>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-gray-secondary-light sm:text-base">
-            Independent reporting. Deeper analysis. A clearer understanding of the health
-            issues shaping our world.
+            Access exclusive health investigations, research analysis, and selected reports
+            from the Joseph Mmwa archive, all with an ad-free reading experience.
           </p>
         </div>
 
@@ -306,7 +303,14 @@ export default function PremiumPage() {
             </div>
 
             <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-muted">
-              Secure payment processing. Review your billing terms before subscribing.
+              Secure payment processing. Review your{" "}
+              <Link
+                href="/privacy-policy"
+                className="font-semibold text-accent underline-offset-2 hover:underline"
+              >
+                privacy policy
+              </Link>{" "}
+              before subscribing.
             </p>
           </div>
         </div>
