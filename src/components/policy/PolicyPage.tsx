@@ -1,43 +1,54 @@
 import type { ReactNode } from "react";
 
-/** Shared shell for the site's long-form policy pages (editorial policy,
- * AI policy, fact-checking, corrections, terms of service) — single
- * reading column, no card grids, thin dividers between sections. */
+/** Shared shell for long-form policy pages — single reading column. */
 export function PolicyPage({
   eyebrow,
   title,
   intro,
   updatedOn,
+  effectiveOn,
   children,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   intro?: string;
-  /** Faint but readable date line under the headline, e.g. "24 October 2026". */
+  /** Faint date under headline, e.g. "2026-10-24". */
   updatedOn?: string;
+  /** Alternate label: Effective on … */
+  effectiveOn?: string;
   children: ReactNode;
 }) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">{eyebrow}</p>
-      <h1 className="mt-3 font-serif text-3xl font-extrabold leading-[1.1] text-white sm:text-4xl">
+      {eyebrow && (
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">{eyebrow}</p>
+      )}
+      <h1
+        className={`font-serif text-3xl font-extrabold leading-[1.1] text-white sm:text-4xl ${
+          eyebrow ? "mt-3" : ""
+        }`}
+      >
         {title}
       </h1>
       {updatedOn && (
         <p className="mt-3 text-sm text-gray-muted/90">
-          Updated on <time dateTime={updatedOn}>{formatUpdatedOn(updatedOn)}</time>
+          Updated on <time dateTime={updatedOn}>{formatPolicyDate(updatedOn)}</time>
+        </p>
+      )}
+      {effectiveOn && (
+        <p className="mt-3 text-sm text-gray-muted/90">
+          Effective on <time dateTime={effectiveOn}>{formatPolicyDate(effectiveOn)}</time>
         </p>
       )}
       {intro && (
         <p className="mt-6 font-serif text-lg font-bold text-white sm:text-xl">{intro}</p>
       )}
-      <div className={intro || updatedOn ? "mt-10" : "mt-8"}>{children}</div>
+      <div className={intro || updatedOn || effectiveOn ? "mt-10" : "mt-8"}>{children}</div>
     </div>
   );
 }
 
-function formatUpdatedOn(isoOrDisplay: string): string {
-  // Accept ISO date (YYYY-MM-DD) or a pre-formatted display string.
+function formatPolicyDate(isoOrDisplay: string): string {
   if (/^\d{4}-\d{2}-\d{2}$/.test(isoOrDisplay)) {
     const d = new Date(`${isoOrDisplay}T12:00:00Z`);
     if (!Number.isNaN(d.getTime())) {
@@ -59,7 +70,6 @@ export function PolicySection({
 }: {
   heading: string;
   children: ReactNode;
-  /** Use 3 when nested inside a PolicyGroup, so the page's heading outline stays correct. */
   headingLevel?: 2 | 3;
 }) {
   const Heading = headingLevel === 3 ? "h3" : "h2";
@@ -71,9 +81,6 @@ export function PolicySection({
   );
 }
 
-/** Groups several PolicySections under one major heading — for pages that
- * merge more than one former policy into distinct parts (e.g. Corrections
- * & Fact-Checking). */
 export function PolicyGroup({ heading, children }: { heading: string; children: ReactNode }) {
   return (
     <div className="mt-14 border-t-2 border-accent/30 pt-10 first:mt-10">
@@ -98,5 +105,12 @@ export function PolicyList({ items }: { items: ReactNode[] }) {
         <li key={index}>{item}</li>
       ))}
     </ul>
+  );
+}
+
+/** Subheading inside a PolicySection (e.g. Account information under §1). */
+export function PolicySubheading({ children }: { children: ReactNode }) {
+  return (
+    <h3 className="mt-6 font-serif text-lg font-bold text-white first:mt-0 sm:text-xl">{children}</h3>
   );
 }
