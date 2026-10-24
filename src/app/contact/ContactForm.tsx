@@ -54,7 +54,7 @@ export function ContactForm() {
             name="subject"
             required
             defaultValue=""
-            className="focus-ring w-full appearance-none border border-white/15 bg-charcoal-deep px-4 py-3 pr-10 text-sm text-offwhite transition-colors hover:border-accent/50 focus:border-accent"
+            className="focus-ring w-full appearance-none border border-white/25 bg-black px-4 py-3 pr-10 text-sm text-white transition-colors hover:border-white/40 focus:border-accent focus:bg-[#0a0a0a]"
             style={{
               colorScheme: "dark",
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f0a83a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
@@ -63,15 +63,11 @@ export function ContactForm() {
               backgroundSize: "1.15rem",
             }}
           >
-            <option value="" disabled className="bg-charcoal-deep text-gray-muted">
+            <option value="" disabled className="bg-black text-gray-muted">
               Select a subject…
             </option>
             {SUBJECT_OPTIONS.map((option) => (
-              <option
-                key={option}
-                value={option}
-                className="bg-charcoal-deep text-offwhite"
-              >
+              <option key={option} value={option} className="bg-black text-white">
                 {option}
               </option>
             ))}
