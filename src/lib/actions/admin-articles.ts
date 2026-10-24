@@ -75,7 +75,6 @@ interface ArticleInput {
   readTimeMinutes: number | null;
   premium: boolean;
   correctionNote: string | null;
-  /** auto | show | hide — article-level medical disclaimer control. */
   medicalDisclaimerMode?: MedicalDisclaimerMode;
   sources: ArticleSource[];
 }
@@ -381,10 +380,17 @@ export async function applyMedicalDisclaimerClassifications(options?: {
     if (!error) updated += 1;
   }
 
-  await logAdminAction(supabase, user.email!, "apply_medical_disclaimer_modes", "articles", null, {
-    updated,
-    forceAll: !!options?.forceAll,
-  });
+  await logAdminAction(
+    supabase,
+    user.email!,
+    "apply_medical_disclaimer_modes",
+    "articles",
+    "bulk",
+    {
+      updated,
+      forceAll: !!options?.forceAll,
+    }
+  );
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { updated };
