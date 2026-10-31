@@ -109,6 +109,7 @@ export function ArticleView({
   const showUpdated = wasUpdatedAfterPublish(article.publicationDate, article.updatedAt);
   const alsoRead = related.map(toHomepageArticle);
   const bottomRelated = related.slice(0, 4);
+  const bodySources = article.sources ?? [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -244,12 +245,12 @@ export function ArticleView({
       ) : null}
 
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlockRenderer blocks={bodyFirst} />
+        <BlockRenderer blocks={bodyFirst} sources={bodySources} />
 
         {/* Mobile/tablet: mid-article swipe (hidden on desktop) */}
         {!premiumLocked && alsoRead.length > 0 && <AlsoReadMid articles={alsoRead} />}
 
-        {bodySecond.length > 0 && <BlockRenderer blocks={bodySecond} />}
+        {bodySecond.length > 0 && <BlockRenderer blocks={bodySecond} sources={bodySources} />}
 
         {premiumLocked && <PaywallNotice />}
         {!premiumLocked && article.correctionNote && (
