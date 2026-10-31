@@ -1,21 +1,29 @@
 import Image from "next/image";
 import type { ContentBlock } from "@/lib/cms/blocks";
 import { renderInlineMarkup } from "@/lib/cms/inline-markup";
+import type { ArticleSource } from "@/lib/cms/types";
 
-export function BlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
+export function BlockRenderer({
+  blocks,
+  sources,
+}: {
+  blocks: ContentBlock[];
+  /** When provided, source publication/author names in body text become subtle links. */
+  sources?: ArticleSource[];
+}) {
   return (
     <div className="article-body space-y-0">
       {blocks.map((block, i) => (
-        <Block key={i} block={block} />
+        <Block key={i} block={block} sources={sources} />
       ))}
     </div>
   );
 }
 
-function ParagraphBody({ text }: { text: string }) {
+function ParagraphBody({ text, sources }: { text: string; sources?: ArticleSource[] }) {
   // Soft line breaks (Shift+Enter) stored as \n → <br />
   if (!text.includes("\n")) {
-    return <>{renderInlineMarkup(text)}</>;
+    return <>{renderInlineMarkup(text, sources)}</>;
   }
   const lines = text.split("\n");
   return (
@@ -23,14 +31,14 @@ function ParagraphBody({ text }: { text: string }) {
       {lines.map((line, i) => (
         <span key={i}>
           {i > 0 && <br />}
-          {renderInlineMarkup(line)}
+          {renderInlineMarkup(line, sources)}
         </span>
       ))}
     </>
   );
 }
 
-function Block({ block }: { block: ContentBlock }) {
+function Block({ block, sources }: { block: ContentBlock; sources?: ArticleSource[] }) {
   switch (block.type) {
     case "paragraph":
       // Empty paragraph = intentional blank line (Enter on a blank line in the editor).
@@ -40,7 +48,7 @@ function Block({ block }: { block: ContentBlock }) {
       }
       return (
         <p className="mb-6 whitespace-pre-wrap text-lg leading-relaxed text-offwhite last:mb-0">
-          <ParagraphBody text={block.text} />
+          <ParagraphBody text={block.text} sources={sources} />
         </p>
       );
 
@@ -51,7 +59,7 @@ function Block({ block }: { block: ContentBlock }) {
       const top = block.level === 1 ? "mt-10 mb-4" : block.level === 2 ? "mt-10 mb-4" : "mt-8 mb-3";
       return (
         <Tag className={`font-serif font-extrabold ${color} ${sizes[block.level]} ${top}`}>
-          {renderInlineMarkup(block.text)}
+          {renderInlineMarkup(block.text, sources)}
         </Tag>
       );
     }
@@ -65,7 +73,7 @@ function Block({ block }: { block: ContentBlock }) {
           }`}
         >
           {block.items.map((item, i) => (
-            <li key={i}>{renderInlineMarkup(item)}</li>
+            <li key={i}>{renderInlineMarkup(item, sources)}</li>
           ))}
         </ListTag>
       );
@@ -74,7 +82,7 @@ function Block({ block }: { block: ContentBlock }) {
     case "blockquote":
       return (
         <blockquote className="mb-6 border-l-2 border-accent pl-5 text-lg italic leading-relaxed text-gray-secondary-light">
-          {renderInlineMarkup(block.text)}
+          {renderInlineMarkup(block.text, sources)}
         </blockquote>
       );
 
@@ -82,7 +90,7 @@ function Block({ block }: { block: ContentBlock }) {
       return (
         <figure className="my-8 border-y border-charcoal py-6 text-center">
           <blockquote className="font-serif text-2xl font-bold leading-snug text-white sm:text-3xl">
-            {renderInlineMarkup(block.text)}
+            {renderInlineMarkup(block.text, sources)}
           </blockquote>
           {block.attribution && (
             <figcaption className="mt-3 text-sm text-gray-muted">{block.attribution}</figcaption>
