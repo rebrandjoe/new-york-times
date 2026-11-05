@@ -5,8 +5,14 @@ import { redirect } from "next/navigation";
 import { requireAdmin, logAdminAction } from "@/lib/cms/admin-guard";
 import { getArticleForEdit, getAdminArticles } from "@/lib/cms/admin-queries";
 import { estimateReadTimeMinutes, type ContentBlock } from "@/lib/cms/blocks";
-import { ARTICLE_SELECT, mapRowToCmsArticle, serializeArticleSources, type RawArticleRow } from "@/lib/cms/mappers";
-import type { ArticleSource } from "@/lib/cms/types";
+import {
+  ARTICLE_SELECT,
+  mapRowToCmsArticle,
+  parseMedicalDisclaimerMode,
+  serializeArticleSources,
+  type RawArticleRow,
+} from "@/lib/cms/mappers";
+import type { ArticleSource, MedicalDisclaimerMode } from "@/lib/cms/types";
 import { sendNewArticlePush } from "@/lib/push/send";
 import type { Json } from "@/lib/supabase/database.types";
 
@@ -70,8 +76,8 @@ interface ArticleInput {
   readTimeMinutes: number | null;
   premium: boolean;
   correctionNote: string | null;
-  /** Accepted for form compatibility; not persisted until a safe migration is applied. */
-  medicalDisclaimerMode?: string;
+  /** Yes → show, No → hide. Default show. */
+  medicalDisclaimerMode?: MedicalDisclaimerMode;
   sources: ArticleSource[];
 }
 
@@ -94,6 +100,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
 
   const slug = await uniqueSlug(supabase, input.slug || input.title);
   const readTime = input.readTimeMinutes ?? estimateReadTimeMinutes(input.body);
+  const medicalMode = parseMedicalDisclaimerMode(input.medicalDisclaimerMode ?? "show");
 
   const { data, error } = await supabase
     .from("articles")
@@ -113,6 +120,7 @@ export async function createArticle(input: ArticleInput): Promise<{ id: string }
       status: "draft",
       premium: input.premium,
       correction_note: input.correctionNote,
+      medical_disclaimer_mode: medicalMode,
       ...serializeArticleSources(input.sources ?? []),
       source_published_at: null,
       created_by: user.id,
@@ -156,6 +164,7 @@ export async function updateArticle(
 
   const slug = await uniqueSlug(supabase, input.slug || input.title, articleId);
   const readTime = input.readTimeMinutes ?? estimateReadTimeMinutes(input.body);
+  const medicalMode = parseMedicalDisclaimerMode(input.medicalDisclaimerMode ?? "show");
 
   const { error } = await supabase
     .from("articles")
@@ -174,6 +183,7 @@ export async function updateArticle(
       read_time_minutes: readTime,
       premium: input.premium,
       correction_note: input.correctionNote,
+      medical_disclaimer_mode: medicalMode,
       ...serializeArticleSources(input.sources ?? []),
       source_published_at: null,
       updated_at: new Date().toISOString(),
@@ -260,6 +270,7 @@ export async function duplicateArticle(articleId: string): Promise<{ id: string 
       read_time_minutes: original.readTimeMinutes,
       status: "draft",
       premium: original.premium,
+      medical_disclaimer_mode: original.medicalDisclaimerMode ?? "show",
       ...serializeArticleSources(original.sources ?? []),
       source_published_at: null,
       created_by: user.id,
