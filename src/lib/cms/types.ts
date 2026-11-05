@@ -1,6 +1,7 @@
 import type { ContentBlock } from "./blocks";
 
-export type MedicalDisclaimerMode = "auto" | "show" | "hide";
+/** Per-article medical disclaimer: on (show) or off (hide). */
+export type MedicalDisclaimerMode = "show" | "hide";
 
 export interface CmsCategory {
   id: string;
@@ -64,8 +65,8 @@ export interface CmsArticle {
   canonicalUrl: string | null;
   correctionNote: string | null;
   socialImage: CmsMedia | null;
-  /** Optional; not required for rendering until a DB column is safely added. */
-  medicalDisclaimerMode?: MedicalDisclaimerMode;
+  /** Yes = show in-article notice; No = never show on this story. */
+  medicalDisclaimerMode: MedicalDisclaimerMode;
   sources: ArticleSource[];
   source: {
     name: string | null;
