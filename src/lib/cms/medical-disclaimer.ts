@@ -1,6 +1,6 @@
 import type { ContentBlock } from "./blocks";
 
-export type MedicalDisclaimerMode = "auto" | "show" | "hide";
+export type MedicalDisclaimerMode = "show" | "hide";
 
 export interface MedicalDisclaimerClassification {
   /** Suggested mode when using Automatic. */
@@ -146,26 +146,18 @@ export function classifyMedicalDisclaimerRelevance(input: {
 /** Resolve whether the article-level notice should render. */
 export function shouldShowMedicalDisclaimer(
   mode: MedicalDisclaimerMode | null | undefined,
-  article: {
+  _article?: {
     title: string;
     excerpt: string | null;
     body: ContentBlock[];
     topics: { name: string }[];
   }
 ): boolean {
-  const resolved: MedicalDisclaimerMode = mode ?? "auto";
-  if (resolved === "show") return true;
-  if (resolved === "hide") return false;
-  const classification = classifyMedicalDisclaimerRelevance({
-    title: article.title,
-    excerpt: article.excerpt,
-    body: article.body,
-    topicNames: article.topics.map((t) => t.name),
-  });
-  return classification.suggested === "show";
+  // Per-article Yes/No only. Default to show when unset.
+  return mode !== "hide";
 }
 
 export function parseMedicalDisclaimerMode(value: unknown): MedicalDisclaimerMode {
-  if (value === "show" || value === "hide" || value === "auto") return value;
-  return "auto";
+  if (value === "hide") return "hide";
+  return "show";
 }
