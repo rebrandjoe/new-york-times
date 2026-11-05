@@ -12,6 +12,7 @@ import { SourceAttribution } from "@/components/article/SourceAttribution";
 import { CorrectionNotice } from "@/components/article/CorrectionNotice";
 import { ReadingProgress } from "@/components/article/ReadingProgress";
 import { SoftJoinPrompt } from "@/components/article/SoftJoinPrompt";
+import { MedicalDisclaimerTab } from "@/components/MedicalDisclaimerTab";
 import { Briefing } from "@/components/sections/Briefing";
 import { truncateBlocksForPreview } from "@/lib/cms/blocks";
 import { toHomepageArticle } from "@/lib/cms/mappers";
@@ -110,6 +111,10 @@ export function ArticleView({
   const alsoRead = related.map(toHomepageArticle);
   const bottomRelated = related.slice(0, 4);
   const bodySources = article.sources ?? [];
+  const showMedicalDisclaimer =
+    interactive &&
+    !premiumLocked &&
+    article.medicalDisclaimerMode !== "hide";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -133,6 +138,9 @@ export function ArticleView({
 
   return (
     <article>
+      {showMedicalDisclaimer && (
+        <MedicalDisclaimerTab enabled articleId={article.id} />
+      )}
       {interactive && (
         <script
           type="application/ld+json"
