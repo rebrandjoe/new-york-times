@@ -1,47 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-const SESSION_KEY = "mmwa_medical_disclaimer_dismissed";
+const SESSION_PREFIX = "mmwa_medical_disclaimer_dismissed:";
 
 const APPEAR_DELAY_MS = 4500;
 const VISIBLE_HOLD_MS = 10000;
 const SLIDE_MS = 1400;
 
-function isArticlePath(pathname: string | null): boolean {
-  return !!pathname && (pathname === "/article" || pathname.startsWith("/article/"));
-}
-
 /**
- * Quiet medical-disclaimer notice on article pages only.
- * Slides in slowly from the left a few seconds after open, holds ≥10s, then
- * slides away. Can be dismissed with X. Upper-left, clear of related stories.
+ * Quiet medical-disclaimer notice for a single article when the editor turned it on.
+ * Slides in slowly from the left, holds ≥10s, optional × dismiss for this story this session.
  */
-export function MedicalDisclaimerTab() {
-  const pathname = usePathname();
-  const onArticle = isArticlePath(pathname);
-
+export function MedicalDisclaimerTab({
+  enabled,
+  articleId,
+}: {
+  enabled: boolean;
+  articleId: string;
+}) {
   const [phase, setPhase] = useState<"idle" | "in" | "out" | "gone">("idle");
+  const sessionKey = `${SESSION_PREFIX}${articleId}`;
 
   const dismiss = useCallback(() => {
     setPhase("out");
     try {
-      sessionStorage.setItem(SESSION_KEY, "1");
+      sessionStorage.setItem(sessionKey, "1");
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [sessionKey]);
 
   useEffect(() => {
-    if (!onArticle) {
+    if (!enabled) {
       setPhase("idle");
       return;
     }
 
     try {
-      if (sessionStorage.getItem(SESSION_KEY) === "1") {
+      if (sessionStorage.getItem(sessionKey) === "1") {
         setPhase("gone");
         return;
       }
@@ -61,7 +59,7 @@ export function MedicalDisclaimerTab() {
       window.clearTimeout(appearTimer);
       window.clearTimeout(holdTimer);
     };
-  }, [onArticle, pathname]);
+  }, [enabled, sessionKey]);
 
   useEffect(() => {
     if (phase !== "out") return;
@@ -69,7 +67,7 @@ export function MedicalDisclaimerTab() {
     return () => window.clearTimeout(done);
   }, [phase]);
 
-  if (!onArticle || phase === "idle" || phase === "gone") return null;
+  if (!enabled || phase === "idle" || phase === "gone") return null;
 
   const visible = phase === "in";
 
