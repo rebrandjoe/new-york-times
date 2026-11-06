@@ -1,1 +1,1 @@
-PLACEHOLDER_READ_FROM_FILE
+use client placeholder - will replace
