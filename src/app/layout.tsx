@@ -18,6 +18,8 @@ const displaySerif = Playfair_Display({
 
 const SITE_URL = "https://josephmmwa.com";
 const SITE_NAME = "JOSEPH MMWA";
+const SITE_TAGLINE = "If it's health, it's here";
+const SITE_TITLE = `${SITE_NAME} — ${SITE_TAGLINE}`;
 const SITE_DESCRIPTION =
   "The world's biggest health and medical news explained as they happen.";
 
@@ -27,8 +29,9 @@ const BRAND_LOGO_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  applicationName: SITE_TITLE,
   title: {
-    default: `${SITE_NAME} — If it's health, it's here`,
+    default: SITE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -36,13 +39,13 @@ export const metadata: Metadata = {
   // child page to inherit homepage URLs. Homepage sets its own in page.tsx.
   openGraph: {
     type: "website",
-    siteName: SITE_NAME,
-    title: `${SITE_NAME} — If it's health, it's here`,
+    siteName: SITE_TITLE,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — If it's health, it's here`,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   icons: {
@@ -73,11 +76,23 @@ const jsonLd = {
       url: SITE_URL,
     },
     {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_TITLE,
+      alternateName: [SITE_NAME, "Joseph Mmwa"],
+      url: SITE_URL,
+      logo: BRAND_LOGO_URL,
+      slogan: SITE_TAGLINE,
+      founder: { "@id": `${SITE_URL}/#person` },
+    },
+    {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
-      name: SITE_NAME,
-      publisher: { "@id": `${SITE_URL}/#person` },
+      name: SITE_TITLE,
+      alternateName: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      publisher: { "@id": `${SITE_URL}/#organization` },
       author: { "@id": `${SITE_URL}/#person` },
     },
   ],
