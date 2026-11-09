@@ -22,8 +22,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    // Primary crawl map. News map is also listed so crawlers can discover it.
-    // (Some Next MetadataRoute typings are stricter about string[] for sitemap.)
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/news-sitemap.xml`],
   };
 }
