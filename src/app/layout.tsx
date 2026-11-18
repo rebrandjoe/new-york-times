@@ -81,7 +81,10 @@ const jsonLd = {
       name: SITE_TITLE,
       alternateName: [SITE_NAME, "Joseph Mmwa"],
       url: SITE_URL,
-      logo: BRAND_LOGO_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: BRAND_LOGO_URL,
+      },
       slogan: SITE_TAGLINE,
       founder: { "@id": `${SITE_URL}/#person` },
     },
@@ -92,8 +95,17 @@ const jsonLd = {
       name: SITE_TITLE,
       alternateName: SITE_NAME,
       description: SITE_DESCRIPTION,
+      inLanguage: "en",
       publisher: { "@id": `${SITE_URL}/#organization` },
       author: { "@id": `${SITE_URL}/#person` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
     },
   ],
 };
@@ -146,6 +158,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${SITE_NAME} RSS`}
+          href={`${SITE_URL}/rss`}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
