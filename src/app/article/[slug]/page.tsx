@@ -6,10 +6,13 @@ import { resolveCmsArticleMetaDescription } from "@/lib/cms/seo-description";
 import { getPublicComments } from "@/lib/actions/comments";
 import { createClient } from "@/lib/supabase/server";
 import { hasActivePremiumAccess } from "@/lib/premium/access";
+import { SUPABASE_LOGO_URL } from "@/components/Wordmark";
 
 const SITE_URL = "https://josephmmwa.com";
-/** Public asset that exists in production (logo.png / og-default.jpg currently 404). */
+/** Fallback share image when an article has no featured image. */
 const DEFAULT_SHARE_IMAGE = `${SITE_URL}/images/joseph-mmwa.jpg`;
+/** Brand mark for publisher logo in schema (prefer square JM logo). */
+const PUBLISHER_LOGO_URL = SUPABASE_LOGO_URL;
 
 // Cache public article HTML for 6 hours — publish still revalidates paths.
 export const revalidate = 21600;
@@ -108,8 +111,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const canonicalUrl = `${SITE_URL}${articlePath}`;
   const imageUrl = toShareImageUrl(article.featuredImage?.url);
   const metaDescription = resolveCmsArticleMetaDescription(article);
+  const sectionName =
+    article.category?.name ||
+    article.topics[0]?.name ||
+    (article.region ? article.region : null) ||
+    "Health";
+  const keywords = [
+    ...article.topics.map((t) => t.name),
+    article.category?.name,
+    article.region,
+    article.country,
+  ].filter((v): v is string => Boolean(v && v.trim()));
 
-  const jsonLd = {
+  const newsArticleLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: article.title,
@@ -117,6 +131,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     image: [imageUrl],
     datePublished: article.publicationDate,
     dateModified: article.updatedAt || article.publicationDate,
+    inLanguage: "en",
+    isAccessibleForFree: !article.premium,
+    articleSection: sectionName,
+    keywords: keywords.length ? keywords.join(", ") : undefined,
     author: {
       "@type": "Person",
       name: article.author?.name || "Joseph Mmwa",
@@ -127,7 +145,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       name: "JOSEPH MMWA",
       logo: {
         "@type": "ImageObject",
-        url: DEFAULT_SHARE_IMAGE,
+        url: PUBLISHER_LOGO_URL,
       },
     },
     mainEntityOfPage: {
@@ -136,11 +154,42 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: sectionName,
+        item: article.category?.slug
+          ? `${SITE_URL}/${article.category.slug === "kenya" || article.category.slug === "global" ? article.category.slug : `topics/${article.category.slug}`}`
+          : `${SITE_URL}/latest`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: canonicalUrl,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <ArticleView
