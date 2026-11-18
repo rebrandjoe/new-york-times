@@ -9,11 +9,39 @@ import { Premium } from "@/components/sections/Premium";
 import { getPublishedArticles, getTopics } from "@/lib/cms/queries";
 import { toHomepageArticle } from "@/lib/cms/mappers";
 import type { RegionSlug } from "@/lib/types";
+import { SUPABASE_LOGO_URL } from "@/components/Wordmark";
+
+const SITE_URL = "https://josephmmwa.com";
+const SITE_TITLE = "JOSEPH MMWA — If it's health, it's here";
+const SITE_DESCRIPTION =
+  "The world's biggest health and medical news explained as they happen.";
+/** Prefer hero for share cards; fall back to brand mark. */
+const HOME_OG_IMAGE = `${SITE_URL}/images/hero-group.jpg`;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     url: "/",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: HOME_OG_IMAGE,
+        alt: "JOSEPH MMWA — global health news",
+        width: 1200,
+        height: 630,
+      },
+      {
+        url: SUPABASE_LOGO_URL,
+        alt: "JOSEPH MMWA logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [HOME_OG_IMAGE],
   },
 };
 
