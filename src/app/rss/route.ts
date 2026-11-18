@@ -26,7 +26,9 @@ export async function GET() {
     .map((article) => {
       const link = `${SITE_URL}/article/${article.slug}`;
       const title = escapeXml(article.title.trim());
-      const description = escapeXml(resolveCmsArticleMetaDescription(article));
+      const description = escapeXml(
+        resolveCmsArticleMetaDescription(article) ?? article.excerpt?.trim() ?? article.title
+      );
       const pubDate = new Date(article.publicationDate).toUTCString();
       const author = escapeXml(article.author?.name || "Joseph Mmwa");
       const category = article.category?.name
