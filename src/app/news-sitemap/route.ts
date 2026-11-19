@@ -4,12 +4,11 @@ const SITE_URL = "https://josephmmwa.com";
 const PUBLICATION_NAME = "JOSEPH MMWA";
 const LANGUAGE = "en";
 
-/**
- * Include articles from the last 7 days (publish or update).
- * Google News prioritises ~2 days; older entries are harmless and help when
- * publish cadence is less than daily.
- */
+/** Prefer articles from the last 7 days (publish or update). */
 const NEWS_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** If the window is empty (slow publish week), still list this many newest stories. */
+const FALLBACK_MIN_URLS = 10;
 
 /** Google allows up to 1,000 URLs per news sitemap. */
 const MAX_NEWS_URLS = 1000;
@@ -41,21 +40,33 @@ export async function GET() {
   const articles = await getPublishedArticles({ limit: 500 });
   const cutoff = Date.now() - NEWS_WINDOW_MS;
 
-  const recent = articles
+  const scored = articles
     .map((article) => ({
       article,
       ts: articleNewsTimestamp(article),
     }))
-    .filter(({ ts }) => !Number.isNaN(ts) && ts >= cutoff)
-    .sort((a, b) => b.ts - a.ts)
-    .slice(0, MAX_NEWS_URLS)
-    .map(({ article }) => article);
+    .filter(({ ts }) => !Number.isNaN(ts))
+    .sort((a, b) => b.ts - a.ts);
+
+  let recent = scored.filter(({ ts }) => ts >= cutoff).map(({ article }) => article);
+
+  // Sparse cadence: never leave the map empty while published stories exist.
+  if (recent.length < FALLBACK_MIN_URLS) {
+    const seen = new Set(recent.map((a) => a.id));
+    for (const { article } of scored) {
+      if (recent.length >= FALLBACK_MIN_URLS) break;
+      if (seen.has(article.id)) continue;
+      seen.add(article.id);
+      recent.push(article);
+    }
+  }
+
+  recent = recent.slice(0, MAX_NEWS_URLS);
 
   const urls = recent
     .map((article) => {
       const loc = `${SITE_URL}/article/${article.slug}`;
       const title = escapeXml(article.title.trim());
-      // Prefer original publication date for news:publication_date (Google requirement).
       const publicationDate = new Date(article.publicationDate).toISOString();
 
       return [
@@ -87,7 +98,6 @@ export async function GET() {
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      // Short cache so newly published stories appear for Google News quickly.
       "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
     },
   });
