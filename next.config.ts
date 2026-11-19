@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
     return [
       // Friendly URL for Google Search Console / Publisher Center
       { source: "/news-sitemap.xml", destination: "/news-sitemap" },
+      // Common RSS paths used by readers and aggregators
+      { source: "/rss.xml", destination: "/rss" },
+      { source: "/feed.xml", destination: "/rss" },
+      { source: "/feed", destination: "/rss" },
     ];
   },
   async headers() {
