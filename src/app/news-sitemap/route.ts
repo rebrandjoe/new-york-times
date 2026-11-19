@@ -4,8 +4,12 @@ const SITE_URL = "https://josephmmwa.com";
 const PUBLICATION_NAME = "JOSEPH MMWA";
 const LANGUAGE = "en";
 
-/** Google News: articles from the last 2 days (publish or meaningful update). */
-const NEWS_WINDOW_MS = 2 * 24 * 60 * 60 * 1000;
+/**
+ * Include articles from the last 7 days (publish or update).
+ * Google News prioritises ~2 days; older entries are harmless and help when
+ * publish cadence is less than daily.
+ */
+const NEWS_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 /** Google allows up to 1,000 URLs per news sitemap. */
 const MAX_NEWS_URLS = 1000;
