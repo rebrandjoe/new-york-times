@@ -87,4 +87,5 @@ export interface ArticleListItem {
   author: CmsAuthor;
   publicationDate: string;
   updatedAt: string;
+  readTimeMinutes: number;
 }
