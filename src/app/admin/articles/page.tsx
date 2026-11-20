@@ -4,22 +4,23 @@ import { getAdminArticles, type AdminArticleFilters } from "@/lib/cms/admin-quer
 import { getCategories } from "@/lib/cms/queries";
 import { ArticleRowActions } from "@/components/admin/ArticleRowActions";
 
-/** Same format as the public article header (e.g. "Nov 7, 2026, 6:41 AM UTC"). */
+/** Same style as public article header ("5 min read"). */
+function formatReadTime(minutes: number) {
+  const n = Number.isFinite(minutes) && minutes > 0 ? Math.round(minutes) : 1;
+  return `${n} min read`;
+}
+
+/** Date only for Updated column (no clock time). */
 function formatDate(iso: string) {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  return (
-    d.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "UTC",
-    }) + " UTC"
-  );
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 const STATUSES: { value: AdminArticleFilters["status"]; label: string }[] = [
@@ -103,7 +104,7 @@ export default async function AdminArticlesPage({
               <th className="py-3 pr-4 font-semibold">Title</th>
               <th className="py-3 pr-4 font-semibold">Status</th>
               <th className="py-3 pr-4 font-semibold">Category</th>
-              <th className="py-3 pr-4 font-semibold">Published</th>
+              <th className="py-3 pr-4 font-semibold">Read time</th>
               <th className="py-3 pr-4 font-semibold">Updated</th>
               <th className="py-3 pr-4 font-semibold">Actions</th>
             </tr>
@@ -135,7 +136,9 @@ export default async function AdminArticlesPage({
                     </span>
                   </td>
                   <td className="py-3 pr-4 text-gray-secondary-light">{article.category?.name ?? "—"}</td>
-                  <td className="py-3 pr-4 text-gray-secondary-light">{formatDate(article.publicationDate)}</td>
+                  <td className="py-3 pr-4 text-gray-secondary-light">
+                    {formatReadTime(article.readTimeMinutes)}
+                  </td>
                   <td className="py-3 pr-4 text-gray-secondary-light">{formatDate(article.updatedAt)}</td>
                   <td className="py-3 pr-4">
                     <ArticleRowActions articleId={article.id} status={article.status} />
