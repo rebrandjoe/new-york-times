@@ -3,7 +3,7 @@ import { ARTICLE_SELECT, mapRowToCmsArticle, type RawArticleRow } from "./mapper
 import type { ArticleListItem, ArticleStatus, CmsArticle } from "./types";
 
 const LIST_SELECT = `
-  id, slug, title, status, publication_date, updated_at,
+  id, slug, title, status, publication_date, updated_at, read_time_minutes,
   category:categories!articles_category_id_fkey(id, name, slug),
   author:authors!articles_author_id_fkey(id, name, slug, title)
 `;
@@ -15,6 +15,7 @@ interface RawListRow {
   status: string;
   publication_date: string;
   updated_at: string;
+  read_time_minutes: number | null;
   category: { id: string; name: string; slug: string } | null;
   author: { id: string; name: string; slug: string; title: string } | null;
 }
@@ -65,6 +66,7 @@ export async function getAdminArticles(
     author: row.author ?? { id: "", name: "Joseph Mmwa", slug: "joseph-mmwa", title: "" },
     publicationDate: row.publication_date,
     updatedAt: row.updated_at,
+    readTimeMinutes: row.read_time_minutes ?? 1,
   }));
 }
 
