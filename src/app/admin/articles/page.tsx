@@ -4,14 +4,19 @@ import { getAdminArticles, type AdminArticleFilters } from "@/lib/cms/admin-quer
 import { getCategories } from "@/lib/cms/queries";
 import { ArticleRowActions } from "@/components/admin/ArticleRowActions";
 
+/** Same format as the public article header (e.g. "Nov 7, 2026, 6:41 AM UTC"). */
 function formatDate(iso: string) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
   return (
-    new Date(iso).toLocaleDateString("en-US", {
+    d.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
       hour: "numeric",
       minute: "2-digit",
+      hour12: true,
       timeZone: "UTC",
     }) + " UTC"
   );
